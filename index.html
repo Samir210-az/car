@@ -11,9 +11,6 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
-    <!-- QRCode.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
-    </script>
 
     <style>
         /* ===== ROOT / RESET ===== */
@@ -67,6 +64,7 @@
             transition: background var(--transition), color var(--transition);
             min-height: 100vh;
             overflow-x: hidden;
+            margin: 0;
         }
         a {
             color: var(--primary);
@@ -169,7 +167,7 @@
         }
 
         /* ===== LOGIN ===== */
-        .login-page {
+        #loginPage {
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -247,13 +245,13 @@
             gap: 1rem;
         }
 
-        /* ===== LAYOUT ===== */
-        .app {
-            display: none !important;
+        /* ===== APP ===== */
+        #app {
+            display: none;
             min-height: 100vh;
         }
-        .app.active {
-            display: block !important;
+        #app.active {
+            display: block;
         }
 
         /* Navbar */
@@ -355,7 +353,7 @@
             color: var(--text);
         }
 
-        /* Sidebar (mobile) */
+        /* Mobile sidebar */
         .mobile-sidebar {
             display: none;
             position: fixed;
@@ -457,17 +455,6 @@
             float: right;
             font-size: 1.8rem;
             opacity: 0.3;
-        }
-        .stat-card .stat-change {
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.3rem;
-        }
-        .stat-change.up {
-            color: var(--success);
-        }
-        .stat-change.down {
-            color: var(--danger);
         }
 
         .charts-grid {
@@ -772,7 +759,6 @@
             }
         }
 
-        /* Misc */
         .text-center {
             text-align: center;
         }
@@ -822,9 +808,6 @@
         .fs-small {
             font-size: 0.8rem;
         }
-        .fs-large {
-            font-size: 1.2rem;
-        }
         .truncate {
             white-space: nowrap;
             overflow: hidden;
@@ -832,13 +815,6 @@
             max-width: 150px;
         }
 
-        /* Scrollable table container */
-        .table-scroll {
-            max-height: 340px;
-            overflow-y: auto;
-        }
-
-        /* Toast notification */
         .toast-container {
             position: fixed;
             top: 80px;
@@ -880,7 +856,7 @@
             }
         }
 
-        /* Print styles */
+        /* Print */
         @media print {
             .navbar,
             .no-print {
@@ -902,7 +878,6 @@
             }
         }
 
-        /* Loading spinner */
         .spinner {
             display: inline-block;
             width: 30px;
@@ -930,31 +905,20 @@
         .loading-overlay.active {
             display: flex;
         }
-
-        /* ===== FIX for login ===== */
-        #loginPage {
-            display: flex;
-        }
-        #app {
-            display: none !important;
-        }
-        #app.active {
-            display: block !important;
-        }
     </style>
 </head>
 <body>
 
-    <!-- ===== LOADING ===== -->
+    <!-- LOADING -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- ===== TOASTS ===== -->
+    <!-- TOASTS -->
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- ===== LOGIN ===== -->
-    <div class="login-page" id="loginPage">
+    <div id="loginPage">
         <div class="login-card glass">
             <div class="text-center">
                 <div class="logo-icon"><i class="fas fa-car"></i></div>
@@ -981,9 +945,9 @@
     </div>
 
     <!-- ===== APP ===== -->
-    <div class="app" id="app">
+    <div id="app">
 
-        <!-- ===== NAVBAR ===== -->
+        <!-- NAVBAR -->
         <nav class="navbar glass" id="navbar">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
             <div class="brand"><i class="fas fa-car"></i> AutoParts</div>
@@ -1009,7 +973,7 @@
             </div>
         </nav>
 
-        <!-- ===== MOBILE SIDEBAR ===== -->
+        <!-- MOBILE SIDEBAR -->
         <div class="mobile-sidebar" id="mobileSidebar">
             <button class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
             <button class="nav-item" data-page="products"><i class="fas fa-boxes"></i> Məhsullar</button>
@@ -1024,44 +988,37 @@
             <button class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Hesabatlar</button>
         </div>
 
-        <!-- ===== MAIN ===== -->
+        <!-- MAIN CONTENT -->
         <div class="main-content" id="mainContent">
 
-            <!-- ============================================================ -->
             <!-- DASHBOARD -->
-            <!-- ============================================================ -->
             <div class="page active" id="page-dashboard">
                 <h2 style="font-weight:700;margin-bottom:0.5rem;"><i class="fas fa-chart-pie" style="color:var(--primary);"></i> Dashboard</h2>
                 <p class="text-muted mb-1" id="dashboardDate"></p>
-
                 <div class="stats-grid" id="statsGrid">
-                    <div class="stat-card"><div class="stat-label">Bugünkü satış</div><div class="stat-value" id="statTodaySales">0 ₼</div><div class="stat-icon"><i class="fas fa-calendar-day"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Bu ay satış</div><div class="stat-value" id="statMonthSales">0 ₼</div><div class="stat-icon"><i class="fas fa-calendar-alt"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Ümumi gəlir</div><div class="stat-value" id="statTotalRevenue">0 ₼</div><div class="stat-icon"><i class="fas fa-arrow-up"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Ümumi xərc</div><div class="stat-value" id="statTotalExpense">0 ₼</div><div class="stat-icon"><i class="fas fa-arrow-down"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Xalis qazanc</div><div class="stat-value" id="statNetProfit">0 ₼</div><div class="stat-icon"><i class="fas fa-coins"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Anbardakı məhsul sayı</div><div class="stat-value" id="statStockCount">0</div><div class="stat-icon"><i class="fas fa-cubes"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Bitmək üzrə olan mallar</div><div class="stat-value text-warning" id="statLowStock">0</div><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Borclu təchizatçılar</div><div class="stat-value text-danger" id="statSupplierDebt">0 ₼</div><div class="stat-icon"><i class="fas fa-user-tie"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Alınacaq borclar</div><div class="stat-value text-success" id="statReceivable">0 ₼</div><div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Kassa qalığı</div><div class="stat-value" id="statCashBalance">0 ₼</div><div class="stat-icon"><i class="fas fa-wallet"></i></div></div>
-                    <div class="stat-card"><div class="stat-label">Bank hesabı</div><div class="stat-value" id="statBankBalance">0 ₼</div><div class="stat-icon"><i class="fas fa-university"></i></div></div>
+                    <div class="stat-card"><div class="stat-label">Bugünkü satış</div><div class="stat-value" id="statTodaySales">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Bu ay satış</div><div class="stat-value" id="statMonthSales">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Ümumi gəlir</div><div class="stat-value" id="statTotalRevenue">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Ümumi xərc</div><div class="stat-value" id="statTotalExpense">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Xalis qazanc</div><div class="stat-value" id="statNetProfit">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Anbardakı məhsul sayı</div><div class="stat-value" id="statStockCount">0</div></div>
+                    <div class="stat-card"><div class="stat-label">Bitmək üzrə olan mallar</div><div class="stat-value text-warning" id="statLowStock">0</div></div>
+                    <div class="stat-card"><div class="stat-label">Borclu təchizatçılar</div><div class="stat-value text-danger" id="statSupplierDebt">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Alınacaq borclar</div><div class="stat-value text-success" id="statReceivable">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Kassa qalığı</div><div class="stat-value" id="statCashBalance">0 ₼</div></div>
+                    <div class="stat-card"><div class="stat-label">Bank hesabı</div><div class="stat-value" id="statBankBalance">0 ₼</div></div>
                 </div>
-
                 <div class="charts-grid">
                     <div class="chart-box"><h4><i class="fas fa-chart-line" style="color:var(--primary);"></i> Gündəlik satış (son 7 gün)</h4><canvas id="dailyChart"></canvas></div>
                     <div class="chart-box"><h4><i class="fas fa-trophy" style="color:var(--warning);"></i> Ən çox satılan məhsullar</h4><canvas id="topProductsChart"></canvas></div>
                 </div>
-
                 <div class="recent-grid">
                     <div class="card"><h4><i class="fas fa-clock"></i> Son satışlar</h4><div class="table-wrap"><table><thead><tr><th>Məhsul</th><th>Miqdar</th><th>Məbləğ</th><th>Vaxt</th></tr></thead><tbody id="recentSales"></tbody></table></div></div>
                     <div class="card"><h4><i class="fas fa-plus-circle"></i> Son əlavə olunan mallar</h4><div class="table-wrap"><table><thead><tr><th>Məhsul</th><th>Stok</th><th>Qiymət</th></tr></thead><tbody id="recentProducts"></tbody></table></div></div>
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- PRODUCTS -->
-            <!-- ============================================================ -->
             <div class="page" id="page-products">
                 <div class="flex-between mb-1">
                     <h2 style="font-weight:700;"><i class="fas fa-boxes" style="color:var(--primary);"></i> Məhsullar</h2>
@@ -1097,9 +1054,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- SALES (POS) -->
-            <!-- ============================================================ -->
             <div class="page" id="page-sales">
                 <h2 style="font-weight:700;margin-bottom:1rem;"><i class="fas fa-cash-register" style="color:var(--primary);"></i> Satış (POS)</h2>
                 <div class="pos-layout">
@@ -1108,9 +1063,7 @@
                             <div class="search-box" style="flex:1;"><i class="fas fa-search"></i><input type="text" id="posSearch" placeholder="Barkod, ad və ya OEM..." oninput="filterPosProducts()" /></div>
                             <button class="btn btn-outline btn-sm" onclick="clearPosCart()"><i class="fas fa-trash"></i> Təmizlə</button>
                         </div>
-                        <div class="pos-products" id="posProductList">
-                            <!-- dynamically rendered -->
-                        </div>
+                        <div class="pos-products" id="posProductList"></div>
                     </div>
                     <div class="card pos-cart">
                         <h4 style="margin-bottom:0.6rem;"><i class="fas fa-shopping-cart"></i> Səbət</h4>
@@ -1133,9 +1086,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- SUPPLIERS -->
-            <!-- ============================================================ -->
             <div class="page" id="page-suppliers">
                 <div class="flex-between mb-1">
                     <h2 style="font-weight:700;"><i class="fas fa-truck" style="color:var(--primary);"></i> Təchizatçılar</h2>
@@ -1149,9 +1100,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- PURCHASES -->
-            <!-- ============================================================ -->
             <div class="page" id="page-purchases">
                 <div class="flex-between mb-1">
                     <h2 style="font-weight:700;"><i class="fas fa-shopping-cart" style="color:var(--primary);"></i> Malların alışı</h2>
@@ -1162,9 +1111,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- FINANCE -->
-            <!-- ============================================================ -->
             <div class="page" id="page-finance">
                 <h2 style="font-weight:700;margin-bottom:1rem;"><i class="fas fa-coins" style="color:var(--primary);"></i> Maliyyə</h2>
                 <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
@@ -1179,9 +1126,7 @@
                 <div class="card"><h4>Əməliyyatlar</h4><div class="table-scroll"><table><thead><tr><th>Tarix</th><th>Tip</th><th>Kateqoriya</th><th>Məbləğ</th><th>Qeyd</th></tr></thead><tbody id="financeTable"></tbody></table></div></div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- EMPLOYEES -->
-            <!-- ============================================================ -->
             <div class="page" id="page-employees">
                 <div class="flex-between mb-1">
                     <h2 style="font-weight:700;"><i class="fas fa-users" style="color:var(--primary);"></i> İşçilər</h2>
@@ -1192,9 +1137,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- TAXES -->
-            <!-- ============================================================ -->
             <div class="page" id="page-taxes">
                 <h2 style="font-weight:700;margin-bottom:1rem;"><i class="fas fa-file-invoice-dollar" style="color:var(--primary);"></i> Vergilər</h2>
                 <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
@@ -1209,9 +1152,7 @@
                 <div class="card"><h4>Vergi ödənişləri</h4><div class="table-wrap"><table><thead><tr><th>Tarix</th><th>Kvartal</th><th>Məbləğ</th><th>Status</th><th>Qeyd</th></tr></thead><tbody id="taxTable"></tbody></table></div></div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- DEBTS -->
-            <!-- ============================================================ -->
             <div class="page" id="page-debts">
                 <h2 style="font-weight:700;margin-bottom:1rem;"><i class="fas fa-hand-holding-usd" style="color:var(--primary);"></i> Borclar</h2>
                 <div class="flex gap-1 mb-1">
@@ -1220,9 +1161,7 @@
                 <div class="card"><h4>Borclar siyahısı</h4><div class="table-wrap"><table><thead><tr><th>Tip</th><th>Şəxs</th><th>Məbləğ</th><th>Ödənilən</th><th>Qalan</th><th>Son tarix</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody id="debtsTable"></tbody></table></div></div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- CUSTOMERS -->
-            <!-- ============================================================ -->
             <div class="page" id="page-customers">
                 <div class="flex-between mb-1">
                     <h2 style="font-weight:700;"><i class="fas fa-address-book" style="color:var(--primary);"></i> Müştərilər</h2>
@@ -1236,9 +1175,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================ -->
             <!-- REPORTS -->
-            <!-- ============================================================ -->
             <div class="page" id="page-reports">
                 <h2 style="font-weight:700;margin-bottom:1rem;"><i class="fas fa-file-alt" style="color:var(--primary);"></i> Hesabatlar</h2>
                 <div class="card">
@@ -1260,6 +1197,7 @@
 
         </div><!-- /main-content -->
     </div><!-- /app -->
+
 
     <!-- ============================================================ -->
     <!-- MODALS -->
@@ -1632,7 +1570,7 @@
             state.role = u.role;
             state.token = 'demo-token-' + randId();
             localStorage.setItem('autoparts_session', JSON.stringify({ user: u, token: state.token }));
-            // Reload to apply session
+            // Səhifəni yeniləyirik ki, checkSession işə düşsün
             window.location.reload();
             return u;
         }
@@ -1642,7 +1580,6 @@
             state.token = null;
             localStorage.removeItem('autoparts_session');
             document.getElementById('app').classList.remove('active');
-            document.getElementById('app').style.display = 'none';
             document.getElementById('loginPage').style.display = 'flex';
         }
 
@@ -1658,11 +1595,12 @@
                         document.getElementById('loginPage').style.display = 'none';
                         const app = document.getElementById('app');
                         app.classList.add('active');
-                        app.style.display = 'block';
                         initApp();
                         return true;
                     }
-                } catch {}
+                } catch (e) {
+                    console.warn('Session parse error:', e);
+                }
             }
             return false;
         }
@@ -1741,7 +1679,6 @@
                     el.style.display = '';
                 }
             });
-            // Also hide pages
             document.querySelectorAll('.page').forEach(el => {
                 const id = el.id.replace('page-', '');
                 if (hide.includes(id)) {
@@ -1750,7 +1687,6 @@
                     el.style.display = '';
                 }
             });
-            // If current page is hidden, switch to dashboard
             const activePage = document.querySelector('.nav-item.active');
             if (activePage && hide.includes(activePage.dataset.page)) {
                 navigateTo('dashboard');
@@ -1777,7 +1713,6 @@
                 el.addEventListener('click', () => {
                     const page = el.dataset.page;
                     navigateTo(page);
-                    // Close mobile sidebar
                     document.getElementById('mobileSidebar').classList.remove('open');
                 });
             });
@@ -1877,18 +1812,15 @@
         }
 
         function navigateTo(page) {
-            // Update nav
             document.querySelectorAll('.nav-item[data-page]').forEach(el => {
                 el.classList.toggle('active', el.dataset.page === page);
             });
             document.querySelectorAll('.mobile-sidebar .nav-item[data-page]').forEach(el => {
                 el.classList.toggle('active', el.dataset.page === page);
             });
-            // Show page
             document.querySelectorAll('.page').forEach(el => {
                 el.classList.toggle('active', el.id === 'page-' + page);
             });
-            // Refresh data if needed
             if (page === 'dashboard') renderDashboard();
             if (page === 'products') renderProducts();
             if (page === 'suppliers') renderSuppliers();
@@ -1964,7 +1896,6 @@
                 `<tr><td>${p.name || '—'}</td><td>${p.stock || 0}</td><td>${fmtMoney(p.sellPrice || 0)}</td></tr>`
             ).join('') || '<tr><td colspan="3" class="text-muted">Heç bir məhsul yoxdur</td></tr>';
 
-            // Charts
             renderCharts(sales);
         }
 
@@ -1972,7 +1903,6 @@
         let topChartInstance = null;
 
         function renderCharts(sales) {
-            // Daily sales (last 7 days)
             const days = [];
             const amounts = [];
             for (let i = 6; i >= 0; i--) {
@@ -1993,7 +1923,6 @@
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
 
-            // Top products
             const productSales = {};
             sales.forEach(s => {
                 const key = s.productName || 'Naməlum';
@@ -2030,7 +1959,6 @@
                 list = list.filter(p => (p.category || '') === category);
             }
 
-            // Pagination
             const total = list.length;
             const size = state.productPageSize;
             const page = state.productPage;
@@ -2067,7 +1995,6 @@
                 </tr>
             `).join('');
 
-            // Update category filter
             const cats = new Set(getProducts().map(p => p.category).filter(Boolean));
             const filter = document.getElementById('productCategoryFilter');
             const currentVal = filter.value;
@@ -2075,7 +2002,6 @@
                 Array.from(cats).map(c => `<option value="${c}">${c}</option>`).join('');
             filter.value = currentVal;
 
-            // Update datalists
             const catList = document.getElementById('catList');
             catList.innerHTML = Array.from(cats).map(c => `<option value="${c}">`).join('');
             const supList = document.getElementById('supplierList');
@@ -2162,7 +2088,6 @@
                 profitPercent: 0,
                 createdAt: new Date().toISOString(),
             };
-            // Calc profit
             if (data.buyPrice > 0 && data.sellPrice > 0) {
                 data.profitPercent = ((data.sellPrice - data.buyPrice) / data.buyPrice * 100);
             }
@@ -2487,15 +2412,12 @@
                 createdAt: new Date().toISOString(),
             };
 
-            // Update stock
             let products = getProducts();
             purchaseItems.forEach(item => {
                 const prod = products.find(p => p.id === item.productId);
                 if (prod) {
                     prod.stock = (prod.stock || 0) + item.qty;
-                    // Update buy price if changed
                     if (item.price > 0) prod.buyPrice = item.price;
-                    // Recalc profit
                     if (prod.buyPrice > 0 && prod.sellPrice > 0) {
                         prod.profitPercent = ((prod.sellPrice - prod.buyPrice) / prod.buyPrice * 100);
                     }
@@ -2507,7 +2429,6 @@
             purchases.push(purchase);
             setPurchases(purchases);
 
-            // Add to finance as expense
             let finance = getFinance();
             finance.push({
                 id: randId(),
@@ -2539,7 +2460,6 @@
 
         function populateSelects() {
             populatePurchaseSelects();
-            // Also update supplier list in product form
             const supList = document.getElementById('supplierList');
             supList.innerHTML = getSuppliers().map(s => `<option value="${s.name}">`).join('');
         }
@@ -2723,7 +2643,6 @@
         // =============================================================
         function renderTaxes() {
             const list = getTaxes();
-            // Calculate quarterly totals
             const quarters = { 1: 0, 2: 0, 3: 0, 4: 0 };
             list.forEach(t => {
                 if (t.status === 'ödənilib') {
@@ -3079,7 +2998,6 @@
             const paymentMethod = document.getElementById('posPaymentMethod').value;
             const discount = parseFloat(document.getElementById('posDiscount').value) || 0;
 
-            // Check stock
             let products = getProducts();
             let canSell = true;
             state.posCart.forEach(item => {
@@ -3091,12 +3009,10 @@
             });
             if (!canSell) return;
 
-            // Deduct stock
             state.posCart.forEach(item => {
                 const prod = products.find(p => p.id === item.productId);
                 if (prod) {
                     prod.stock = (prod.stock || 0) - item.qty;
-                    // Recalc profit
                     if (prod.buyPrice > 0 && prod.sellPrice > 0) {
                         prod.profitPercent = ((prod.sellPrice - prod.buyPrice) / prod.buyPrice * 100);
                     }
@@ -3104,7 +3020,6 @@
             });
             setProducts(products);
 
-            // Create sale record
             const sale = {
                 id: randId(),
                 items: state.posCart.map(item => ({ ...item })),
@@ -3121,7 +3036,6 @@
             sales.push(sale);
             setSales(sales);
 
-            // Add to finance as income
             let finance = getFinance();
             finance.push({
                 id: randId(),
@@ -3134,14 +3048,12 @@
             });
             setFinance(finance);
 
-            // Clear cart
             state.posCart = [];
             renderPosCart();
             renderProducts();
             renderDashboard();
             toast(`Satış tamamlandı! ${fmtMoney(total)}`, 'success');
 
-            // Print receipt
             setTimeout(() => printReceipt(sale), 300);
         }
 
@@ -3166,7 +3078,6 @@
             receipt += `ƏDV daxil deyil\n`;
             receipt += `AutoParts ERP - ${new Date().toLocaleString('az-AZ')}\n`;
 
-            // Print using a new window
             const win = window.open('', '_blank', 'width=400,height=600');
             if (win) {
                 win.document.write(`<pre style="font-family:monospace;padding:20px;">${receipt}</pre>`);
@@ -3282,12 +3193,10 @@
         if (!checkSession()) {
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('app').classList.remove('active');
-            document.getElementById('app').style.display = 'none';
         } else {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('app').classList.add('active');
-            document.getElementById('app').style.display = 'block';
-            // initApp is called from checkSession
+            initApp();
         }
 
         // Expose functions to global for inline onclick
@@ -3347,7 +3256,6 @@
         window.openModal = openModal;
         window.toast = toast;
 
-        // Keyboard shortcut for backup restore (Ctrl+Shift+B)
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key === 'B') {
                 if (confirm('Backup bərpa etmək istədiyinizə əminsiniz? Cari məlumatlar itiriləcək.')) {
@@ -3360,6 +3268,5 @@
         console.log('📊 Məlumatlar localstorage-də saxlanılır.');
         console.log('⌨️ Ctrl+K - axtarış, Ctrl+Shift+B - backup bərpa');
     </script>
-
 </body>
 </html>

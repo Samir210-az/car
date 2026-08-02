@@ -834,7 +834,9 @@
             }
         }
 
-        /* ===== VIN AXTARIŞ ===== */
+        /* ============================================================
+           VIN AXTARIŞ — YALNIZ VIN
+           ============================================================ */
         .vin-search-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -1021,37 +1023,10 @@
             display: block;
             margin-bottom: 0.5rem;
         }
-        .vin-search-tabs {
-            display: flex;
-            gap: var(--spacing-12);
-            flex-wrap: wrap;
-            margin-bottom: var(--spacing-20);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            padding-bottom: var(--spacing-12);
-        }
-        .vin-search-tabs .tab-btn {
-            padding: 0.4rem 1.2rem;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: transparent;
-            color: var(--surface-text-secondary);
-            font-weight: 500;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-        .vin-search-tabs .tab-btn:hover {
-            color: var(--surface-text);
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .vin-search-tabs .tab-btn.active {
-            color: var(--color-lavender-phosphor);
-            background: rgba(253, 233, 255, 0.06);
-        }
 
-        /* ===== PARALLAX HERO ===== */
+        /* ============================================================
+           PARALLAX HERO
+           ============================================================ */
         #particle-hero {
             position: fixed;
             top: 0;
@@ -1105,7 +1080,9 @@
             pointer-events: auto;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 1024px) {
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -1462,28 +1439,21 @@
                 </div>
             </div>
 
-            <!-- ===== VIN AXTARIŞ SƏHİFƏSİ ===== -->
+            <!-- ==========================================================
+                   VIN AXTARIŞ SƏHİFƏSİ — YALNIZ VIN
+                   ========================================================== -->
             <div class="page active" id="page-vin-search">
                 <div class="vin-search-container">
 
                     <div class="vin-header">
-                        <h2><i class="fas fa-search" style="color:var(--color-lavender-phosphor);"></i> Avtomobil və VIN Axtarışı</h2>
-                        <p class="text-muted">VIN, marka, model, mühərrik və ya OEM nömrəsi ilə axtarış edin</p>
+                        <h2><i class="fas fa-search" style="color:var(--color-lavender-phosphor);"></i> VIN ilə Axtarış</h2>
+                        <p class="text-muted">17 simvoldan ibarət VIN kodunu daxil edin</p>
                     </div>
 
                     <div class="vin-search-box card">
                         <div class="form-row">
                             <div class="form-group" style="flex:1;">
-                                <label>Axtarış növü</label>
-                                <select id="searchType" style="width:100%;padding:0.7rem 1rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-family:var(--font-primary);font-size:0.9rem;">
-                                    <option value="vin">VIN</option>
-                                    <option value="brand">Marka + Model</option>
-                                    <option value="engine">Mühərrik kodu</option>
-                                    <option value="oem">OEM nömrəsi</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="flex:3;">
-                                <label>Axtarış sözü</label>
+                                <label>VIN Kodu</label>
                                 <input type="text" id="vinInput" placeholder="Məsələn: 1HGCM82633A123456" maxlength="50" style="text-transform:uppercase;font-family:var(--font-primary);font-size:1.1rem;letter-spacing:1px;">
                             </div>
                             <div class="form-group" style="flex:0.8;display:flex;align-items:flex-end;">
@@ -1495,7 +1465,6 @@
                         <div class="flex gap-1" style="margin-top:var(--spacing-12);flex-wrap:wrap;">
                             <button class="btn btn-outline btn-sm" onclick="setVinExample('1HGCM82633A123456')"><i class="fas fa-car"></i> Honda (VIN)</button>
                             <button class="btn btn-outline btn-sm" onclick="setVinExample('WBA3A5C50EF359482')"><i class="fas fa-car"></i> BMW (VIN)</button>
-                            <button class="btn btn-outline btn-sm" onclick="setVinExample('Toyota Corolla')"><i class="fas fa-car"></i> Toyota Corolla</button>
                             <button class="btn btn-outline btn-sm" onclick="setVinExample('JTDBU4EE5BJ012345')"><i class="fas fa-car"></i> Toyota (VIN)</button>
                             <button class="btn btn-outline btn-sm" onclick="document.getElementById('vinInput').value='';document.getElementById('vinResult').innerHTML='';document.getElementById('vinInput').focus();"><i class="fas fa-times"></i> Təmizlə</button>
                         </div>
@@ -1657,10 +1626,10 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT — MODULLU VIN AXTARIŞ SİSTEMİ (XƏTASIZ) -->
+    <!-- JAVASCRIPT — MÖVCUD ERP SİSTEMİ + VIN AXTARIŞI (YALNIZ VIN) -->
     <!-- ============================================================ -->
     <script>
-        console.log('🚗 366 AUTO — Modullu VIN axtarış sistemi ilə işə salındı');
+        console.log('🚗 366 AUTO — Yalnız VIN axtarışı ilə işə salındı');
 
         // ===== PARALLAX HERO =====
         (function initParticleHero() {
@@ -1781,7 +1750,9 @@
         })();
 
 
-        // ===== STATE =====
+        // =============================================================
+        // === MÖVCUD ERP STATE ===
+        // =============================================================
         const state = {
             user: { username: 'admin', role: 'admin', name: 'Admin' },
             role: 'admin',
@@ -1800,7 +1771,9 @@
             productPageSize: 15,
         };
 
-        // ===== HELPERS =====
+        // =============================================================
+        // === MÖVCUD HELPERS ===
+        // =============================================================
         function $(id) { return document.getElementById(id); }
 
         function fmt(n) { return Number(n).toFixed(2); }
@@ -1879,7 +1852,9 @@
             saveToStorage('customers', c); }
 
 
-        // ===== INIT =====
+        // =============================================================
+        // === MÖVCUD INIT ===
+        // =============================================================
         function initApp() {
             state.products = loadFromStorage('products');
             state.suppliers = loadFromStorage('suppliers');
@@ -1924,6 +1899,10 @@
             document.querySelectorAll('.page').forEach(el => { el.style.display = ''; });
         }
 
+
+        // =============================================================
+        // === MÖVCUD EVENT LISTENERS ===
+        // =============================================================
         function setupEventListeners() {
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 if (confirm('Çıxış etmək istədiyinizə əminsiniz?')) {
@@ -1980,19 +1959,6 @@
                     }
                 });
             }
-
-            document.getElementById('searchType').addEventListener('change', function() {
-                const input = document.getElementById('vinInput');
-                const types = {
-                    vin: 'Məsələn: 1HGCM82633A123456',
-                    brand: 'Məsələn: Toyota Corolla',
-                    engine: 'Məsələn: 1ZZ-FE',
-                    oem: 'Məsələn: 15400-PLM-A02'
-                };
-                input.placeholder = types[this.value] || 'Axtarış sözü daxil edin';
-                input.value = '';
-                document.getElementById('vinResult').innerHTML = '';
-            });
 
             document.getElementById('productForm').addEventListener('submit', function(e) { e.preventDefault();
                 saveProduct(); });
@@ -2055,12 +2021,13 @@
 
         function setVinExample(value) {
             document.getElementById('vinInput').value = value;
-            document.getElementById('searchType').value = 'vin';
             performSearch();
         }
 
 
-        // ===== DASHBOARD =====
+        // =============================================================
+        // === MÖVCUD DASHBOARD ===
+        // =============================================================
         function renderDashboard() {
             const products = getProducts();
             const sales = getSales();
@@ -2163,7 +2130,9 @@
         }
 
 
-        // ===== PRODUCTS =====
+        // =============================================================
+        // === MÖVCUD PRODUCTS ===
+        // =============================================================
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
             const category = document.getElementById('productCategoryFilter').value;
@@ -2392,7 +2361,12 @@
         }
 
 
-        // ===== SUPPLIERS (qısa) =====
+        // =============================================================
+        // === MÖVCUD SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS ===
+        // (Qısa saxlanılır, tam işləkdir)
+        // =============================================================
+
+        // === SUPPLIERS ===
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
             let list = getSuppliers();
@@ -2473,8 +2447,7 @@
             toast('Təchizatçı silindi!', 'danger');
         }
 
-
-        // ===== PURCHASES (qısa) =====
+        // === PURCHASES ===
         let purchaseItems = [];
 
         function renderPurchases() {
@@ -2622,8 +2595,7 @@
             document.getElementById('supplierList').innerHTML = getSuppliers().map(s =>
                 `<option value="${s.name}">`).join(''); }
 
-
-        // ===== FINANCE =====
+        // === FINANCE ===
         function renderFinance() {
             const list = getFinance();
             const revenue = list.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
@@ -2677,8 +2649,7 @@
             toast('Xərc əlavə edildi!');
         }
 
-
-        // ===== EMPLOYEES =====
+        // === EMPLOYEES ===
         function renderEmployees() {
             const list = getEmployees();
             const tbody = document.getElementById('employeesTable');
@@ -2771,8 +2742,7 @@
             renderDashboard();
         }
 
-
-        // ===== TAXES =====
+        // === TAXES ===
         function renderTaxes() {
             const list = getTaxes();
             const quarters = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -2817,8 +2787,7 @@
             toast('Vergi ödənişi yadda saxlandı!');
         }
 
-
-        // ===== DEBTS =====
+        // === DEBTS ===
         function renderDebts() {
             const list = getDebts();
             const tbody = document.getElementById('debtsTable');
@@ -2912,8 +2881,7 @@
             toast(`${fmtMoney(payAmount)} ödəniş edildi!`);
         }
 
-
-        // ===== CUSTOMERS =====
+        // === CUSTOMERS ===
         function renderCustomers() {
             const search = document.getElementById('customerSearch').value.toLowerCase().trim();
             let list = getCustomers();
@@ -2992,8 +2960,7 @@
             toast('Müştəri silindi!', 'danger');
         }
 
-
-        // ===== POS =====
+        // === POS ===
         function renderPosProducts() {
             const search = document.getElementById('posSearch').value.toLowerCase().trim();
             let list = getProducts();
@@ -3165,8 +3132,7 @@
             } else alert(receipt);
         }
 
-
-        // ===== REPORTS =====
+        // === REPORTS ===
         function generateReport() {
             const start = document.getElementById('reportStart').value;
             const end = document.getElementById('reportEnd').value;
@@ -3219,7 +3185,7 @@
 
 
         // =============================================================
-        // === MODULLU VIN AXTARIŞ SİSTEMİ (XƏTASIZ) ===
+        // === YENİ — YALNIZ VIN AXTARIŞI (MODULLU, XƏTASIZ) ===
         // =============================================================
 
         // -------- 1. VinAPI --------
@@ -3277,12 +3243,12 @@
                     }
                 }
 
-                const normalized = this.normalizeResults(results);
+                const normalized = this.normalizeResults(results, vin);
                 VinCache.set(cacheKey, { data: normalized, source, timestamp: Date.now() });
                 return { data: normalized, source };
             },
 
-            normalizeResults(results) {
+            normalizeResults(results, vin) {
                 const map = {};
                 results.forEach(item => {
                     if (item.Variable && item.Value) {
@@ -3303,9 +3269,9 @@
                     exteriorColor: map.ExteriorColor || 'Məlumat tapılmadı',
                     interiorColor: map.InteriorColor || 'Məlumat tapılmadı',
                     trim: map.Trim || 'Məlumat tapılmadı',
-                    wmi: vin.substring(0, 3) || 'Məlumat tapılmadı',
-                    vds: vin.substring(3, 9) || 'Məlumat tapılmadı',
-                    vis: vin.substring(9, 17) || 'Məlumat tapılmadı',
+                    wmi: (vin || '').substring(0, 3) || 'Məlumat tapılmadı',
+                    vds: (vin || '').substring(3, 9) || 'Məlumat tapılmadı',
+                    vis: (vin || '').substring(9, 17) || 'Məlumat tapılmadı',
                     vinValid: this.validateVin(vin),
                 };
             },
@@ -3352,12 +3318,6 @@
                 try {
                     localStorage.setItem('vin_cache_' + key, JSON.stringify(data));
                 } catch { /* ignore */ }
-            },
-            clear() {
-                const keys = Object.keys(localStorage);
-                keys.forEach(k => {
-                    if (k.startsWith('vin_cache_')) localStorage.removeItem(k);
-                });
             }
         };
 
@@ -3426,17 +3386,17 @@
                     'honda': [
                         { name: 'Yağ filtri', code: '15400-PLM-A02', price: 25.99, supplier: 'partsouq.com' },
                         { name: 'Hava filtri', code: '17220-5A2-A00', price: 18.50, supplier: 'emex.ru' },
-                        { name: 'Əyləc diskleri', code: '45251-SDA-A00', price: 89.99, supplier: 'partsouq.com' },
+                        { name: 'Əyləc diskləri', code: '45251-SDA-A00', price: 89.99, supplier: 'partsouq.com' },
                     ],
                     'bmw': [
                         { name: 'Yağ filtri', code: '11-42-7-632-943', price: 29.99, supplier: 'emex.ru' },
                         { name: 'Hava filtri', code: '13-71-8-615-367', price: 22.50, supplier: 'partsouq.com' },
-                        { name: 'Əyləc diskleri', code: '34-11-6-852-981', price: 120.00, supplier: 'emex.ru' },
+                        { name: 'Əyləc diskləri', code: '34-11-6-852-981', price: 120.00, supplier: 'emex.ru' },
                     ],
                     'toyota': [
                         { name: 'Yağ filtri', code: '90915-YZZE1', price: 22.99, supplier: 'partsouq.com' },
                         { name: 'Hava filtri', code: '17801-0V010', price: 16.50, supplier: 'emex.ru' },
-                        { name: 'Əyləc diskleri', code: '43512-0W050', price: 75.00, supplier: 'partsouq.com' },
+                        { name: 'Əyləc diskləri', code: '43512-0W050', price: 75.00, supplier: 'partsouq.com' },
                     ],
                     'mercedes': [
                         { name: 'Yağ filtri', code: 'A0001805409', price: 34.99, supplier: 'emex.ru' },
@@ -3468,10 +3428,8 @@
                 `;
             },
 
-            // BURADA VIN PARAMETRİ ƏLAVƏ EDİLDİ - AMA İSTİFADƏ EDİLMİR, SADƏCƏ XƏTANIN QARŞISINI ALMAQ ÜÇÜN
-            showError(message, vin = '') {
+            showError(message) {
                 const container = document.getElementById('vinResult');
-                // Vin parametri istifadə edilmir, lakin mövcuddur.
                 container.innerHTML = `
                     <div class="vin-error">
                         <i class="fas fa-exclamation-circle"></i> ${message}
@@ -3616,148 +3574,61 @@
             }
         };
 
-        // -------- 5. VinController (performSearch) --------
+        // -------- 5. VIN Controller (ƏSAS AXTARIŞ FUNKSİYASI — YALNIZ VIN) --------
         async function performSearch() {
             const input = document.getElementById('vinInput');
-            const searchType = document.getElementById('searchType').value;
             const query = input.value.trim();
 
             if (!query) {
-                VinUI.showError('Zəhmət olmasa axtarış sözü daxil edin!');
+                VinUI.showError('Zəhmət olmasa VIN kodunu daxil edin!');
+                return;
+            }
+
+            const vin = query.toUpperCase().replace(/\s/g, '');
+
+            if (vin.length !== 17) {
+                VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
+                return;
+            }
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
                 return;
             }
 
             VinUI.showLoading();
 
             try {
-                if (searchType === 'vin') {
-                    const vin = query.toUpperCase().replace(/\s/g, '');
-                    if (vin.length !== 17) {
-                        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!', vin);
-                        return;
-                    }
-                    if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!', vin);
-                        return;
-                    }
-
-                    const result = await VinAPI.search(vin);
-                    const vehicle = result.data;
-                    const products = getProducts();
-                    const matchedProducts = VinMatcher.matchProducts(products, vehicle);
-                    const externalParts = VinMatcher.getExternalParts(vehicle.make);
-                    VinUI.renderResult(vin, vehicle, result.source, matchedProducts, externalParts);
-                } else {
-                    // Marka/Model, Mühərrik, OEM axtarışı
-                    const products = getProducts();
-                    let results = [];
-                    const q = query.toLowerCase().trim();
-
-                    if (searchType === 'brand') {
-                        const parts = q.split(' ');
-                        const brand = parts[0] || '';
-                        const model = parts.slice(1).join(' ') || '';
-                        results = products.filter(p => {
-                            const pBrand = (p.carBrand || '').toLowerCase();
-                            const pModel = (p.carModel || '').toLowerCase();
-                            const brandMatch = pBrand.includes(brand) || brand.includes(pBrand);
-                            const modelMatch = pModel.includes(model) || model.includes(pModel);
-                            return brandMatch && (model ? modelMatch : true);
-                        });
-                    } else if (searchType === 'engine') {
-                        results = products.filter(p =>
-                            (p.engine || '').toLowerCase().includes(q) ||
-                            (p.oem || '').toLowerCase().includes(q)
-                        );
-                    } else if (searchType === 'oem') {
-                        results = products.filter(p =>
-                            (p.oem || '').toLowerCase().includes(q) ||
-                            (p.code || '').toLowerCase().includes(q) ||
-                            (p.barcode || '').toLowerCase().includes(q)
-                        );
-                    }
-
-                    const container = document.getElementById('vinResult');
-                    if (results.length > 0) {
-                        const matchedProducts = results.slice(0, 20);
-                        container.innerHTML = `
-                            <div class="vin-vehicle-card">
-                                <div class="vin-parts-section" style="border-top:none;padding-top:0;">
-                                    <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--surface-text-secondary);font-weight:500;">
-                                        <i class="fas fa-search" style="color:var(--color-lavender-phosphor);"></i> 
-                                        "${query}" üçün nəticələr (${matchedProducts.length})
-                                    </h4>
-                                    <div class="vin-parts-grid">
-                                        ${matchedProducts.map(p => `
-                                            <div class="vin-part-card">
-                                                ${p.image ? `<img src="${p.image}" class="part-image" alt="${p.name}">` : `<div class="part-image" style="display:flex;align-items:center;justify-content:center;color:var(--surface-text-secondary);"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
-                                                <div class="part-name">${p.name}</div>
-                                                <div class="part-code">${p.oem || p.code || ''}</div>
-                                                <div class="part-stock"><i class="fas fa-cubes"></i> Stok: ${p.stock || 0}</div>
-                                                <div class="part-price">${fmtMoney(p.sellPrice || 0)}</div>
-                                                <div class="part-supplier"><i class="fas fa-truck"></i> ${p.supplier || '366 AUTO'}</div>
-                                                <div class="part-actions">
-                                                    <button class="btn btn-primary btn-sm" onclick="addToCartFromSearch('${p.id}')">
-                                                        <i class="fas fa-cart-plus"></i> Səbətə əlavə et
-                                                    </button>
-                                                    <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')"><i class="fas fa-eye"></i></button>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        container.innerHTML = `
-                            <div class="vin-vehicle-card">
-                                <div class="no-products-found">
-                                    <i class="fas fa-search"></i>
-                                    <p>"${query}" üçün heç bir nəticə tapılmadı.</p>
-                                    <p class="text-muted fs-small">Fərqli axtarış sözü və ya filtr seçin.</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
+                const result = await VinAPI.search(vin);
+                const vehicle = result.data;
+                const products = getProducts();
+                const matchedProducts = VinMatcher.matchProducts(products, vehicle);
+                const externalParts = VinMatcher.getExternalParts(vehicle.make);
+                VinUI.renderResult(vin, vehicle, result.source, matchedProducts, externalParts);
             } catch (error) {
                 console.error('Axtarış xətası:', error);
-                VinUI.showError(error.message || 'Axtarış zamanı xəta baş verdi.');
+                VinUI.showError(error.message || 'VIN axtarışı zamanı xəta baş verdi.');
             }
         }
 
-        // Qlobal funksiyalar
-        function searchByVin() {
-            performSearch();
-        }
-
+        // -------- KÖMƏKÇİ FUNKSİYALAR --------
         function addToCartFromSearch(productId) {
-            const product = getProducts().find(p => p.id === productId);
-            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
-            if ((product.stock || 0) < 1) { toast('Stokda yoxdur!', 'danger'); return; }
-
-            const existing = state.posCart.find(item => item.productId === productId);
-            if (existing) {
-                if ((product.stock || 0) <= existing.qty) { toast('Stokda kifayət qədər yoxdur!', 'warning'); return; }
-                existing.qty += 1;
+            if (typeof window.addToCart === 'function') {
+                window.addToCart(productId);
+                const products = getProducts();
+                const product = products.find(p => p.id === productId);
+                toast(`${product ? product.name : 'Məhsul'} səbətə əlavə edildi!`, 'success');
+                setTimeout(() => {
+                    const salesBtn = document.querySelector('.nav-item[data-page="sales"]');
+                    if (salesBtn) salesBtn.click();
+                }, 600);
             } else {
-                state.posCart.push({
-                    productId: product.id,
-                    productName: product.name,
-                    qty: 1,
-                    price: product.sellPrice || 0
-                });
+                toast('Zəhmət olmasa əvvəlcə "Məhsullar" səhifəsinə keçin.', 'warning');
             }
-
-            toast(`${product.name} səbətə əlavə edildi!`, 'success');
-            setTimeout(() => {
-                const salesBtn = document.querySelector('.nav-item[data-page="sales"]');
-                if (salesBtn) salesBtn.click();
-            }, 600);
         }
 
-
-        // ===== BACKUP =====
+        // =============================================================
+        // === BACKUP ===
+        // =============================================================
         function autoBackup() {
             try {
                 const backup = {
@@ -3796,7 +3667,9 @@
         }
 
 
-        // ===== BOOT =====
+        // =============================================================
+        // === BOOT ===
+        // =============================================================
         initApp();
 
         // Global funksiyalar
@@ -3845,7 +3718,9 @@
         window.closeModal = closeModal;
         window.openModal = openModal;
         window.toast = toast;
-        window.searchByVin = searchByVin;
+
+        // VIN axtarışı üçün qlobal funksiyalar
+        window.searchByVin = performSearch;
         window.performSearch = performSearch;
         window.addToCartFromSearch = addToCartFromSearch;
         window.setVinExample = setVinExample;
@@ -3856,7 +3731,7 @@
             }
         });
 
-        console.log('✅ 366 AUTO — Modullu VIN axtarış sistemi aktivdir!');
+        console.log('✅ 366 AUTO — Yalnız VIN axtarışı aktivdir!');
         console.log('📦 Modullar: VinAPI, VinCache, VinMatcher, VinUI, VinController');
         console.log('📊 Məlumatlar localStorage-də saxlanılır.');
         console.log('🔍 VIN axtarışı: NHTSA (əsas) + DB.VIN (ehtiyat)');

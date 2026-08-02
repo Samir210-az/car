@@ -249,11 +249,11 @@
 
         /* ===== LAYOUT ===== */
         .app {
-            display: none;
+            display: none !important;
             min-height: 100vh;
         }
         .app.active {
-            display: block;
+            display: block !important;
         }
 
         /* Navbar */
@@ -931,12 +931,15 @@
             display: flex;
         }
 
-        /* Fix: App visibility */
+        /* ===== FIX for login ===== */
+        #loginPage {
+            display: flex;
+        }
         #app {
-            display: none;
+            display: none !important;
         }
         #app.active {
-            display: block;
+            display: block !important;
         }
     </style>
 </head>
@@ -1629,7 +1632,7 @@
             state.role = u.role;
             state.token = 'demo-token-' + randId();
             localStorage.setItem('autoparts_session', JSON.stringify({ user: u, token: state.token }));
-            // Reload to properly show app
+            // Reload to apply session
             window.location.reload();
             return u;
         }
@@ -1761,9 +1764,7 @@
                 const user = document.getElementById('loginUser').value.trim();
                 const pass = document.getElementById('loginPass').value.trim();
                 const result = login(user, pass);
-                if (result) {
-                    // login function already reloads
-                } else {
+                if (!result) {
                     toast('İstifadəçi adı və ya şifrə yanlışdır!', 'danger');
                 }
             });
@@ -3286,7 +3287,7 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('app').classList.add('active');
             document.getElementById('app').style.display = 'block';
-            initApp();
+            // initApp is called from checkSession
         }
 
         // Expose functions to global for inline onclick

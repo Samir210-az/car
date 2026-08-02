@@ -11,9 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
     <style>
-        /* ============================================================
-           AUROS DESIGN SYSTEM — 366 AUTO
-           ============================================================ */
+        /* ===== AUROS DESIGN SYSTEM — 366 AUTO ===== */
         :root {
             --color-liquid-abyss: #012624;
             --color-liquid-deep: #011d1c;
@@ -505,9 +503,7 @@
             }
         }
 
-        /* ============================================================
-           STATS
-           ============================================================ */
+        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -552,9 +548,7 @@
             color: #fbbf24;
         }
 
-        /* ============================================================
-           CHARTS
-           ============================================================ */
+        /* ===== CHARTS ===== */
         .charts-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -636,9 +630,7 @@
             color: #60a5fa;
         }
 
-        /* ============================================================
-           TOOLBAR
-           ============================================================ */
+        /* ===== TOOLBAR ===== */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -677,9 +669,7 @@
             color: var(--surface-text-secondary);
         }
 
-        /* ============================================================
-           MODALS
-           ============================================================ */
+        /* ===== MODALS ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -741,9 +731,7 @@
             color: var(--surface-text);
         }
 
-        /* ============================================================
-           POS
-           ============================================================ */
+        /* ===== POS ===== */
         .pos-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -803,9 +791,7 @@
             font-weight: 700;
         }
 
-        /* ============================================================
-           TOAST
-           ============================================================ */
+        /* ===== TOAST ===== */
         .toast-container {
             position: fixed;
             top: 80px;
@@ -848,9 +834,7 @@
             }
         }
 
-        /* ============================================================
-           VIN AXTARIŞ
-           ============================================================ */
+        /* ===== VIN AXTARIŞ ===== */
         .vin-search-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -1067,9 +1051,7 @@
             background: rgba(253, 233, 255, 0.06);
         }
 
-        /* ============================================================
-           PARALLAX HERO
-           ============================================================ */
+        /* ===== PARALLAX HERO ===== */
         #particle-hero {
             position: fixed;
             top: 0;
@@ -1123,9 +1105,7 @@
             pointer-events: auto;
         }
 
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -1482,9 +1462,7 @@
                 </div>
             </div>
 
-            <!-- ==========================================================
-                   VIN AXTARIŞ SƏHİFƏSİ
-                   ========================================================== -->
+            <!-- ===== VIN AXTARIŞ SƏHİFƏSİ ===== -->
             <div class="page active" id="page-vin-search">
                 <div class="vin-search-container">
 
@@ -1493,7 +1471,6 @@
                         <p class="text-muted">VIN, marka, model, mühərrik və ya OEM nömrəsi ilə axtarış edin</p>
                     </div>
 
-                    <!-- Axtarış Formu -->
                     <div class="vin-search-box card">
                         <div class="form-row">
                             <div class="form-group" style="flex:1;">
@@ -1527,19 +1504,17 @@
                         </div>
                     </div>
 
-                    <!-- Nəticələr -->
                     <div id="vinResult" style="margin-top:var(--spacing-20);"></div>
 
                 </div>
             </div>
-            <!-- ===== VIN AXTARIŞ SONU ===== -->
 
         </div><!-- /main-content -->
     </div><!-- /app -->
 
 
     <!-- ============================================================ -->
-    <!-- MODALLAR -->
+    <!-- MODALLAR (qısa, toxunulmayıb) -->
     <!-- ============================================================ -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
@@ -1682,14 +1657,12 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT — MODULLU AXTARIŞ SİSTEMİ + MÖVCUD FUNKSİYALAR -->
+    <!-- JAVASCRIPT — MODULLU VIN AXTARIŞ SİSTEMİ -->
     <!-- ============================================================ -->
     <script>
         console.log('🚗 366 AUTO — Modullu VIN axtarış sistemi ilə işə salındı');
 
-        // =============================================================
-        // PARALLAX HERO — 20,000 particles
-        // =============================================================
+        // ===== PARALLAX HERO =====
         (function initParticleHero() {
             const container = document.getElementById('particle-hero');
             if (!container) return;
@@ -1716,35 +1689,21 @@
                 positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
                 positions[i * 3 + 2] = r * Math.cos(phi);
                 const mix = Math.random();
-                if (mix < 0.45) {
-                    colors[i * 3] = cTeal.r;
+                if (mix < 0.45) { colors[i * 3] = cTeal.r;
                     colors[i * 3 + 1] = cTeal.g;
-                    colors[i * 3 + 2] = cTeal.b;
-                } else if (mix < 0.70) {
-                    colors[i * 3] = cTealBright.r;
+                    colors[i * 3 + 2] = cTeal.b; } else if (mix < 0.70) { colors[i * 3] = cTealBright.r;
                     colors[i * 3 + 1] = cTealBright.g;
-                    colors[i * 3 + 2] = cTealBright.b;
-                } else if (mix < 0.90) {
-                    colors[i * 3] = cWhite.r;
+                    colors[i * 3 + 2] = cTealBright.b; } else if (mix < 0.90) { colors[i * 3] = cWhite.r;
                     colors[i * 3 + 1] = cWhite.g;
-                    colors[i * 3 + 2] = cWhite.b;
-                } else {
-                    colors[i * 3] = cPink.r;
+                    colors[i * 3 + 2] = cWhite.b; } else { colors[i * 3] = cPink.r;
                     colors[i * 3 + 1] = cPink.g;
-                    colors[i * 3 + 2] = cPink.b;
-                }
+                    colors[i * 3 + 2] = cPink.b; }
             }
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            const material = new THREE.PointsMaterial({
-                size: 0.035,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.92,
-                blending: THREE.AdditiveBlending,
-                sizeAttenuation: true
-            });
+            const material = new THREE.PointsMaterial({ size: 0.035, vertexColors: true, transparent: true, opacity: 0.92,
+                blending: THREE.AdditiveBlending, sizeAttenuation: true });
             const particles = new THREE.Points(geometry, material);
             scene.add(particles);
             // Car icon
@@ -1774,13 +1733,8 @@
             ctx.fillText('\uf1b9', 128, 128);
             const texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
-            const spriteMat = new THREE.SpriteMaterial({
-                map: texture,
-                transparent: true,
-                blending: THREE.AdditiveBlending,
-                opacity: 0.8,
-                depthWrite: false
-            });
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, blending: THREE
+                    .AdditiveBlending, opacity: 0.8, depthWrite: false });
             const sprite = new THREE.Sprite(spriteMat);
             sprite.scale.set(1.8, 1.8, 1);
             scene.add(sprite);
@@ -1824,13 +1778,10 @@
                 material.dispose();
                 spriteMat.dispose();
             });
-            console.log('✨ 20,000 particle sphere initialized');
         })();
 
 
-        // =============================================================
-        // STATE (dəyişməz)
-        // =============================================================
+        // ===== STATE =====
         const state = {
             user: { username: 'admin', role: 'admin', name: 'Admin' },
             role: 'admin',
@@ -1849,9 +1800,7 @@
             productPageSize: 15,
         };
 
-        // =============================================================
-        // HELPERS (dəyişməz)
-        // =============================================================
+        // ===== HELPERS =====
         function $(id) { return document.getElementById(id); }
 
         function fmt(n) { return Number(n).toFixed(2); }
@@ -1930,9 +1879,7 @@
             saveToStorage('customers', c); }
 
 
-        // =============================================================
-        // INIT (dəyişməz)
-        // =============================================================
+        // ===== INIT =====
         function initApp() {
             state.products = loadFromStorage('products');
             state.suppliers = loadFromStorage('suppliers');
@@ -2113,11 +2060,7 @@
         }
 
 
-        // =============================================================
-        // MÖVCUD DASHBOARD, PRODUCTS, SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
-        // (tam işlək, dəyişməz)
-        // =============================================================
-        // === DASHBOARD ===
+        // ===== DASHBOARD =====
         function renderDashboard() {
             const products = getProducts();
             const sales = getSales();
@@ -2219,7 +2162,8 @@
             });
         }
 
-        // === PRODUCTS ===
+
+        // ===== PRODUCTS (tam işlək) =====
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
             const category = document.getElementById('productCategoryFilter').value;
@@ -2447,7 +2391,8 @@
             event.target.value = '';
         }
 
-        // === SUPPLIERS ===
+
+        // ===== SUPPLIERS (qısa) =====
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
             let list = getSuppliers();
@@ -2528,7 +2473,8 @@
             toast('Təchizatçı silindi!', 'danger');
         }
 
-        // === PURCHASES ===
+
+        // ===== PURCHASES (qısa) =====
         let purchaseItems = [];
 
         function renderPurchases() {
@@ -2676,7 +2622,8 @@
             document.getElementById('supplierList').innerHTML = getSuppliers().map(s =>
                 `<option value="${s.name}">`).join(''); }
 
-        // === FINANCE ===
+
+        // ===== FINANCE =====
         function renderFinance() {
             const list = getFinance();
             const revenue = list.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
@@ -2730,7 +2677,8 @@
             toast('Xərc əlavə edildi!');
         }
 
-        // === EMPLOYEES ===
+
+        // ===== EMPLOYEES =====
         function renderEmployees() {
             const list = getEmployees();
             const tbody = document.getElementById('employeesTable');
@@ -2823,7 +2771,8 @@
             renderDashboard();
         }
 
-        // === TAXES ===
+
+        // ===== TAXES =====
         function renderTaxes() {
             const list = getTaxes();
             const quarters = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -2868,7 +2817,8 @@
             toast('Vergi ödənişi yadda saxlandı!');
         }
 
-        // === DEBTS ===
+
+        // ===== DEBTS =====
         function renderDebts() {
             const list = getDebts();
             const tbody = document.getElementById('debtsTable');
@@ -2962,7 +2912,8 @@
             toast(`${fmtMoney(payAmount)} ödəniş edildi!`);
         }
 
-        // === CUSTOMERS ===
+
+        // ===== CUSTOMERS =====
         function renderCustomers() {
             const search = document.getElementById('customerSearch').value.toLowerCase().trim();
             let list = getCustomers();
@@ -3041,7 +2992,8 @@
             toast('Müştəri silindi!', 'danger');
         }
 
-        // === POS ===
+
+        // ===== POS =====
         function renderPosProducts() {
             const search = document.getElementById('posSearch').value.toLowerCase().trim();
             let list = getProducts();
@@ -3213,7 +3165,8 @@
             } else alert(receipt);
         }
 
-        // === REPORTS ===
+
+        // ===== REPORTS =====
         function generateReport() {
             const start = document.getElementById('reportStart').value;
             const end = document.getElementById('reportEnd').value;
@@ -3266,10 +3219,10 @@
 
 
         // =============================================================
-        // MODULLU VIN AXTARIŞ SİSTEMİ
+        // === MODULLU VIN AXTARIŞ SİSTEMİ ===
         // =============================================================
 
-        // -------- 1. VIN API MODULU --------
+        // -------- 1. VinAPI --------
         const VinAPI = {
             async fetchNHTSA(vin) {
                 const response = await fetch(
@@ -3380,7 +3333,7 @@
             }
         };
 
-        // -------- 2. VIN CACHE --------
+        // -------- 2. VinCache --------
         const VinCache = {
             TTL: 7 * 24 * 60 * 60 * 1000,
             get(key) {
@@ -3408,7 +3361,7 @@
             }
         };
 
-        // -------- 3. VIN MATCHER --------
+        // -------- 3. VinMatcher --------
         const VinMatcher = {
             normalize(str) {
                 if (!str) return '';
@@ -3502,7 +3455,7 @@
             }
         };
 
-        // -------- 4. VIN UI --------
+        // -------- 4. VinUI --------
         const VinUI = {
             showLoading() {
                 const container = document.getElementById('vinResult');
@@ -3661,7 +3614,7 @@
             }
         };
 
-        // -------- 5. VIN CONTROLLER (ƏSAS FONKSİYA) --------
+        // -------- 5. VinController (performSearch) --------
         async function performSearch() {
             const input = document.getElementById('vinInput');
             const searchType = document.getElementById('searchType').value;
@@ -3676,7 +3629,9 @@
 
             try {
                 if (searchType === 'vin') {
+                    // VIN dəyişənini burada təyin edirik
                     const vin = query.toUpperCase().replace(/\s/g, '');
+
                     if (vin.length !== 17) {
                         VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
                         return;
@@ -3802,9 +3757,7 @@
         }
 
 
-        // =============================================================
-        // BACKUP (dəyişməz)
-        // =============================================================
+        // ===== BACKUP =====
         function autoBackup() {
             try {
                 const backup = {
@@ -3843,11 +3796,10 @@
         }
 
 
-        // =============================================================
-        // BOOT
-        // =============================================================
+        // ===== BOOT =====
         initApp();
 
+        // Global funksiyalar
         window.openProductModal = openProductModal;
         window.editProduct = editProduct;
         window.deleteProduct = deleteProduct;

@@ -1101,7 +1101,7 @@
         .hero-overlay {
             position: relative;
             z-index: 1;
-            min-height: 80vh;
+            min-height: 70vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1308,9 +1308,7 @@
                 <h1>366 AUTO</h1>
                 <p>Avtomobil ehtiyat hissələri üçün peşəkar idarəetmə platforması. VIN ilə axtarış, real-time inventar, maliyyə analitikası.</p>
                 <div class="hero-cta">
-                    <button class="btn btn-primary" onclick="document.querySelector('.nav-item[data-page=vin-search]').click();">
-                        <i class="fas fa-search"></i> VIN ilə axtar
-                    </button>
+                    <button class="btn btn-primary" id="heroVinBtn"><i class="fas fa-search"></i> VIN ilə axtar</button>
                 </div>
             </div>
 
@@ -1504,7 +1502,7 @@
                                 <input type="text" id="vinInput" placeholder="Məsələn: 1HGCM82633A123456" maxlength="17" style="text-transform:uppercase;font-family:var(--font-primary);font-size:1.1rem;letter-spacing:1px;">
                             </div>
                             <div class="form-group" style="flex:1;display:flex;align-items:flex-end;">
-                                <button class="btn btn-primary w-full" onclick="searchByVin()" style="justify-content:center;padding:0.7rem;">
+                                <button class="btn btn-primary w-full" id="vinSearchBtn" style="justify-content:center;padding:0.7rem;">
                                     <i class="fas fa-search"></i> Axtar
                                 </button>
                             </div>
@@ -1524,7 +1522,7 @@
 
 
     <!-- ============================================================ -->
-    <!-- MODALLAR -->
+    <!-- MODALLAR (qısa, lakin tam) -->
     <!-- ============================================================ -->
 
     <!-- Product Modal -->
@@ -1677,13 +1675,13 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
+    <!-- JAVASCRIPT — BÜTÜN FUNKSİYALAR + VİN + 20.000 HİSSƏCİK -->
     <!-- ============================================================ -->
     <script>
-        console.log('🚗 366 AUTO — Auros Dizayn Sistemi + 20.000 hissəcik');
+        console.log('🚗 366 AUTO — Bütün funksiyalar aktivdir');
 
         // =============================================================
-        // PARALLAX HERO — Three.js Particle Sphere (20,000 particles + car icon)
+        // PARALLAX HERO — 20,000 particles + car icon
         // =============================================================
         (function initParticleHero() {
             const container = document.getElementById('particle-hero');
@@ -1693,52 +1691,47 @@
             const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.z = 9;
 
-            const renderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true
-            });
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // --- 20,000 particles ---
-            const particleCount = 20000;
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
+            // 20,000 particles
+            const count = 20000;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
 
-            const colorTeal = new THREE.Color('#00827c');
-            const colorTealBright = new THREE.Color('#00d4c0');
-            const colorWhite = new THREE.Color('#ffffff');
-            const colorPink = new THREE.Color('#fde9ff');
+            const cTeal = new THREE.Color('#00827c');
+            const cTealBright = new THREE.Color('#00d4c0');
+            const cWhite = new THREE.Color('#ffffff');
+            const cPink = new THREE.Color('#fde9ff');
 
             const radius = 4.5;
-
-            for (let i = 0; i < particleCount; i++) {
+            for (let i = 0; i < count; i++) {
                 const theta = Math.random() * Math.PI * 2;
                 const phi = Math.acos((Math.random() * 2) - 1);
                 const r = radius * Math.pow(Math.random(), 0.45);
-
                 positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
                 positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
                 positions[i * 3 + 2] = r * Math.cos(phi);
 
                 const mix = Math.random();
                 if (mix < 0.45) {
-                    colors[i * 3] = colorTeal.r;
-                    colors[i * 3 + 1] = colorTeal.g;
-                    colors[i * 3 + 2] = colorTeal.b;
+                    colors[i * 3] = cTeal.r;
+                    colors[i * 3 + 1] = cTeal.g;
+                    colors[i * 3 + 2] = cTeal.b;
                 } else if (mix < 0.70) {
-                    colors[i * 3] = colorTealBright.r;
-                    colors[i * 3 + 1] = colorTealBright.g;
-                    colors[i * 3 + 2] = colorTealBright.b;
+                    colors[i * 3] = cTealBright.r;
+                    colors[i * 3 + 1] = cTealBright.g;
+                    colors[i * 3 + 2] = cTealBright.b;
                 } else if (mix < 0.90) {
-                    colors[i * 3] = colorWhite.r;
-                    colors[i * 3 + 1] = colorWhite.g;
-                    colors[i * 3 + 2] = colorWhite.b;
+                    colors[i * 3] = cWhite.r;
+                    colors[i * 3 + 1] = cWhite.g;
+                    colors[i * 3 + 2] = cWhite.b;
                 } else {
-                    colors[i * 3] = colorPink.r;
-                    colors[i * 3 + 1] = colorPink.g;
-                    colors[i * 3 + 2] = colorPink.b;
+                    colors[i * 3] = cPink.r;
+                    colors[i * 3 + 1] = cPink.g;
+                    colors[i * 3 + 2] = cPink.b;
                 }
             }
 
@@ -1754,116 +1747,96 @@
                 blending: THREE.AdditiveBlending,
                 sizeAttenuation: true
             });
-
             const particles = new THREE.Points(geometry, material);
             scene.add(particles);
 
-            // --- Car Icon (Sprite) ---
+            // Car icon sprite
             const canvas = document.createElement('canvas');
             canvas.width = 256;
             canvas.height = 256;
             const ctx = canvas.getContext('2d');
-
             ctx.clearRect(0, 0, 256, 256);
 
-            // Glow
-            const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 120);
-            gradient.addColorStop(0, 'rgba(253, 233, 255, 0.12)');
-            gradient.addColorStop(1, 'rgba(0, 130, 124, 0)');
-            ctx.fillStyle = gradient;
+            const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 120);
+            grad.addColorStop(0, 'rgba(253, 233, 255, 0.12)');
+            grad.addColorStop(1, 'rgba(0, 130, 124, 0)');
+            ctx.fillStyle = grad;
             ctx.fillRect(0, 0, 256, 256);
 
-            // Car icon
             ctx.font = '80px "Font Awesome 6 Free"';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-
             ctx.shadowColor = 'rgba(253, 233, 255, 0.5)';
             ctx.shadowBlur = 50;
             ctx.fillStyle = '#fde9ff';
             ctx.fillText('\uf1b9', 128, 130);
-
             ctx.shadowBlur = 0;
-            const grad = ctx.createLinearGradient(50, 50, 206, 206);
-            grad.addColorStop(0, '#00827c');
-            grad.addColorStop(0.5, '#cbfffc');
-            grad.addColorStop(1, '#fde9ff');
-            ctx.fillStyle = grad;
+            const grad2 = ctx.createLinearGradient(50, 50, 206, 206);
+            grad2.addColorStop(0, '#00827c');
+            grad2.addColorStop(0.5, '#cbfffc');
+            grad2.addColorStop(1, '#fde9ff');
+            ctx.fillStyle = grad2;
             ctx.fillText('\uf1b9', 128, 128);
 
             const texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
-
-            const spriteMaterial = new THREE.SpriteMaterial({
+            const spriteMat = new THREE.SpriteMaterial({
                 map: texture,
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 opacity: 0.8,
                 depthWrite: false
             });
-            const sprite = new THREE.Sprite(spriteMaterial);
+            const sprite = new THREE.Sprite(spriteMat);
             sprite.scale.set(1.8, 1.8, 1);
             scene.add(sprite);
 
-            // --- Mouse / Touch ---
             let mouseX = 0,
-                mouseY = 0;
-            let targetRotX = 0,
-                targetRotY = 0;
-
+                mouseY = 0,
+                targetX = 0,
+                targetY = 0;
             document.addEventListener('mousemove', (e) => {
                 mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
                 mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
             });
-
             document.addEventListener('touchmove', (e) => {
-                const touch = e.touches[0];
-                if (touch) {
-                    mouseX = (touch.clientX / window.innerWidth - 0.5) * 2;
-                    mouseY = (touch.clientY / window.innerHeight - 0.5) * 2;
-                }
+                const t = e.touches[0];
+                if (t) { mouseX = (t.clientX / window.innerWidth - 0.5) * 2;
+                    mouseY = (t.clientY / window.innerHeight - 0.5) * 2; }
             }, { passive: true });
 
-            // --- Resize ---
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            // --- Animation ---
             let time = 0;
 
             function animate() {
                 requestAnimationFrame(animate);
                 time += 0.003;
-
-                targetRotX += (mouseY * 0.4 - targetRotX) * 0.04;
-                targetRotY += (mouseX * 0.4 - targetRotY) * 0.04;
-
-                particles.rotation.x += (targetRotX - particles.rotation.x) * 0.05;
-                particles.rotation.y += (targetRotY - particles.rotation.y) * 0.05;
+                targetX += (mouseY * 0.4 - targetX) * 0.04;
+                targetY += (mouseX * 0.4 - targetY) * 0.04;
+                particles.rotation.x += (targetX - particles.rotation.x) * 0.05;
+                particles.rotation.y += (targetY - particles.rotation.y) * 0.05;
                 particles.rotation.z += Math.sin(time * 0.2) * 0.0005;
-
                 sprite.rotation.z = particles.rotation.z * 0.5;
-
                 const pulse = 1 + Math.sin(time * 0.6) * 0.015;
                 particles.scale.set(pulse, pulse, pulse);
-
                 renderer.render(scene, camera);
             }
-
             animate();
 
             window.addEventListener('beforeunload', () => {
                 renderer.dispose();
                 geometry.dispose();
                 material.dispose();
-                spriteMaterial.dispose();
+                spriteMat.dispose();
             });
-
-            console.log('✨ 20,000 particle sphere with car icon initialized');
+            console.log('✨ 20,000 particle sphere initialized');
         })();
+
 
         // =============================================================
         // STATE
@@ -1966,6 +1939,7 @@
         function setCustomers(c) { state.customers = c;
             saveToStorage('customers', c); }
 
+
         // =============================================================
         // INIT
         // =============================================================
@@ -2014,6 +1988,7 @@
         }
 
         function setupEventListeners() {
+            // Logout
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 if (confirm('Çıxış etmək istədiyinizə əminsiniz?')) {
                     localStorage.clear();
@@ -2021,26 +1996,68 @@
                 }
             });
 
+            // --- NAV ITEMS ---
             document.querySelectorAll('.nav-item[data-page]').forEach(el => {
-                el.addEventListener('click', function() {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
                     const page = this.dataset.page;
                     navigateTo(page);
                     document.getElementById('mobileSidebar').classList.remove('open');
                 });
             });
 
+            // Mobile sidebar items
+            document.querySelectorAll('.mobile-sidebar .nav-item[data-page]').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    navigateTo(page);
+                    document.getElementById('mobileSidebar').classList.remove('open');
+                });
+            });
+
+            // Hamburger
             document.getElementById('hamburgerBtn').addEventListener('click', function() {
                 document.getElementById('mobileSidebar').classList.toggle('open');
             });
 
-            const themeToggle = document.getElementById('themeToggle');
-            themeToggle.addEventListener('click', function() {
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', function() {
                 document.body.classList.toggle('dark');
                 const isDark = document.body.classList.contains('dark');
                 localStorage.setItem('autoparts_theme', isDark ? 'dark' : 'light');
                 this.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             });
 
+            // Hero VIN button
+            document.getElementById('heroVinBtn').addEventListener('click', function() {
+                navigateTo('vin-search');
+            });
+
+            // VIN Search button (explicit)
+            const vinSearchBtn = document.getElementById('vinSearchBtn');
+            if (vinSearchBtn) {
+                vinSearchBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchByVin();
+                });
+            }
+
+            // VIN input Enter
+            const vinInput = document.getElementById('vinInput');
+            if (vinInput) {
+                vinInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchByVin();
+                    }
+                });
+                vinInput.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+            }
+
+            // Form submit-lər
             document.getElementById('productForm').addEventListener('submit', function(e) { e.preventDefault();
                 saveProduct(); });
             document.getElementById('supplierForm').addEventListener('submit', function(e) { e.preventDefault();
@@ -2073,6 +2090,7 @@
             document.getElementById('reportStart').value = start.toISOString().split('T')[0];
         }
 
+
         // =============================================================
         // NAVIGATION
         // =============================================================
@@ -2104,8 +2122,9 @@
             }
         }
 
+
         // =============================================================
-        // DASHBOARD
+        // DASHBOARD (qısa)
         // =============================================================
         function renderDashboard() {
             const products = getProducts();
@@ -2208,8 +2227,9 @@
             });
         }
 
+
         // =============================================================
-        // PRODUCTS
+        // PRODUCTS (əsas funksiyalar)
         // =============================================================
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
@@ -2438,11 +2458,842 @@
             event.target.value = '';
         }
 
+
         // =============================================================
-        // SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
-        // Bütün bu funksiyalar əvvəlki versiyadakı kimidir və tam işləyir.
-        // Yer qənaəti üçün burada qısa saxlanılır, amma tam funksionaldır.
+        // SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS (qısa)
         // =============================================================
+        // Bu funksiyalar əvvəlki kimi tamdır və işləyir.
+        // Kodun qalan hissəsi burada tam olaraq yer alır.
+
+        // === SUPPLIERS ===
+        function renderSuppliers() {
+            const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
+            let list = getSuppliers();
+            if (search) list = list.filter(s => (s.name || '').toLowerCase().includes(search));
+            const tbody = document.getElementById('suppliersTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="7" class="text-muted text-center">Heç bir təchizatçı yoxdur</td></tr>'; return; }
+            const debts = getDebts();
+            tbody.innerHTML = list.map(s => {
+                const debt = debts.filter(d => d.type === 'borcluyuq' && d.person === s.name && d.status !== 'bağlandı')
+                    .reduce((sum, d) => sum + (d.total - d.paid), 0);
+                return `<tr>
+                    <td class="fw-600">${s.name}</td>
+                    <td>${s.phone || '—'}</td>
+                    <td>${s.email || '—'}</td>
+                    <td class="truncate">${s.address || '—'}</td>
+                    <td>${s.voen || '—'}</td>
+                    <td class="${debt > 0 ? 'text-danger fw-600' : ''}" style="${debt > 0 ? 'color:#f87171;' : ''}">${fmtMoney(debt)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editSupplier('${s.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSupplier('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function openSupplierModal(data) {
+            const isEdit = !!data;
+            document.getElementById('supplierModalTitle').textContent = isEdit ? 'Təchizatçını redaktə et' :
+                'Təchizatçı əlavə et';
+            document.getElementById('supplierForm').reset();
+            document.getElementById('supplierId').value = '';
+            if (isEdit) {
+                document.getElementById('supplierId').value = data.id;
+                document.getElementById('sName').value = data.name || '';
+                document.getElementById('sPhone').value = data.phone || '';
+                document.getElementById('sWhatsapp').value = data.whatsapp || '';
+                document.getElementById('sEmail').value = data.email || '';
+                document.getElementById('sAddress').value = data.address || '';
+                document.getElementById('sVoen').value = data.voen || '';
+                document.getElementById('sBank').value = data.bank || '';
+                document.getElementById('sNote').value = data.note || '';
+            }
+            openModal('supplierModal');
+        }
+
+        function saveSupplier() {
+            const id = document.getElementById('supplierId').value || randId();
+            const data = {
+                id,
+                name: document.getElementById('sName').value.trim(),
+                phone: document.getElementById('sPhone').value.trim(),
+                whatsapp: document.getElementById('sWhatsapp').value.trim(),
+                email: document.getElementById('sEmail').value.trim(),
+                address: document.getElementById('sAddress').value.trim(),
+                voen: document.getElementById('sVoen').value.trim(),
+                bank: document.getElementById('sBank').value.trim(),
+                note: document.getElementById('sNote').value.trim(),
+                createdAt: new Date().toISOString(),
+            };
+            let list = getSuppliers();
+            const idx = list.findIndex(s => s.id === id);
+            if (idx >= 0) list[idx] = { ...list[idx], ...data };
+            else list.push(data);
+            setSuppliers(list);
+            closeModal('supplierModal');
+            renderSuppliers();
+            populateSelects();
+            toast('Təchizatçı yadda saxlandı!');
+        }
+
+        function editSupplier(id) { const s = getSuppliers().find(x => x.id === id); if (s) openSupplierModal(s); }
+
+        function deleteSupplier(id) {
+            if (!confirm('Təchizatçını silmək istədiyinizə əminsiniz?')) return;
+            setSuppliers(getSuppliers().filter(s => s.id !== id));
+            renderSuppliers();
+            toast('Təchizatçı silindi!', 'danger');
+        }
+
+
+        // === PURCHASES ===
+        let purchaseItems = [];
+
+        function renderPurchases() {
+            const list = getPurchases();
+            const tbody = document.getElementById('purchasesTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="7" class="text-muted text-center">Heç bir alış yoxdur</td></tr>'; return; }
+            tbody.innerHTML = list.slice().reverse().map((p, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${p.supplier || '—'}</td>
+                    <td>${p.date || ''}</td>
+                    <td>${p.items ? p.items.length : 0} məhsul</td>
+                    <td>${fmtMoney(p.total || 0)}</td>
+                    <td><span class="badge badge-success">Tamamlandı</span></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="viewPurchase('${p.id}')"><i class="fas fa-eye"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function openPurchaseModal() {
+            purchaseItems = [];
+            document.getElementById('purchaseForm').reset();
+            document.getElementById('purchaseItemsBody').innerHTML = '';
+            document.getElementById('purTotalDisplay').textContent = '0.00 ₼';
+            populatePurchaseSelects();
+            openModal('purchaseModal');
+        }
+
+        function populatePurchaseSelects() {
+            const sup = document.getElementById('purSupplier');
+            sup.innerHTML = '<option value="">Seçin</option>' + getSuppliers().map(s =>
+                `<option value="${s.name}">${s.name}</option>`).join('');
+            const prod = document.getElementById('purProduct');
+            prod.innerHTML = '<option value="">Seçin</option>' + getProducts().map(p =>
+                `<option value="${p.id}">${p.name} (${p.oem || ''})</option>`).join('');
+        }
+
+        function addPurchaseItem() {
+            const productId = document.getElementById('purProduct').value;
+            const qty = parseInt(document.getElementById('purQty').value) || 1;
+            const price = parseFloat(document.getElementById('purPrice').value) || 0;
+            if (!productId) { toast('Məhsul seçin!', 'warning'); return; }
+            if (qty < 1) { toast('Miqdar düzgün deyil!', 'warning'); return; }
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            const existing = purchaseItems.find(item => item.productId === productId);
+            if (existing) { existing.qty += qty;
+                existing.price = price || existing.price; } else {
+                purchaseItems.push({ productId, productName: product.name, qty, price: price || product.buyPrice || 0 }); }
+            renderPurchaseItems();
+            document.getElementById('purQty').value = 1;
+            document.getElementById('purPrice').value = '';
+            toast('Məhsul əlavə edildi!');
+        }
+
+        function renderPurchaseItems() {
+            const tbody = document.getElementById('purchaseItemsBody');
+            if (purchaseItems.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="5" class="text-muted text-center">Heç bir məhsul əlavə edilməyib</td></tr>'; return; }
+            tbody.innerHTML = purchaseItems.map((item, idx) => `
+                <tr>
+                    <td>${item.productName}</td>
+                    <td>${item.qty}</td>
+                    <td>${fmtMoney(item.price)}</td>
+                    <td>${fmtMoney(item.qty * item.price)}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removePurchaseItem(${idx})"><i class="fas fa-times"></i></button></td>
+                </tr>
+            `).join('');
+            calcPurchaseTotal();
+        }
+
+        function removePurchaseItem(idx) { purchaseItems.splice(idx, 1);
+            renderPurchaseItems(); }
+
+        function calcPurchaseTotal() {
+            const subtotal = purchaseItems.reduce((sum, item) => sum + item.qty * item.price, 0);
+            const tax = parseFloat(document.getElementById('purTax').value) || 0;
+            const discount = parseFloat(document.getElementById('purDiscount').value) || 0;
+            const shipping = parseFloat(document.getElementById('purShipping').value) || 0;
+            const other = parseFloat(document.getElementById('purOther').value) || 0;
+            const total = subtotal + (subtotal * tax / 100) - discount + shipping + other;
+            document.getElementById('purTotalDisplay').textContent = fmtMoney(total);
+            return total;
+        }
+
+        function completePurchase() {
+            const supplier = document.getElementById('purSupplier').value;
+            if (!supplier) { toast('Təchizatçı seçin!', 'warning'); return; }
+            if (purchaseItems.length === 0) { toast('Heç bir məhsul əlavə edilməyib!', 'warning'); return; }
+            const total = calcPurchaseTotal();
+            const purchase = {
+                id: randId(),
+                supplier,
+                date: today(),
+                items: purchaseItems.map(item => ({ ...item })),
+                total,
+                tax: parseFloat(document.getElementById('purTax').value) || 0,
+                discount: parseFloat(document.getElementById('purDiscount').value) || 0,
+                shipping: parseFloat(document.getElementById('purShipping').value) || 0,
+                other: parseFloat(document.getElementById('purOther').value) || 0,
+                createdAt: new Date().toISOString(),
+            };
+            let products = getProducts();
+            purchaseItems.forEach(item => {
+                const prod = products.find(p => p.id === item.productId);
+                if (prod) {
+                    prod.stock = (prod.stock || 0) + item.qty;
+                    if (item.price > 0) prod.buyPrice = item.price;
+                    if (prod.buyPrice > 0 && prod.sellPrice > 0) prod.profitPercent = ((prod.sellPrice - prod.buyPrice) /
+                        prod.buyPrice * 100);
+                }
+            });
+            setProducts(products);
+            let purchases = getPurchases();
+            purchases.push(purchase);
+            setPurchases(purchases);
+            let finance = getFinance();
+            finance.push({
+                id: randId(),
+                type: 'xərc',
+                category: 'alış',
+                amount: total,
+                date: today(),
+                note: `Alış #${purchase.id} - ${supplier}`,
+                createdAt: new Date().toISOString(),
+            });
+            setFinance(finance);
+            closeModal('purchaseModal');
+            renderPurchases();
+            renderDashboard();
+            toast('Alış tamamlandı! Stok yeniləndi.');
+        }
+
+        function viewPurchase(id) {
+            const p = getPurchases().find(x => x.id === id);
+            if (!p) { toast('Alış tapılmadı!', 'danger'); return; }
+            let msg = `Alış #${p.id}\nTəchizatçı: ${p.supplier}\nTarix: ${p.date}\n\nMəhsullar:\n`;
+            p.items.forEach(item => { msg += `  ${item.productName} x ${item.qty} = ${fmtMoney(item.qty * item.price)}\n`; });
+            msg += `\nCəmi: ${fmtMoney(p.total)}`;
+            alert(msg);
+        }
+
+        function populateSelects() { populatePurchaseSelects();
+            document.getElementById('supplierList').innerHTML = getSuppliers().map(s =>
+                `<option value="${s.name}">`).join(''); }
+
+
+        // === FINANCE ===
+        function renderFinance() {
+            const list = getFinance();
+            const revenue = list.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
+            const expense = list.filter(f => f.type === 'xərc').reduce((s, f) => s + f.amount, 0);
+            document.getElementById('finRevenue').textContent = fmtMoney(revenue);
+            document.getElementById('finExpense').textContent = fmtMoney(expense);
+            document.getElementById('finNet').textContent = fmtMoney(revenue - expense);
+            const tbody = document.getElementById('financeTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="5" class="text-muted text-center">Heç bir əməliyyat yoxdur</td></tr>'; return; }
+            tbody.innerHTML = list.slice().reverse().slice(0, 50).map(f => `
+                <tr>
+                    <td>${f.date || ''}</td>
+                    <td><span class="badge ${f.type === 'gəlir' ? 'badge-success' : 'badge-danger'}">${f.type === 'gəlir' ? 'Gəlir' : 'Xərc'}</span></td>
+                    <td>${f.category || '—'}</td>
+                    <td class="${f.type === 'gəlir' ? 'text-success' : 'text-danger'}" style="${f.type === 'gəlir' ? 'color:#34d399;' : 'color:#f87171;'} fw-600">${fmtMoney(f.amount)}</td>
+                    <td class="truncate">${f.note || ''}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openIncomeModal() { openModal('incomeModal'); }
+
+        function addIncome() {
+            const amount = parseFloat(document.getElementById('incAmount').value);
+            if (!amount || amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const data = { id: randId(), type: 'gəlir', category: document.getElementById('incCategory').value, amount,
+                date: today(), note: document.getElementById('incNote').value.trim(), createdAt: new Date().toISOString() };
+            let list = getFinance();
+            list.push(data);
+            setFinance(list);
+            closeModal('incomeModal');
+            renderFinance();
+            renderDashboard();
+            toast('Gəlir əlavə edildi!');
+        }
+
+        function openExpenseModal() { openModal('expenseModal'); }
+
+        function addExpense() {
+            const amount = parseFloat(document.getElementById('expAmount').value);
+            if (!amount || amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const data = { id: randId(), type: 'xərc', category: document.getElementById('expCategory').value, amount,
+                date: today(), note: document.getElementById('expNote').value.trim(), createdAt: new Date().toISOString() };
+            let list = getFinance();
+            list.push(data);
+            setFinance(list);
+            closeModal('expenseModal');
+            renderFinance();
+            renderDashboard();
+            toast('Xərc əlavə edildi!');
+        }
+
+
+        // === EMPLOYEES ===
+        function renderEmployees() {
+            const list = getEmployees();
+            const tbody = document.getElementById('employeesTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="6" class="text-muted text-center">Heç bir işçi yoxdur</td></tr>'; return; }
+            tbody.innerHTML = list.map(e => `
+                <tr>
+                    <td class="fw-600">${e.name} ${e.surname || ''}</td>
+                    <td>${e.position || '—'}</td>
+                    <td>${e.phone || '—'}</td>
+                    <td>${fmtMoney(e.salary || 0)}</td>
+                    <td>${fmtMoney(e.bonus || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editEmployee('${e.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEmployee('${e.id}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="paySalary('${e.id}')"><i class="fas fa-money-bill-wave"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openEmployeeModal(data) {
+            const isEdit = !!data;
+            document.getElementById('employeeModalTitle').textContent = isEdit ? 'İşçini redaktə et' : 'Yeni işçi əlavə et';
+            document.getElementById('employeeForm').reset();
+            document.getElementById('employeeId').value = '';
+            if (isEdit) {
+                document.getElementById('employeeId').value = data.id;
+                document.getElementById('eName').value = data.name || '';
+                document.getElementById('eSurname').value = data.surname || '';
+                document.getElementById('ePosition').value = data.position || '';
+                document.getElementById('ePhone').value = data.phone || '';
+                document.getElementById('eSalary').value = data.salary || '';
+                document.getElementById('eBonus').value = data.bonus || 0;
+                document.getElementById('eHireDate').value = data.hireDate || '';
+            }
+            openModal('employeeModal');
+        }
+
+        function saveEmployee() {
+            const id = document.getElementById('employeeId').value || randId();
+            const data = {
+                id,
+                name: document.getElementById('eName').value.trim(),
+                surname: document.getElementById('eSurname').value.trim(),
+                position: document.getElementById('ePosition').value.trim(),
+                phone: document.getElementById('ePhone').value.trim(),
+                salary: parseFloat(document.getElementById('eSalary').value) || 0,
+                bonus: parseFloat(document.getElementById('eBonus').value) || 0,
+                hireDate: document.getElementById('eHireDate').value || today(),
+                createdAt: new Date().toISOString(),
+            };
+            let list = getEmployees();
+            const idx = list.findIndex(e => e.id === id);
+            if (idx >= 0) list[idx] = { ...list[idx], ...data };
+            else list.push(data);
+            setEmployees(list);
+            closeModal('employeeModal');
+            renderEmployees();
+            toast('İşçi yadda saxlandı!');
+        }
+
+        function editEmployee(id) { const e = getEmployees().find(x => x.id === id); if (e) openEmployeeModal(e); }
+
+        function deleteEmployee(id) {
+            if (!confirm('İşçini silmək istədiyinizə əminsiniz?')) return;
+            setEmployees(getEmployees().filter(e => e.id !== id));
+            renderEmployees();
+            toast('İşçi silindi!', 'danger');
+        }
+
+        function paySalary(id) {
+            const emp = getEmployees().find(e => e.id === id);
+            if (!emp) return;
+            const amount = (emp.salary || 0) + (emp.bonus || 0);
+            if (amount <= 0) { toast('Əməkhaqqı məbləği 0-dır!', 'warning'); return; }
+            if (!confirm(`${emp.name} üçün ${fmtMoney(amount)} maaş ödənilsin?`)) return;
+            let finance = getFinance();
+            finance.push({
+                id: randId(),
+                type: 'xərc',
+                category: 'əməkhaqqı',
+                amount,
+                date: today(),
+                note: `${emp.name} - ${emp.position} əməkhaqqı`,
+                createdAt: new Date().toISOString(),
+            });
+            setFinance(finance);
+            toast(`${emp.name} üçün maaş ödənildi!`);
+            renderDashboard();
+        }
+
+
+        // === TAXES ===
+        function renderTaxes() {
+            const list = getTaxes();
+            const quarters = { 1: 0, 2: 0, 3: 0, 4: 0 };
+            list.forEach(t => { if (t.status === 'ödənilib') { const q = parseInt(t.quarter) || 0; if (q >= 1 && q <= 4)
+                        quarters[q] = (quarters[q] || 0) + t.amount; } });
+            document.getElementById('taxQ1').textContent = fmtMoney(quarters[1]);
+            document.getElementById('taxQ2').textContent = fmtMoney(quarters[2]);
+            document.getElementById('taxQ3').textContent = fmtMoney(quarters[3]);
+            document.getElementById('taxQ4').textContent = fmtMoney(quarters[4]);
+            const tbody = document.getElementById('taxTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="5" class="text-muted text-center">Heç bir vergi ödənişi yoxdur</td></tr>'; return; }
+            tbody.innerHTML = list.slice().reverse().map(t => `
+                <tr>
+                    <td>${t.date || ''}</td>
+                    <td>${t.quarter} ci kvartal</td>
+                    <td>${fmtMoney(t.amount)}</td>
+                    <td><span class="badge ${t.status === 'ödənilib' ? 'badge-success' : t.status === 'gecikib' ? 'badge-danger' : 'badge-warning'}">${t.status || 'Gözləyir'}</span></td>
+                    <td class="truncate">${t.note || ''}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openTaxPaymentModal() { openModal('taxModal'); }
+
+        function saveTaxPayment() {
+            const data = {
+                id: randId(),
+                quarter: document.getElementById('taxQuarter').value,
+                amount: parseFloat(document.getElementById('taxAmount').value) || 0,
+                date: document.getElementById('taxDate').value || today(),
+                status: document.getElementById('taxStatus').value,
+                note: document.getElementById('taxNote').value.trim(),
+                createdAt: new Date().toISOString(),
+            };
+            if (data.amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            let list = getTaxes();
+            list.push(data);
+            setTaxes(list);
+            closeModal('taxModal');
+            renderTaxes();
+            toast('Vergi ödənişi yadda saxlandı!');
+        }
+
+
+        // === DEBTS ===
+        function renderDebts() {
+            const list = getDebts();
+            const tbody = document.getElementById('debtsTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="8" class="text-muted text-center">Heç bir borc yoxdur</td></tr>'; return; }
+            tbody.innerHTML = list.map(d => {
+                const remaining = d.total - d.paid;
+                const status = d.status || 'aktiv';
+                return `<tr>
+                    <td><span class="badge ${d.type === 'borcluyuq' ? 'badge-danger' : 'badge-warning'}">${d.type === 'borcluyuq' ? 'Borcluyuq' : 'Bizə borcludur'}</span></td>
+                    <td>${d.person}</td>
+                    <td>${fmtMoney(d.total)}</td>
+                    <td>${fmtMoney(d.paid || 0)}</td>
+                    <td class="${remaining > 0 ? 'text-danger fw-600' : 'text-success'}" style="${remaining > 0 ? 'color:#f87171;' : 'color:#34d399;'}">${fmtMoney(remaining)}</td>
+                    <td>${d.dueDate || '—'}</td>
+                    <td><span class="badge ${status === 'bağlandı' ? 'badge-success' : 'badge-warning'}">${status === 'bağlandı' ? 'Bağlandı' : 'Aktiv'}</span></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editDebt('${d.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="payDebt('${d.id}')"><i class="fas fa-money-bill-wave"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function openDebtModal(data) {
+            const isEdit = !!data;
+            document.getElementById('debtModalTitle').textContent = isEdit ? 'Borcu redaktə et' : 'Yeni borc';
+            document.getElementById('debtForm').reset();
+            document.getElementById('debtId').value = '';
+            if (isEdit) {
+                document.getElementById('debtId').value = data.id;
+                document.getElementById('debtType').value = data.type || 'borcluyuq';
+                document.getElementById('debtPerson').value = data.person || '';
+                document.getElementById('debtTotal').value = data.total || '';
+                document.getElementById('debtPaid').value = data.paid || 0;
+                document.getElementById('debtDue').value = data.dueDate || '';
+                document.getElementById('debtStatus').value = data.status || 'aktiv';
+                document.getElementById('debtNote').value = data.note || '';
+            }
+            openModal('debtModal');
+        }
+
+        function saveDebt() {
+            const id = document.getElementById('debtId').value || randId();
+            const total = parseFloat(document.getElementById('debtTotal').value) || 0;
+            const paid = parseFloat(document.getElementById('debtPaid').value) || 0;
+            if (total <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const data = {
+                id,
+                type: document.getElementById('debtType').value,
+                person: document.getElementById('debtPerson').value.trim(),
+                total,
+                paid,
+                dueDate: document.getElementById('debtDue').value || '',
+                status: document.getElementById('debtStatus').value,
+                note: document.getElementById('debtNote').value.trim(),
+                updatedAt: new Date().toISOString(),
+            };
+            if (data.paid >= data.total) data.status = 'bağlandı';
+            let list = getDebts();
+            const idx = list.findIndex(d => d.id === id);
+            if (idx >= 0) list[idx] = { ...list[idx], ...data };
+            else list.push(data);
+            setDebts(list);
+            closeModal('debtModal');
+            renderDebts();
+            renderDashboard();
+            toast('Borc yadda saxlandı!');
+        }
+
+        function editDebt(id) { const d = getDebts().find(x => x.id === id); if (d) openDebtModal(d); }
+
+        function payDebt(id) {
+            const d = getDebts().find(x => x.id === id);
+            if (!d) return;
+            const remaining = d.total - d.paid;
+            if (remaining <= 0) { toast('Bu borc artıq bağlanıb!', 'warning'); return; }
+            const amount = prompt(`Qalan borc: ${fmtMoney(remaining)}\nÖdəniləcək məbləğ:`, remaining.toFixed(2));
+            if (amount === null) return;
+            const val = parseFloat(amount);
+            if (isNaN(val) || val <= 0) { toast('Düzgün məbləğ daxil edin!', 'warning'); return; }
+            const payAmount = Math.min(val, remaining);
+            d.paid = (d.paid || 0) + payAmount;
+            if (d.paid >= d.total) d.status = 'bağlandı';
+            let list = getDebts();
+            const idx = list.findIndex(x => x.id === id);
+            if (idx >= 0) list[idx] = d;
+            setDebts(list);
+            renderDebts();
+            renderDashboard();
+            toast(`${fmtMoney(payAmount)} ödəniş edildi!`);
+        }
+
+
+        // === CUSTOMERS ===
+        function renderCustomers() {
+            const search = document.getElementById('customerSearch').value.toLowerCase().trim();
+            let list = getCustomers();
+            if (search) list = list.filter(c => (c.name || '').toLowerCase().includes(search));
+            const tbody = document.getElementById('customersTable');
+            if (list.length === 0) { tbody.innerHTML =
+                    '<tr><td colspan="6" class="text-muted text-center">Heç bir müştəri yoxdur</td></tr>'; return; }
+            const debts = getDebts();
+            tbody.innerHTML = list.map(c => {
+                const debt = debts.filter(d => d.type === 'bizeborcludur' && d.person === c.name && d.status !==
+                    'bağlandı').reduce((s, d) => s + (d.total - d.paid), 0);
+                return `<tr>
+                    <td class="fw-600">${c.name}</td>
+                    <td>${c.phone || '—'}</td>
+                    <td>${c.carBrand || ''} ${c.carModel || ''}</td>
+                    <td>${c.plate || '—'}</td>
+                    <td class="${debt > 0 ? 'text-success fw-600' : ''}" style="${debt > 0 ? 'color:#34d399;' : ''}">${fmtMoney(debt)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editCustomer('${c.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${c.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function openCustomerModal(data) {
+            const isEdit = !!data;
+            document.getElementById('customerModalTitle').textContent = isEdit ? 'Müştərini redaktə et' :
+                'Yeni müştəri əlavə et';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            if (isEdit) {
+                document.getElementById('customerId').value = data.id;
+                document.getElementById('cName').value = data.name || '';
+                document.getElementById('cPhone').value = data.phone || '';
+                document.getElementById('cWhatsapp').value = data.whatsapp || '';
+                document.getElementById('cEmail').value = data.email || '';
+                document.getElementById('cCarBrand').value = data.carBrand || '';
+                document.getElementById('cCarModel').value = data.carModel || '';
+                document.getElementById('cPlate').value = data.plate || '';
+                document.getElementById('cNote').value = data.note || '';
+            }
+            openModal('customerModal');
+        }
+
+        function saveCustomer() {
+            const id = document.getElementById('customerId').value || randId();
+            const data = {
+                id,
+                name: document.getElementById('cName').value.trim(),
+                phone: document.getElementById('cPhone').value.trim(),
+                whatsapp: document.getElementById('cWhatsapp').value.trim(),
+                email: document.getElementById('cEmail').value.trim(),
+                carBrand: document.getElementById('cCarBrand').value.trim(),
+                carModel: document.getElementById('cCarModel').value.trim(),
+                plate: document.getElementById('cPlate').value.trim(),
+                note: document.getElementById('cNote').value.trim(),
+                createdAt: new Date().toISOString(),
+            };
+            let list = getCustomers();
+            const idx = list.findIndex(c => c.id === id);
+            if (idx >= 0) list[idx] = { ...list[idx], ...data };
+            else list.push(data);
+            setCustomers(list);
+            closeModal('customerModal');
+            renderCustomers();
+            toast('Müştəri yadda saxlandı!');
+        }
+
+        function editCustomer(id) { const c = getCustomers().find(x => x.id === id); if (c) openCustomerModal(c); }
+
+        function deleteCustomer(id) {
+            if (!confirm('Müştərini silmək istədiyinizə əminsiniz?')) return;
+            setCustomers(getCustomers().filter(c => c.id !== id));
+            renderCustomers();
+            toast('Müştəri silindi!', 'danger');
+        }
+
+
+        // =============================================================
+        // POS (SALES)
+        // =============================================================
+        function renderPosProducts() {
+            const search = document.getElementById('posSearch').value.toLowerCase().trim();
+            let list = getProducts();
+            if (search) list = list.filter(p => (p.name || '').toLowerCase().includes(search) || (p.barcode || '')
+                .toLowerCase().includes(search) || (p.oem || '').toLowerCase().includes(search));
+            const container = document.getElementById('posProductList');
+            if (list.length === 0) { container.innerHTML =
+                '<div class="text-muted text-center">Məhsul tapılmadı</div>'; return; }
+            container.innerHTML = list.slice(0, 30).map(p => `
+                <div class="pos-item" onclick="addToCart('${p.id}')">
+                    <div>
+                        <span class="fw-600">${p.name}</span>
+                        <span class="text-muted fs-small"> ${p.oem || ''}</span>
+                    </div>
+                    <div>
+                        <span class="fw-600">${fmtMoney(p.sellPrice || 0)}</span>
+                        <span class="text-muted fs-small"> (stok: ${p.stock || 0})</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPosProducts() { renderPosProducts(); }
+
+        function addToCart(productId) {
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            if ((product.stock || 0) < 1) { toast('Stokda yoxdur!', 'danger'); return; }
+            const existing = state.posCart.find(item => item.productId === productId);
+            if (existing) {
+                if ((product.stock || 0) <= existing.qty) { toast('Stokda kifayət qədər yoxdur!', 'warning'); return; }
+                existing.qty += 1;
+            } else {
+                state.posCart.push({ productId: product.id, productName: product.name, qty: 1, price: product.sellPrice ||
+                        0 });
+            }
+            renderPosCart();
+            toast(`${product.name} əlavə edildi`);
+        }
+
+        function renderPosCart() {
+            const container = document.getElementById('posCartItems');
+            if (state.posCart.length === 0) { container.innerHTML =
+                '<div class="text-muted text-center">Səbət boşdur</div>'; return; }
+            container.innerHTML = state.posCart.map((item, idx) => `
+                <div class="cart-item">
+                    <div>
+                        <span class="fw-600">${item.productName}</span>
+                        <span class="text-muted fs-small">${fmtMoney(item.price)}</span>
+                    </div>
+                    <div class="qty-control">
+                        <button onclick="changeCartQty(${idx}, -1)">−</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeCartQty(${idx}, 1)">+</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeFromCart(${idx})"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            updatePosTotal();
+        }
+
+        function changeCartQty(idx, delta) {
+            const item = state.posCart[idx];
+            if (!item) return;
+            const product = getProducts().find(p => p.id === item.productId);
+            const newQty = item.qty + delta;
+            if (newQty < 1) { removeFromCart(idx); return; }
+            if (product && (product.stock || 0) < newQty) { toast('Stokda kifayət qədər yoxdur!', 'warning'); return; }
+            item.qty = newQty;
+            renderPosCart();
+        }
+
+        function removeFromCart(idx) { state.posCart.splice(idx, 1);
+            renderPosCart(); }
+
+        function clearPosCart() { state.posCart = [];
+            renderPosCart(); }
+
+        function updatePosTotal() {
+            const subtotal = state.posCart.reduce((sum, item) => sum + item.qty * item.price, 0);
+            const discount = parseFloat(document.getElementById('posDiscount').value) || 0;
+            const total = Math.max(0, subtotal - discount);
+            document.getElementById('posTotal').textContent = fmtMoney(total);
+            document.getElementById('posDiscountDisplay').textContent = fmtMoney(discount);
+            return total;
+        }
+
+        function completeSale() {
+            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
+            const total = updatePosTotal();
+            if (total <= 0) { toast('Cəmi 0-dır!', 'warning'); return; }
+            const paymentMethod = document.getElementById('posPaymentMethod').value;
+            const discount = parseFloat(document.getElementById('posDiscount').value) || 0;
+            let products = getProducts();
+            let canSell = true;
+            state.posCart.forEach(item => {
+                const prod = products.find(p => p.id === item.productId);
+                if (!prod || (prod.stock || 0) < item.qty) { canSell = false;
+                    toast(`${item.productName} üçün stok kifayət deyil!`, 'danger'); }
+            });
+            if (!canSell) return;
+            state.posCart.forEach(item => {
+                const prod = products.find(p => p.id === item.productId);
+                if (prod) {
+                    prod.stock = (prod.stock || 0) - item.qty;
+                    if (prod.buyPrice > 0 && prod.sellPrice > 0) prod.profitPercent = ((prod.sellPrice - prod.buyPrice) /
+                        prod.buyPrice * 100);
+                }
+            });
+            setProducts(products);
+            const sale = {
+                id: randId(),
+                items: state.posCart.map(item => ({ ...item })),
+                total,
+                discount,
+                paymentMethod,
+                date: today(),
+                time: now(),
+                productName: state.posCart.map(item => item.productName).join(', '),
+                qty: state.posCart.reduce((s, i) => s + i.qty, 0),
+                createdAt: new Date().toISOString(),
+            };
+            let sales = getSales();
+            sales.push(sale);
+            setSales(sales);
+            let finance = getFinance();
+            finance.push({
+                id: randId(),
+                type: 'gəlir',
+                category: 'satış',
+                amount: total,
+                date: today(),
+                note: `Satış #${sale.id}`,
+                createdAt: new Date().toISOString(),
+            });
+            setFinance(finance);
+            state.posCart = [];
+            renderPosCart();
+            renderProducts();
+            renderDashboard();
+            toast(`Satış tamamlandı! ${fmtMoney(total)}`, 'success');
+            setTimeout(() => printReceipt(sale), 300);
+        }
+
+        function printReceipt(sale) {
+            if (!sale) { const sales = getSales(); if (sales.length === 0) { toast('Satış yoxdur!', 'warning'); return; }
+                sale = sales[sales.length - 1]; }
+            let receipt = `=== 366 AUTO ERP ===\n`;
+            receipt += `Satış #${sale.id}\n`;
+            receipt += `Tarix: ${sale.date} ${sale.time || ''}\n`;
+            receipt += `Ödəniş: ${sale.paymentMethod || 'nağd'}\n`;
+            receipt += `------------------------\n`;
+            sale.items.forEach(item => { receipt += `${item.productName} x ${item.qty} = ${fmtMoney(item.qty * item.price)}\n`; });
+            receipt += `------------------------\n`;
+            if (sale.discount) receipt += `Endirim: -${fmtMoney(sale.discount)}\n`;
+            receipt += `CƏMİ: ${fmtMoney(sale.total)}\n`;
+            receipt += `========================\n`;
+            receipt += `366 AUTO - Avtomobil Ehtiyat Hissələri\n`;
+            receipt += `${new Date().toLocaleString('az-AZ')}\n`;
+            const win = window.open('', '_blank', 'width=400,height=600');
+            if (win) {
+                win.document.write(
+                    `<pre style="font-family:monospace;padding:20px;background:#011d1c;color:#edfffe;">${receipt}</pre>`);
+                win.document.write(
+                    `<button onclick="window.print()" style="margin:10px;padding:8px 20px;background:#003734;color:#fff;border:none;border-radius:6px;cursor:pointer;">Çap et</button>
+                               <button onclick="window.close()" style="margin:10px;padding:8px 20px;background:transparent;color:#bbc7c6;border:1px solid #bbc7c6;border-radius:6px;cursor:pointer;">Bağla</button>`
+                );
+                win.document.close();
+            } else alert(receipt);
+        }
+
+
+        // =============================================================
+        // REPORTS
+        // =============================================================
+        function generateReport() {
+            const start = document.getElementById('reportStart').value;
+            const end = document.getElementById('reportEnd').value;
+            if (!start || !end) { toast('Tarix aralığı seçin!', 'warning'); return; }
+            const sales = getSales().filter(s => s.date >= start && s.date <= end);
+            const finance = getFinance().filter(f => f.date >= start && f.date <= end);
+            const purchases = getPurchases().filter(p => p.date >= start && p.date <= end);
+            const revenue = finance.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
+            const expense = finance.filter(f => f.type === 'xərc').reduce((s, f) => s + f.amount, 0);
+            const profit = revenue - expense;
+            const saleTotal = sales.reduce((s, i) => s + i.total, 0);
+            const purchaseTotal = purchases.reduce((s, p) => s + p.total, 0);
+            let html = `
+                <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+                    <div class="stat-card"><div class="stat-label">Satış</div><div class="stat-value">${fmtMoney(saleTotal)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Alış</div><div class="stat-value">${fmtMoney(purchaseTotal)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Gəlir</div><div class="stat-value" style="color:#34d399;">${fmtMoney(revenue)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Xərc</div><div class="stat-value" style="color:#f87171;">${fmtMoney(expense)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Xalis</div><div class="stat-value" style="color:${profit >= 0 ? '#34d399' : '#f87171'}">${fmtMoney(profit)}</div></div>
+                </div>
+                <p><strong>Dövr:</strong> ${start} - ${end} &bull; <strong>Satış sayı:</strong> ${sales.length} &bull; <strong>Alış sayı:</strong> ${purchases.length}</p>
+                <div class="table-wrap"><table><thead><tr><th>Tarix</th><th>Tip</th><th>Kateqoriya</th><th>Məbləğ</th></tr></thead><tbody>
+            `;
+            const all = [...finance, ...sales.map(s => ({ ...s, type: 'satış', category: 'satış', amount: s.total }))];
+            const sorted = all.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+            sorted.slice(0, 50).forEach(item => {
+                const isIncome = item.type === 'gəlir' || item.type === 'satış';
+                html += `<tr>
+                    <td>${item.date || ''}</td>
+                    <td><span class="badge ${isIncome ? 'badge-success' : 'badge-danger'}">${isIncome ? 'Gəlir' : 'Xərc'}</span></td>
+                    <td>${item.category || item.productName || '—'}</td>
+                    <td class="${isIncome ? 'text-success' : 'text-danger'}" style="${isIncome ? 'color:#34d399;' : 'color:#f87171;'}">${fmtMoney(item.amount || 0)}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+            document.getElementById('reportContent').innerHTML = html;
+            toast('Hesabat yaradıldı!');
+        }
+
+        function exportReportExcel() {
+            const content = document.getElementById('reportContent').textContent;
+            if (!content || content.includes('Tarix seçib')) { toast('Əvvəlcə hesabat yaradın!', 'warning'); return; }
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'hesabat.txt';
+            link.click();
+            toast('Export edildi!');
+        }
+
 
         // =============================================================
         // VIN AXTARIŞ
@@ -2463,18 +3314,31 @@
                 { name: 'Hava filtri', code: '17801-0V010', price: 16.50, supplier: 'emex.ru' },
                 { name: 'Əyləc diskleri', code: '43512-0W050', price: 75.00, supplier: 'partsouq.com' },
             ],
+            'Mercedes': [
+                { name: 'Yağ filtri', code: 'A0001805409', price: 34.99, supplier: 'emex.ru' },
+                { name: 'Hava filtri', code: 'A2760940304', price: 28.50, supplier: 'partsouq.com' },
+            ]
         };
 
         function searchByVin() {
             const vin = document.getElementById('vinInput').value.trim().toUpperCase();
             const resultDiv = document.getElementById('vinResult');
 
-            if (!vin) { resultDiv.innerHTML =
-                    `<div class="vin-error">Zəhmət olmasa VIN kodunu daxil edin!</div>`; return; }
-            if (vin.length !== 17) { resultDiv.innerHTML =
-                    `<div class="vin-error">VIN kodu 17 simvoldan ibarət olmalıdır! (Hal-hazırda: ${vin.length})</div>`; return; }
-            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) { resultDiv.innerHTML =
-                    `<div class="vin-error">VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!</div>`; return; }
+            if (!vin) {
+                resultDiv.innerHTML =
+                    `<div class="vin-error"><i class="fas fa-exclamation-circle"></i> Zəhmət olmasa VIN kodunu daxil edin!</div>`;
+                return;
+            }
+            if (vin.length !== 17) {
+                resultDiv.innerHTML =
+                    `<div class="vin-error"><i class="fas fa-exclamation-circle"></i> VIN kodu 17 simvoldan ibarət olmalıdır! (Hal-hazırda: ${vin.length})</div>`;
+                return;
+            }
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                resultDiv.innerHTML =
+                    `<div class="vin-error"><i class="fas fa-exclamation-circle"></i> VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!</div>`;
+                return;
+            }
 
             resultDiv.innerHTML = `
                 <div class="vin-loading">
@@ -2627,16 +3491,6 @@
             return item && item.Value ? item.Value : null;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const vinInput = document.getElementById('vinInput');
-            if (vinInput) {
-                vinInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') { e.preventDefault();
-                        searchByVin(); }
-                });
-                vinInput.addEventListener('input', function() { this.value = this.value.toUpperCase(); });
-            }
-        });
 
         // =============================================================
         // BACKUP
@@ -2677,6 +3531,7 @@
                 location.reload();
             } catch (e) { toast('Xəta: ' + e.message, 'danger'); }
         }
+
 
         // =============================================================
         // BOOT
@@ -2737,10 +3592,10 @@
             }
         });
 
-        console.log('✅ 366 AUTO — 20,000 hissəcik + avtomobil ikonu');
+        console.log('✅ 366 AUTO — Bütün funksiyalar aktivdir!');
         console.log('📊 Məlumatlar localStorage-də saxlanılır.');
         console.log('🔍 VIN axtarışı aktivdir.');
-        console.log('✨ 20,000 particle sphere with car icon');
+        console.log('✨ 20,000 hissəcikli parallax sfera + avtomobil ikonu');
         console.log('⌨️ Ctrl+Shift+B - backup bərpa');
     </script>
 </body>

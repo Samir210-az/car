@@ -56,6 +56,7 @@
             color: var(--text);
             transition: background var(--transition), color var(--transition);
             min-height: 100vh;
+            margin: 0;
         }
         button {
             cursor: pointer;
@@ -231,11 +232,11 @@
             }
         }
         #app {
-            display: none;
+            display: none !important;
             min-height: 100vh;
         }
         #app.active {
-            display: block;
+            display: block !important;
         }
         .navbar {
             position: fixed;
@@ -752,41 +753,9 @@
             text-overflow: ellipsis;
             max-width: 150px;
         }
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(4px);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-        .loading-overlay.active {
-            display: flex;
-        }
     </style>
 </head>
 <body>
-
-    <!-- Loading -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
 
     <!-- Toast -->
     <div class="toast-container" id="toastContainer"></div>
@@ -802,11 +771,11 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label><i class="fas fa-user"></i> İstifadəçi adı</label>
-                    <input type="text" id="loginUser" placeholder="admin" value="admin" required />
+                    <input type="text" id="loginUser" placeholder="admin" value="admin" required autocomplete="username" />
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Şifrə</label>
-                    <input type="password" id="loginPass" placeholder="••••••••" value="admin123" required />
+                    <input type="password" id="loginPass" placeholder="••••••••" value="admin123" required autocomplete="current-password" />
                 </div>
                 <button type="submit" class="btn btn-primary w-full" style="justify-content:center;padding:0.8rem;">
                     <i class="fas fa-sign-in-alt"></i> Daxil ol
@@ -1039,7 +1008,7 @@
         </div><!-- /main-content -->
     </div><!-- /app -->
 
-    <!-- ===== MODALS (qısa) ===== -->
+    <!-- MODALS (qısa) -->
     <div class="modal-overlay" id="productModal"><div class="modal"><div class="modal-header"><h3 id="productModalTitle">Məhsul əlavə et</h3><button class="modal-close" onclick="closeModal('productModal')">&times;</button></div>
         <form id="productForm"><input type="hidden" id="productId" />
             <div class="form-row"><div class="form-group"><label>Ad *</label><input type="text" id="pName" required /></div><div class="form-group"><label>OEM</label><input type="text" id="pOem" /></div></div>
@@ -1138,6 +1107,8 @@
     </div></div>
 
     <script>
+        console.log('🔵 AutoParts ERP yüklənir...');
+
         // =============================================================
         // STATE
         // =============================================================
@@ -1145,7 +1116,6 @@
             user: null,
             role: 'admin',
             token: null,
-            dark: false,
             products: [],
             suppliers: [],
             purchases: [],
@@ -1243,7 +1213,7 @@
             saveToStorage('customers', c); }
 
         // =============================================================
-        // AUTH - YENİ VERSİYA (səhifə yeniləmədən)
+        // AUTH - SADƏ VƏ İŞLƏK
         // =============================================================
         const USERS = [
             { username: 'admin', password: 'admin123', role: 'admin', name: 'Admin' },
@@ -1252,18 +1222,30 @@
         ];
 
         function login(username, password) {
+            console.log('🔑 Login cəhdi:', username);
             const u = USERS.find(x => x.username === username && x.password === password);
-            if (!u) return null;
+            if (!u) {
+                console.warn('❌ İstifadəçi tapılmadı!');
+                return null;
+            }
+            console.log('✅ İstifadəçi tapıldı:', u.name);
+
             state.user = u;
             state.role = u.role;
             state.token = 'demo-token-' + randId();
             localStorage.setItem('autoparts_session', JSON.stringify({ user: u, token: state.token }));
-            // Səhifəni yeniləmədən dashboard-a keç
+            console.log('💾 Sessiya saxlanıldı');
+
+            // LoginPage-i gizlət, app-i göstər
             document.getElementById('loginPage').style.display = 'none';
             const app = document.getElementById('app');
             app.classList.add('active');
-            // Məlumatları yüklə və dashboard-u göstər
+            console.log('📱 App göstərildi, classList:', app.classList);
+
+            // Məlumatları yüklə
             initApp();
+            console.log('✅ App init edildi');
+
             return u;
         }
 
@@ -1273,9 +1255,11 @@
             localStorage.removeItem('autoparts_session');
             document.getElementById('app').classList.remove('active');
             document.getElementById('loginPage').style.display = 'flex';
+            console.log('👋 Logout edildi');
         }
 
         function checkSession() {
+            console.log('🔍 Sessiya yoxlanılır...');
             const raw = localStorage.getItem('autoparts_session');
             if (raw) {
                 try {
@@ -1284,13 +1268,17 @@
                         state.user = data.user;
                         state.role = data.user.role;
                         state.token = data.token;
+                        console.log('✅ Sessiya tapıldı:', data.user.name);
                         document.getElementById('loginPage').style.display = 'none';
-                        document.getElementById('app').classList.add('active');
+                        const app = document.getElementById('app');
+                        app.classList.add('active');
+                        console.log('📱 App göstərildi (sessiya)');
                         initApp();
                         return true;
                     }
-                } catch (e) { console.warn('Session error:', e); }
+                } catch (e) { console.warn('⚠️ Sessiya xətası:', e); }
             }
+            console.log('❌ Sessiya tapılmadı');
             return false;
         }
 
@@ -1298,6 +1286,9 @@
         // INIT
         // =============================================================
         function initApp() {
+            console.log('🔄 InitApp başlayır...');
+
+            // Bütün məlumatları yüklə
             state.products = loadFromStorage('products');
             state.suppliers = loadFromStorage('suppliers');
             state.purchases = loadFromStorage('purchases');
@@ -1307,10 +1298,15 @@
             state.taxes = loadFromStorage('taxes');
             state.debts = loadFromStorage('debts');
             state.customers = loadFromStorage('customers');
+            console.log('📦 Məlumatlar yükləndi');
 
-            document.getElementById('userName').textContent = state.user.name;
-            document.getElementById('userAvatar').textContent = state.user.name[0].toUpperCase();
+            // User məlumatlarını göstər
+            if (state.user) {
+                document.getElementById('userName').textContent = state.user.name;
+                document.getElementById('userAvatar').textContent = state.user.name[0].toUpperCase();
+            }
 
+            // Hər şeyi render et
             applyRolePermissions();
             renderDashboard();
             renderProducts();
@@ -1324,6 +1320,7 @@
             renderPosProducts();
             populateSelects();
 
+            // Tarix
             document.getElementById('dashboardDate').textContent = 'Bugün: ' + new Date().toLocaleDateString('az-AZ', {
                 weekday: 'long',
                 year: 'numeric',
@@ -1331,6 +1328,7 @@
                 day: 'numeric'
             });
 
+            // Theme
             if (localStorage.getItem('autoparts_theme') === 'dark') {
                 document.body.classList.add('dark');
                 document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
@@ -1339,6 +1337,7 @@
 
             setupEventListeners();
             setInterval(autoBackup, 60000);
+            console.log('✅ InitApp tamamlandı!');
         }
 
         function applyRolePermissions() {
@@ -1365,13 +1364,19 @@
         }
 
         function setupEventListeners() {
+            // Login
             document.getElementById('loginForm').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const user = document.getElementById('loginUser').value.trim();
                 const pass = document.getElementById('loginPass').value.trim();
                 const result = login(user, pass);
-                if (!result) toast('İstifadəçi adı və ya şifrə yanlışdır!', 'danger');
-                else toast('Xoş gəldiniz, ' + result.name + '!');
+                if (!result) {
+                    toast('İstifadəçi adı və ya şifrə yanlışdır!', 'danger');
+                    console.warn('❌ Login uğursuz!');
+                } else {
+                    toast('Xoş gəldiniz, ' + result.name + '!');
+                    console.log('✅ Login uğurlu!');
+                }
             });
 
             document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -1396,6 +1401,7 @@
                     '<i class="fas fa-moon"></i>';
             });
 
+            // Form submit-lər
             document.getElementById('productForm').addEventListener('submit', (e) => { e.preventDefault();
                 saveProduct(); });
             document.getElementById('supplierForm').addEventListener('submit', (e) => { e.preventDefault();
@@ -1415,10 +1421,12 @@
             document.getElementById('debtForm').addEventListener('submit', (e) => { e.preventDefault();
                 saveDebt(); });
 
+            // Modalları bağla
             document.querySelectorAll('.modal-overlay').forEach(el => {
                 el.addEventListener('click', (e) => { if (e.target === el) el.classList.remove('active'); });
             });
 
+            // Report tarixləri
             const d = new Date();
             document.getElementById('reportEnd').value = today();
             const start = new Date(d);
@@ -1552,7 +1560,7 @@
         }
 
         // =============================================================
-        // PRODUCTS (əsas funksiyalar)
+        // PRODUCTS
         // =============================================================
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
@@ -1779,7 +1787,7 @@
         }
 
         // =============================================================
-        // SUPPLIERS (qısa)
+        // SUPPLIERS
         // =============================================================
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
@@ -1862,7 +1870,7 @@
         }
 
         // =============================================================
-        // PURCHASES (qısa)
+        // PURCHASES
         // =============================================================
         let purchaseItems = [];
 
@@ -2658,13 +2666,14 @@
         if (!checkSession()) {
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('app').classList.remove('active');
+            console.log('🔐 Login səhifəsi göstərilir');
         } else {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('app').classList.add('active');
-            initApp();
+            console.log('✅ Sessiya ilə dashboard-a keçid');
         }
 
-        // Global functions for onclick
+        // Global functions
         window.openProductModal = openProductModal;
         window.editProduct = editProduct;
         window.deleteProduct = deleteProduct;
@@ -2718,7 +2727,7 @@
             }
         });
 
-        console.log('🛞 AutoParts ERP yükləndi!');
+        console.log('✅ AutoParts ERP tam hazırdır!');
         console.log('📊 Məlumatlar localstorage-də saxlanılır.');
         console.log('⌨️ Ctrl+K - axtarış, Ctrl+Shift+B - backup bərpa');
     </script>

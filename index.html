@@ -4,15 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>366 AUTO — Avtomobil Ehtiyat Hissələri</title>
-
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
-
     <style>
         /* ============================================================
            AUROS DESIGN SYSTEM — 366 AUTO
@@ -852,7 +849,7 @@
         }
 
         /* ============================================================
-           VIN AXTARIŞ — XÜSUSİ STILLƏR
+           VIN AXTARIŞ
            ============================================================ */
         .vin-search-container {
             max-width: 1200px;
@@ -1542,7 +1539,7 @@
 
 
     <!-- ============================================================ -->
-    <!-- MODALLAR (əvvəlki kimi) -->
+    <!-- MODALLAR (qısa, toxunulmayıb) -->
     <!-- ============================================================ -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
@@ -1832,7 +1829,7 @@
 
 
         // =============================================================
-        // MÖVCUD STATE
+        // MÖVCUD STATE (dəyişməz)
         // =============================================================
         const state = {
             user: { username: 'admin', role: 'admin', name: 'Admin' },
@@ -1853,7 +1850,7 @@
         };
 
         // =============================================================
-        // MÖVCUD HELPERS
+        // MÖVCUD HELPERS (dəyişməz)
         // =============================================================
         function $(id) { return document.getElementById(id); }
 
@@ -1934,7 +1931,7 @@
 
 
         // =============================================================
-        // MÖVCUD INIT
+        // MÖVCUD INIT (dəyişməz)
         // =============================================================
         function initApp() {
             state.products = loadFromStorage('products');
@@ -2127,8 +2124,13 @@
 
 
         // =============================================================
-        // MÖVCUD DASHBOARD
+        // MÖVCUD DASHBOARD, PRODUCTS, SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
+        // (tam işlək, dəyişməz)
         // =============================================================
+        // Bu funksiyalar əvvəlki versiyalardakı kimidir, amma yer qənaəti üçün burada qısa şəkildə verilir.
+        // Onlar tam işləkdir.
+
+        // === DASHBOARD ===
         function renderDashboard() {
             const products = getProducts();
             const sales = getSales();
@@ -2230,10 +2232,7 @@
             });
         }
 
-
-        // =============================================================
-        // MÖVCUD PRODUCTS
-        // =============================================================
+        // === PRODUCTS ===
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
             const category = document.getElementById('productCategoryFilter').value;
@@ -2461,11 +2460,6 @@
             event.target.value = '';
         }
 
-
-        // =============================================================
-        // MÖVCUD SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
-        // (qısa saxlanılır, tam işləkdir)
-        // =============================================================
         // === SUPPLIERS ===
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
@@ -3285,14 +3279,11 @@
 
 
         // =============================================================
-        // =============================================================
         // YENİ — MODULLU VIN AXTARIŞ SİSTEMİ
-        // =============================================================
         // =============================================================
 
         // -------- 1. VIN API MODULU --------
         const VinAPI = {
-            // Əsas mənbə: NHTSA vPIC
             async fetchNHTSA(vin) {
                 const response = await fetch(
                     `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
@@ -3302,13 +3293,11 @@
                 return data.Results;
             },
 
-            // Ehtiyat mənbə: DB.VIN (pulsuz, CORS aktiv)
             async fetchDBVin(vin) {
                 const response = await fetch(`https://db.vin/api/vin/${vin}`);
                 if (!response.ok) throw new Error(`DB.VIN API xətası: ${response.status}`);
                 const data = await response.json();
                 if (!data || !data.make) throw new Error('DB.VIN məlumat tapılmadı');
-                // DB.VIN cavabını NHTSA formatına çevir
                 return [
                     { Variable: 'Make', Value: data.make || '' },
                     { Variable: 'Model', Value: data.model || '' },
@@ -3326,7 +3315,6 @@
                 ];
             },
 
-            // Çoxmənbəli axtarış (fallback)
             async search(vin) {
                 const cacheKey = `vin_${vin}`;
                 const cached = VinCache.get(cacheKey);
@@ -3354,7 +3342,6 @@
                 return { data: normalized, source };
             },
 
-            // Nəticələri normallaşdır
             normalizeResults(results) {
                 const map = {};
                 results.forEach(item => {
@@ -3383,7 +3370,6 @@
                 };
             },
 
-            // VIN doğrulaması
             validateVin(vin) {
                 if (!vin || vin.length !== 17) return false;
                 if (/[IOQ]/.test(vin)) return false;
@@ -3407,11 +3393,9 @@
             }
         };
 
-
-        // -------- 2. VIN CACHE MODULU --------
+        // -------- 2. VIN CACHE --------
         const VinCache = {
-            TTL: 7 * 24 * 60 * 60 * 1000, // 7 gün
-
+            TTL: 7 * 24 * 60 * 60 * 1000,
             get(key) {
                 try {
                     const raw = localStorage.getItem('vin_cache_' + key);
@@ -3424,13 +3408,11 @@
                     return data.data;
                 } catch { return null; }
             },
-
             set(key, data) {
                 try {
                     localStorage.setItem('vin_cache_' + key, JSON.stringify(data));
                 } catch { /* ignore */ }
             },
-
             clear() {
                 const keys = Object.keys(localStorage);
                 keys.forEach(k => {
@@ -3439,16 +3421,12 @@
             }
         };
 
-
-        // -------- 3. VIN MATCHER MODULU --------
+        // -------- 3. VIN MATCHER --------
         const VinMatcher = {
-            // Mətni normallaşdır
             normalize(str) {
                 if (!str) return '';
                 return str.toLowerCase().replace(/[^a-z0-9]/g, '');
             },
-
-            // Məhsulları ağıllı şəkildə uyğunlaşdır
             matchProducts(products, vehicle) {
                 if (!products || products.length === 0) return [];
 
@@ -3463,10 +3441,8 @@
                     const pEngine = this.normalize(p.engine);
                     const pOem = this.normalize(p.oem);
 
-                    // Marka uyğunluğu (əsas şərt)
                     const makeMatch = pMake && (pMake.includes(makeNorm) || makeNorm.includes(pMake));
 
-                    // Model uyğunluğu
                     let modelMatch = false;
                     if (pModel && modelNorm) {
                         modelMatch = pModel.includes(modelNorm) || modelNorm.includes(pModel);
@@ -3477,41 +3453,34 @@
                         }
                     }
 
-                    // İl uyğunluğu (təxmini)
                     let yearMatch = false;
                     if (pYear && yearNorm && pYear.length > 0 && yearNorm.length > 0) {
                         yearMatch = pYear === yearNorm || Math.abs(parseInt(pYear) - parseInt(yearNorm)) <= 2;
                     }
 
-                    // Mühərrik uyğunluğu
                     let engineMatch = false;
                     if (pEngine && vehicle.engineCode) {
                         const engNorm = this.normalize(vehicle.engineCode);
                         engineMatch = pEngine.includes(engNorm) || engNorm.includes(pEngine);
                     }
 
-                    // OEM uyğunluğu (əgər məhsulda OEM varsa)
                     let oemMatch = false;
                     if (pOem && vehicle.oem) {
                         const oemNorm = this.normalize(vehicle.oem);
                         oemMatch = pOem.includes(oemNorm) || oemNorm.includes(pOem);
                     }
 
-                    // Nəticə: marka əsasdır, sonra model və ya il və ya mühərrik
                     if (!makeMatch) return false;
                     if (modelMatch) return true;
                     if (yearMatch) return true;
                     if (engineMatch) return true;
                     if (oemMatch) return true;
-
-                    // Əgər marka uyğundursa və model boşdursa (ümumi məhsullar)
                     if (makeMatch && !pModel) return true;
 
                     return false;
                 });
             },
 
-            // Marka/modelə görə xarici hissələr
             getExternalParts(make) {
                 const db = {
                     'honda': [
@@ -3546,8 +3515,7 @@
             }
         };
 
-
-        // -------- 4. VIN UI MODULU --------
+        // -------- 4. VIN UI --------
         const VinUI = {
             showLoading() {
                 const container = document.getElementById('vinResult');
@@ -3573,7 +3541,6 @@
             renderResult(vin, vehicle, source, matchedProducts, externalParts) {
                 const container = document.getElementById('vinResult');
 
-                // Avtomobil məlumatları
                 let html = `
                     <div class="vin-vehicle-card">
                         <div class="flex-between">
@@ -3616,7 +3583,6 @@
                     </div>
                 `;
 
-                // Anbar məhsulları
                 if (matchedProducts && matchedProducts.length > 0) {
                     html += `
                         <div class="vin-vehicle-card">
@@ -3657,7 +3623,6 @@
                     `;
                 }
 
-                // Xarici tövsiyələr
                 if (externalParts && externalParts.length > 0) {
                     html += `
                         <div class="vin-vehicle-card">
@@ -3709,7 +3674,6 @@
             }
         };
 
-
         // -------- 5. VIN CONTROLLER --------
         async function performSearch() {
             const input = document.getElementById('vinInput');
@@ -3721,38 +3685,28 @@
                 return;
             }
 
-            // VIN axtarışı
-            if (searchType === 'vin') {
-                const vin = query.toUpperCase().replace(/\s/g, '');
-                if (vin.length !== 17) {
-                    VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
-                    return;
-                }
-                if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                    VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
-                    return;
-                }
+            VinUI.showLoading();
 
-                VinUI.showLoading();
+            try {
+                if (searchType === 'vin') {
+                    const vin = query.toUpperCase().replace(/\s/g, '');
+                    if (vin.length !== 17) {
+                        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
+                        return;
+                    }
+                    if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
+                        return;
+                    }
 
-                try {
                     const result = await VinAPI.search(vin);
                     const vehicle = result.data;
-
-                    // Məhsulları uyğunlaşdır
                     const products = getProducts();
                     const matchedProducts = VinMatcher.matchProducts(products, vehicle);
                     const externalParts = VinMatcher.getExternalParts(vehicle.make);
-
                     VinUI.renderResult(vin, vehicle, result.source, matchedProducts, externalParts);
-                } catch (error) {
-                    console.error('Axtarış xətası:', error);
-                    VinUI.showError(error.message || 'VIN axtarışı zamanı xəta baş verdi.');
-                }
-            } else {
-                // Marka/Model, Mühərrik, OEM axtarışı
-                VinUI.showLoading();
-                try {
+                } else {
+                    // Marka/Model, Mühərrik, OEM axtarışı
                     const products = getProducts();
                     let results = [];
                     const q = query.toLowerCase().trim();
@@ -3823,18 +3777,18 @@
                             </div>
                         `;
                     }
-                } catch (error) {
-                    VinUI.showError('Axtarış zamanı xəta baş verdi: ' + error.message);
                 }
+            } catch (error) {
+                console.error('Axtarış xətası:', error);
+                VinUI.showError(error.message || 'Axtarış zamanı xəta baş verdi.');
             }
         }
 
-        // Qlobal funksiya
+        // Qlobal funksiyalar
         function searchByVin() {
             performSearch();
         }
 
-        // Səbətə əlavə et (axtarış nəticələrindən)
         function addToCartFromSearch(productId) {
             const product = getProducts().find(p => p.id === productId);
             if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
@@ -3862,7 +3816,7 @@
 
 
         // =============================================================
-        // BACKUP
+        // BACKUP (dəyişməz)
         // =============================================================
         function autoBackup() {
             try {
@@ -3907,7 +3861,6 @@
         // =============================================================
         initApp();
 
-        // Global funksiyalar
         window.openProductModal = openProductModal;
         window.editProduct = editProduct;
         window.deleteProduct = deleteProduct;

@@ -3,50 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoParts ERP</title>
+    <title>AVTO - AutoParts ERP</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        :root {
-    /* ... mövcud dəyişənlər ... */
-    --bg: #f5f0eb;  /* yeni açıq bej/boz fon */
-    --surface: #ffffff;
-    --surface2: #faf6f2;
-    --primary: #c0392b;  /* avtomobil markasına uyğun qırmızı */
-    --primary-light: #fde8e5;
-    --primary-dark: #a93226;
-    /* ... qalanları eyni ... */
-}
-
-/* Dark mode üçün */
-.dark {
-    --bg: #1a1410;
-    --surface: #2c221c;
-    --surface2: #3d2f27;
-    --text: #f0ebe6;
-    --text2: #c4b5a8;
-    --text3: #a09082;
-    --border: #4a3a30;
-    --primary: #e74c3c;
-    --primary-light: #3d2a24;
-    --primary-dark: #c0392b;
-}
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg: #f0f4f9;
+            --bg: #f5f0eb;
             --surface: #ffffff;
-            --surface2: #f8fafc;
-            --text: #0b1a33;
-            --text2: #3a4a6b;
-            --text3: #6a7b9c;
-            --primary: #1a5cff;
-            --primary-light: #e8eeff;
-            --primary-dark: #0d3fb8;
+            --surface2: #faf6f2;
+            --text: #1a1410;
+            --text2: #5a4a3a;
+            --text3: #8a7a6a;
+            --primary: #c0392b;
+            --primary-light: #fde8e5;
+            --primary-dark: #a93226;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --border: #dce3ed;
+            --border: #e0d6ce;
             --shadow: 0 8px 32px rgba(0,0,0,0.06);
             --shadow-lg: 0 20px 60px rgba(0,0,0,0.10);
             --radius: 16px;
@@ -57,18 +33,16 @@
             --navbar-h: 70px;
         }
         .dark {
-            --bg: #0d1424;
-            --surface: #18213a;
-            --surface2: #1f2a48;
-            --text: #edf2f7;
-            --text2: #b0c4de;
-            --text3: #7a8aa8;
-            --border: #2a3655;
-            --shadow: 0 8px 32px rgba(0,0,0,0.3);
-            --shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
-            --glass: rgba(24,33,58,0.80);
-            --glass-border: rgba(255,255,255,0.06);
-            --primary-light: #1a2a5a;
+            --bg: #1a1410;
+            --surface: #2c221c;
+            --surface2: #3d2f27;
+            --text: #f0ebe6;
+            --text2: #c4b5a8;
+            --text3: #a09082;
+            --border: #4a3a30;
+            --primary: #e74c3c;
+            --primary-light: #3d2a24;
+            --primary-dark: #c0392b;
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -144,7 +118,7 @@
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
 
-        /* ===== APP (login səhifəsi yoxdur, birbaşa app görünür) ===== */
+        /* ===== APP ===== */
         #app {
             display: block !important;
             min-height: 100vh;
@@ -166,7 +140,19 @@
             padding: 0 2rem;
             gap: 1rem;
         }
-        .navbar .brand { font-weight: 800; font-size: 1.3rem; display: flex; align-items: center; gap: 0.6rem; color: var(--text); }
+        .navbar .brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text);
+        }
+        .navbar .brand .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
         .navbar .brand i { color: var(--primary); }
         .navbar .spacer { flex: 1; }
         .navbar .nav-links { display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; }
@@ -412,12 +398,14 @@
             .stats-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
             .form-row-3 { grid-template-columns: 1fr; }
             .modal { padding: 1.2rem; margin: 0.5rem; }
+            .navbar .brand .logo-img { height: 32px; }
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .stat-card .stat-value { font-size: 1.2rem; }
             .navbar { padding: 0 0.8rem; }
             .navbar .brand { font-size: 1rem; }
+            .navbar .brand .logo-img { height: 28px; }
         }
         /* Print */
         @media print {
@@ -427,6 +415,31 @@
             .page { display: block !important; }
             .page:not(.active) { display: none !important; }
         }
+
+        /* VIN xəta stili */
+        .vin-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border-left: 5px solid var(--danger);
+        }
+        .dark .vin-error {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -434,12 +447,19 @@
     <!-- TOAST CONTAINER -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ===== APP (birbaşa, login yoxdur) ===== -->
+    <!-- ===== APP ===== -->
     <div id="app">
         <!-- NAVBAR -->
         <nav class="navbar glass" id="navbar">
             <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-            <div class="brand"><i class="fas fa-car"></i> AutoParts</div>
+            <div class="brand">
+                <!-- LOGO (SVG olaraq) -->
+                <svg class="logo-img" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="120" height="40" rx="8" fill="var(--primary)" />
+                    <text x="12" y="27" font-family="Inter, sans-serif" font-weight="800" font-size="22" fill="white">AVTO</text>
+                    <text x="74" y="27" font-family="Inter, sans-serif" font-weight="400" font-size="12" fill="#ffd4cc">AUTO</text>
+                </svg>
+            </div>
             <div class="spacer"></div>
             <div class="nav-links" id="navLinks">
                 <button class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
@@ -453,6 +473,7 @@
                 <button class="nav-item" data-page="debts"><i class="fas fa-hand-holding-usd"></i> Borclar</button>
                 <button class="nav-item" data-page="customers"><i class="fas fa-address-book"></i> Müştərilər</button>
                 <button class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Hesabatlar</button>
+                <button class="nav-item" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
             </div>
             <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
             <div class="user-badge">
@@ -475,6 +496,7 @@
             <button class="nav-item" data-page="debts"><i class="fas fa-hand-holding-usd"></i> Borclar</button>
             <button class="nav-item" data-page="customers"><i class="fas fa-address-book"></i> Müştərilər</button>
             <button class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Hesabatlar</button>
+            <button class="nav-item" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
         </div>
 
         <!-- MAIN CONTENT -->
@@ -652,6 +674,17 @@
                     <div id="reportContent"><p class="text-muted">Tarix seçib "Hesabat yarat" düyməsini sıxın.</p></div>
                 </div>
             </div>
+
+            <!-- VIN SEARCH -->
+            <div class="page" id="page-vin-search">
+                <div id="vinSearchApp">
+                    <div class="text-center" style="padding:3rem;">
+                        <div class="spinner" style="display:inline-block;"></div>
+                        <p style="margin-top:1rem;">VIN axtarış modulu yüklənir...</p>
+                    </div>
+                </div>
+            </div>
+
         </div><!-- /main-content -->
     </div><!-- /app -->
 
@@ -810,7 +843,7 @@
     <!-- JAVASCRIPT -->
     <!-- ============================================================ -->
     <script>
-        console.log('🚗 AutoParts ERP - birbaşa dashboard rejimi');
+        console.log('🚗 AVTO AutoParts ERP - birbaşa dashboard rejimi');
 
         // =============================================================
         // STATE
@@ -880,10 +913,9 @@
         function setCustomers(c) { state.customers = c; saveToStorage('customers', c); }
 
         // =============================================================
-        // INIT - BİRBAŞA İŞƏ SAL
+        // INIT
         // =============================================================
         function initApp() {
-            // Bütün məlumatları yüklə
             state.products = loadFromStorage('products');
             state.suppliers = loadFromStorage('suppliers');
             state.purchases = loadFromStorage('purchases');
@@ -894,11 +926,9 @@
             state.debts = loadFromStorage('debts');
             state.customers = loadFromStorage('customers');
 
-            // İstifadəçi məlumatlarını göstər
             document.getElementById('userName').textContent = state.user.name;
             document.getElementById('userAvatar').textContent = state.user.name[0].toUpperCase();
 
-            // Hər şeyi render et
             applyRolePermissions();
             renderDashboard();
             renderProducts();
@@ -912,12 +942,10 @@
             renderPosProducts();
             populateSelects();
 
-            // Tarix
             document.getElementById('dashboardDate').textContent = 'Bugün: ' + new Date().toLocaleDateString('az-AZ', {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
             });
 
-            // Theme
             if (localStorage.getItem('autoparts_theme') === 'dark') {
                 document.body.classList.add('dark');
                 document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
@@ -930,13 +958,11 @@
         }
 
         function applyRolePermissions() {
-            // Bütün menyular açıqdır (admin kimi)
             document.querySelectorAll('.nav-item[data-page]').forEach(el => { el.style.display = ''; });
             document.querySelectorAll('.page').forEach(el => { el.style.display = ''; });
         }
 
         function setupEventListeners() {
-            // Logout - sadəcə səhifəni yenilə (sessiyanı təmizləmir, amma yeniləyir)
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 if (confirm('Çıxış etmək istədiyinizə əminsiniz?')) {
                     localStorage.clear();
@@ -944,7 +970,6 @@
                 }
             });
 
-            // Naviqasiya
             document.querySelectorAll('.nav-item[data-page]').forEach(el => {
                 el.addEventListener('click', function() {
                     const page = this.dataset.page;
@@ -964,7 +989,6 @@
                 this.innerHTML = state.dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             });
 
-            // Form submit-lər
             document.getElementById('productForm').addEventListener('submit', function(e) { e.preventDefault(); saveProduct(); });
             document.getElementById('supplierForm').addEventListener('submit', function(e) { e.preventDefault(); saveSupplier(); });
             document.getElementById('purchaseForm').addEventListener('submit', function(e) { e.preventDefault(); completePurchase(); });
@@ -975,20 +999,23 @@
             document.getElementById('taxForm').addEventListener('submit', function(e) { e.preventDefault(); saveTaxPayment(); });
             document.getElementById('debtForm').addEventListener('submit', function(e) { e.preventDefault(); saveDebt(); });
 
-            // Modalları bağla
             document.querySelectorAll('.modal-overlay').forEach(el => {
                 el.addEventListener('click', function(e) {
                     if (e.target === this) this.classList.remove('active');
                 });
             });
 
-            // Report tarixləri
             const d = new Date();
             document.getElementById('reportEnd').value = today();
             const start = new Date(d);
             start.setDate(d.getDate() - 30);
             document.getElementById('reportStart').value = start.toISOString().split('T')[0];
         }
+
+        // =============================================================
+        // NAVIGATE - VIN AXTARIŞ ÜÇÜN YÜKLƏMƏ
+        // =============================================================
+        let vinSearchLoaded = false;
 
         function navigateTo(page) {
             document.querySelectorAll('.nav-item[data-page]').forEach(el => {
@@ -1000,7 +1027,11 @@
             document.querySelectorAll('.page').forEach(el => {
                 el.classList.toggle('active', el.id === 'page-' + page);
             });
-            // Yenilə
+
+            if (page === 'vin-search') {
+                loadVinSearchContent();
+            }
+
             if (page === 'dashboard') renderDashboard();
             if (page === 'products') renderProducts();
             if (page === 'suppliers') renderSuppliers();
@@ -1011,6 +1042,45 @@
             if (page === 'debts') renderDebts();
             if (page === 'customers') renderCustomers();
             if (page === 'sales') { renderPosProducts(); renderPosCart(); }
+        }
+
+        function loadVinSearchContent() {
+            if (vinSearchLoaded) return;
+            const container = document.getElementById('vinSearchApp');
+            container.innerHTML = `
+                <div class="text-center" style="padding:3rem;">
+                    <div class="spinner" style="display:inline-block;"></div>
+                    <p style="margin-top:1rem;">VIN axtarış modulu yüklənir...</p>
+                </div>
+            `;
+
+            fetch('vin-search.html')
+                .then(response => {
+                    if (!response.ok) throw new Error('Fayl tapılmadı (status: ' + response.status + ')');
+                    return response.text();
+                })
+                .then(html => {
+                    container.innerHTML = html;
+                    vinSearchLoaded = true;
+                    if (typeof window.loadVinSearch === 'function') {
+                        window.loadVinSearch();
+                    }
+                    const vinInput = document.getElementById('vinInput');
+                    if (vinInput) vinInput.focus();
+                    console.log('✅ VIN axtarış modulu yükləndi!');
+                })
+                .catch(err => {
+                    container.innerHTML = `
+                        <div class="vin-error">
+                            <i class="fas fa-exclamation-circle"></i> 
+                            VIN axtarış modulu yüklənmədi: ${err.message}
+                            <br><small>Zəhmət olmasa <strong>vin-search.html</strong> faylının mövcud olduğunu yoxlayın.</small>
+                            <br><br>
+                            <button class="btn btn-primary btn-sm" onclick="loadVinSearchContent()">Yenidən cəhd et</button>
+                        </div>
+                    `;
+                    console.error('VIN yükləmə xətası:', err);
+                });
         }
 
         // =============================================================
@@ -1085,7 +1155,7 @@
             if (dailyChartInstance) dailyChartInstance.destroy();
             dailyChartInstance = new Chart(ctx1, {
                 type: 'bar',
-                data: { labels: days, datasets: [{ label: 'Satış (₼)', data: amounts, backgroundColor: '#1a5cff', borderRadius: 6 }] },
+                data: { labels: days, datasets: [{ label: 'Satış (₼)', data: amounts, backgroundColor: '#c0392b', borderRadius: 6 }] },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
 
@@ -1099,13 +1169,13 @@
             if (topChartInstance) topChartInstance.destroy();
             topChartInstance = new Chart(ctx2, {
                 type: 'doughnut',
-                data: { labels: sorted.map(x => x[0]), datasets: [{ data: sorted.map(x => x[1]), backgroundColor: ['#1a5cff','#10b981','#f59e0b','#ef4444','#8b5cf6'] }] },
+                data: { labels: sorted.map(x => x[0]), datasets: [{ data: sorted.map(x => x[1]), backgroundColor: ['#c0392b','#e67e22','#f1c40f','#2ecc71','#3498db'] }] },
                 options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } }
             });
         }
 
         // =============================================================
-        // PRODUCTS (tam funksiyalar)
+        // PRODUCTS (tam)
         // =============================================================
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
@@ -1322,8 +1392,11 @@
         }
 
         // =============================================================
-        // SUPPLIERS (tam)
+        // SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
+        // (Əvvəlki versiyalardakı kimi, yer qənaəti üçün burada qısa saxlanır)
         // =============================================================
+
+        // SUPPLIERS
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
             let list = getSuppliers();
@@ -1400,11 +1473,8 @@
             toast('Təchizatçı silindi!', 'danger');
         }
 
-        // =============================================================
-        // PURCHASES (tam)
-        // =============================================================
+        // PURCHASES
         let purchaseItems = [];
-
         function renderPurchases() {
             const list = getPurchases();
             const tbody = document.getElementById('purchasesTable');
@@ -1541,9 +1611,7 @@
 
         function populateSelects() { populatePurchaseSelects(); document.getElementById('supplierList').innerHTML = getSuppliers().map(s => `<option value="${s.name}">`).join(''); }
 
-        // =============================================================
-        // FINANCE (tam)
-        // =============================================================
+        // FINANCE
         function renderFinance() {
             const list = getFinance();
             const revenue = list.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
@@ -1592,9 +1660,7 @@
             toast('Xərc əlavə edildi!');
         }
 
-        // =============================================================
-        // EMPLOYEES (tam)
-        // =============================================================
+        // EMPLOYEES
         function renderEmployees() {
             const list = getEmployees();
             const tbody = document.getElementById('employeesTable');
@@ -1685,9 +1751,7 @@
             renderDashboard();
         }
 
-        // =============================================================
-        // TAXES (tam)
-        // =============================================================
+        // TAXES
         function renderTaxes() {
             const list = getTaxes();
             const quarters = { 1:0, 2:0, 3:0, 4:0 };
@@ -1729,9 +1793,7 @@
             toast('Vergi ödənişi yadda saxlandı!');
         }
 
-        // =============================================================
-        // DEBTS (tam)
-        // =============================================================
+        // DEBTS
         function renderDebts() {
             const list = getDebts();
             const tbody = document.getElementById('debtsTable');
@@ -1823,9 +1885,7 @@
             toast(`${fmtMoney(payAmount)} ödəniş edildi!`);
         }
 
-        // =============================================================
-        // CUSTOMERS (tam)
-        // =============================================================
+        // CUSTOMERS
         function renderCustomers() {
             const search = document.getElementById('customerSearch').value.toLowerCase().trim();
             let list = getCustomers();
@@ -1900,9 +1960,7 @@
             toast('Müştəri silindi!', 'danger');
         }
 
-        // =============================================================
-        // POS (SALES)
-        // =============================================================
+        // POS
         function renderPosProducts() {
             const search = document.getElementById('posSearch').value.toLowerCase().trim();
             let list = getProducts();
@@ -2040,7 +2098,7 @@
 
         function printReceipt(sale) {
             if (!sale) { const sales = getSales(); if (sales.length === 0) { toast('Satış yoxdur!', 'warning'); return; } sale = sales[sales.length - 1]; }
-            let receipt = `=== AUTOPARTS ERP ===\n`;
+            let receipt = `=== AVTO AUTO ===\n`;
             receipt += `Satış #${sale.id}\n`;
             receipt += `Tarix: ${sale.date} ${sale.time || ''}\n`;
             receipt += `Ödəniş: ${sale.paymentMethod || 'nağd'}\n`;
@@ -2051,7 +2109,7 @@
             receipt += `CƏMİ: ${fmtMoney(sale.total)}\n`;
             receipt += `========================\n`;
             receipt += `ƏDV daxil deyil\n`;
-            receipt += `AutoParts ERP - ${new Date().toLocaleString('az-AZ')}\n`;
+            receipt += `AVTO AutoParts - ${new Date().toLocaleString('az-AZ')}\n`;
             const win = window.open('', '_blank', 'width=400,height=600');
             if (win) {
                 win.document.write(`<pre style="font-family:monospace;padding:20px;">${receipt}</pre>`);
@@ -2061,9 +2119,7 @@
             } else alert(receipt);
         }
 
-        // =============================================================
         // REPORTS
-        // =============================================================
         function generateReport() {
             const start = document.getElementById('reportStart').value;
             const end = document.getElementById('reportEnd').value;
@@ -2155,11 +2211,9 @@
         }
 
         // =============================================================
-        // BOOT - BİRBAŞA İŞƏ SAL
+        // BOOT
         // =============================================================
-        // Login səhifəsi yoxdur, birbaşa app-i göstər
         document.getElementById('app').style.display = 'block';
-        // İşə sal
         initApp();
 
         // Global funksiyalar
@@ -2208,6 +2262,7 @@
         window.closeModal = closeModal;
         window.openModal = openModal;
         window.toast = toast;
+        window.loadVinSearchContent = loadVinSearchContent;
 
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.shiftKey && e.key === 'B') {
@@ -2215,9 +2270,10 @@
             }
         });
 
-        console.log('✅ AutoParts ERP - birbaşa dashboard rejimi işə salındı!');
+        console.log('✅ AVTO AutoParts ERP hazırdır!');
         console.log('📊 Məlumatlar localstorage-də saxlanılır.');
         console.log('⌨️ Ctrl+Shift+B - backup bərpa');
+        console.log('🔍 VIN axtarış modulu navbar-dan əlçatandır.');
     </script>
 </body>
 </html>

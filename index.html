@@ -11,7 +11,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
     <style>
-        /* ===== AUROS DESIGN SYSTEM — 366 AUTO ===== */
+        /* ============================================================
+           AUROS DESIGN SYSTEM — 366 AUTO
+           ============================================================ */
         :root {
             --color-liquid-abyss: #012624;
             --color-liquid-deep: #011d1c;
@@ -835,7 +837,7 @@
         }
 
         /* ============================================================
-           VIN AXTARIŞ — YALNIZ VIN
+           VIN AXTARIŞ — YALNIZ VIN, DAHA ÇOX MƏLUMAT
            ============================================================ */
         .vin-search-container {
             max-width: 1200px;
@@ -2362,11 +2364,8 @@
 
 
         // =============================================================
-        // === MÖVCUD SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS ===
-        // (Qısa saxlanılır, tam işləkdir)
+        // === MÖVCUD SUPPLIERS ===
         // =============================================================
-
-        // === SUPPLIERS ===
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
             let list = getSuppliers();
@@ -2447,7 +2446,10 @@
             toast('Təchizatçı silindi!', 'danger');
         }
 
-        // === PURCHASES ===
+
+        // =============================================================
+        // === MÖVCUD PURCHASES ===
+        // =============================================================
         let purchaseItems = [];
 
         function renderPurchases() {
@@ -2595,7 +2597,10 @@
             document.getElementById('supplierList').innerHTML = getSuppliers().map(s =>
                 `<option value="${s.name}">`).join(''); }
 
-        // === FINANCE ===
+
+        // =============================================================
+        // === MÖVCUD FINANCE ===
+        // =============================================================
         function renderFinance() {
             const list = getFinance();
             const revenue = list.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
@@ -2649,7 +2654,10 @@
             toast('Xərc əlavə edildi!');
         }
 
-        // === EMPLOYEES ===
+
+        // =============================================================
+        // === MÖVCUD EMPLOYEES ===
+        // =============================================================
         function renderEmployees() {
             const list = getEmployees();
             const tbody = document.getElementById('employeesTable');
@@ -2742,7 +2750,10 @@
             renderDashboard();
         }
 
-        // === TAXES ===
+
+        // =============================================================
+        // === MÖVCUD TAXES ===
+        // =============================================================
         function renderTaxes() {
             const list = getTaxes();
             const quarters = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -2787,7 +2798,10 @@
             toast('Vergi ödənişi yadda saxlandı!');
         }
 
-        // === DEBTS ===
+
+        // =============================================================
+        // === MÖVCUD DEBTS ===
+        // =============================================================
         function renderDebts() {
             const list = getDebts();
             const tbody = document.getElementById('debtsTable');
@@ -2881,7 +2895,10 @@
             toast(`${fmtMoney(payAmount)} ödəniş edildi!`);
         }
 
-        // === CUSTOMERS ===
+
+        // =============================================================
+        // === MÖVCUD CUSTOMERS ===
+        // =============================================================
         function renderCustomers() {
             const search = document.getElementById('customerSearch').value.toLowerCase().trim();
             let list = getCustomers();
@@ -2960,7 +2977,10 @@
             toast('Müştəri silindi!', 'danger');
         }
 
-        // === POS ===
+
+        // =============================================================
+        // === MÖVCUD POS ===
+        // =============================================================
         function renderPosProducts() {
             const search = document.getElementById('posSearch').value.toLowerCase().trim();
             let list = getProducts();
@@ -3132,7 +3152,10 @@
             } else alert(receipt);
         }
 
-        // === REPORTS ===
+
+        // =============================================================
+        // === MÖVCUD REPORTS ===
+        // =============================================================
         function generateReport() {
             const start = document.getElementById('reportStart').value;
             const end = document.getElementById('reportEnd').value;
@@ -3185,18 +3208,28 @@
 
 
         // =============================================================
-        // === YENİ — YALNIZ VIN AXTARIŞI (MODULLU, XƏTASIZ) ===
+        // === YENİ — YALNIZ VIN AXTARIŞI (MODULLU, DAHA ÇOX MƏLUMAT) ===
         // =============================================================
 
-        // -------- 1. VinAPI --------
+        // -------- 1. VinAPI (NHTSA DecodeVinValues + DB.VIN) --------
         const VinAPI = {
+            // NHTSA DecodeVinValues - daha çox məlumat üçün
             async fetchNHTSA(vin) {
+                // Əvvəlcə DecodeVinValues endpoint-i ilə cəhd edək
                 const response = await fetch(
-                    `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
+                    `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`);
                 if (!response.ok) throw new Error(`NHTSA API xətası: ${response.status}`);
                 const data = await response.json();
                 if (!data.Results || data.Results.length === 0) throw new Error('NHTSA məlumat tapılmadı');
-                return data.Results;
+                // Cavab Results[0] obyektindən məlumatları çıxar
+                const result = data.Results[0];
+                const variables = [];
+                for (const key in result) {
+                    if (result.hasOwnProperty(key) && key !== 'ErrorCode' && key !== 'ErrorText') {
+                        variables.push({ Variable: key, Value: result[key] });
+                    }
+                }
+                return variables;
             },
 
             async fetchDBVin(vin) {
@@ -3218,6 +3251,8 @@
                     { Variable: 'ExteriorColor', Value: data.color || data.exterior_color || '' },
                     { Variable: 'InteriorColor', Value: data.interior_color || '' },
                     { Variable: 'Trim', Value: data.trim || '' },
+                    { Variable: 'Series', Value: data.series || '' },
+                    { Variable: 'VehicleType', Value: data.vehicle_type || '' },
                 ];
             },
 
@@ -3231,15 +3266,27 @@
 
                 try {
                     results = await this.fetchNHTSA(vin);
-                    source = 'NHTSA';
+                    source = 'NHTSA (DecodeVinValues)';
                 } catch (e1) {
-                    console.warn('NHTSA uğursuz, DB.VIN-ə keçilir:', e1.message);
+                    console.warn('NHTSA DecodeVinValues uğursuz, DecodeVin-ə keçilir:', e1.message);
                     try {
-                        results = await this.fetchDBVin(vin);
-                        source = 'DB.VIN';
+                        // Əgər DecodeVinValues işləməsə, DecodeVin endpoint-inə keç
+                        const response = await fetch(
+                            `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
+                        if (!response.ok) throw new Error(`NHTSA DecodeVin xətası: ${response.status}`);
+                        const data = await response.json();
+                        if (!data.Results || data.Results.length === 0) throw new Error('NHTSA məlumat tapılmadı');
+                        results = data.Results;
+                        source = 'NHTSA (DecodeVin)';
                     } catch (e2) {
-                        console.error('Hər iki API uğursuz:', e2.message);
-                        throw new Error('VIN məlumatı tapılmadı. Zəhmət olmasa VIN-i yoxlayın.');
+                        console.warn('NHTSA DecodeVin uğursuz, DB.VIN-ə keçilir:', e2.message);
+                        try {
+                            results = await this.fetchDBVin(vin);
+                            source = 'DB.VIN';
+                        } catch (e3) {
+                            console.error('Hər üç API uğursuz:', e3.message);
+                            throw new Error('VIN məlumatı tapılmadı. Zəhmət olmasa VIN-i yoxlayın.');
+                        }
                     }
                 }
 
@@ -3269,6 +3316,13 @@
                     exteriorColor: map.ExteriorColor || 'Məlumat tapılmadı',
                     interiorColor: map.InteriorColor || 'Məlumat tapılmadı',
                     trim: map.Trim || 'Məlumat tapılmadı',
+                    series: map.Series || 'Məlumat tapılmadı',
+                    vehicleType: map.VehicleType || 'Məlumat tapılmadı',
+                    engineModel: map.EngineModel || 'Məlumat tapılmadı',
+                    engineConfiguration: map.EngineConfiguration || 'Məlumat tapılmadı',
+                    fuelInjectionType: map.FuelInjectionType || 'Məlumat tapılmadı',
+                    doors: map.Doors || 'Məlumat tapılmadı',
+                    steering: map.Steering || 'Məlumat tapılmadı',
                     wmi: (vin || '').substring(0, 3) || 'Məlumat tapılmadı',
                     vds: (vin || '').substring(3, 9) || 'Məlumat tapılmadı',
                     vis: (vin || '').substring(9, 17) || 'Məlumat tapılmadı',
@@ -3321,7 +3375,7 @@
             }
         };
 
-        // -------- 3. VinMatcher --------
+        // -------- 3. VinMatcher (anbar məhsulları ilə uyğunlaşdırma) --------
         const VinMatcher = {
             normalize(str) {
                 if (!str) return '';
@@ -3359,8 +3413,8 @@
                     }
 
                     let engineMatch = false;
-                    if (pEngine && vehicle.engineCode) {
-                        const engNorm = this.normalize(vehicle.engineCode);
+                    if (pEngine && vehicle.engineModel) {
+                        const engNorm = this.normalize(vehicle.engineModel);
                         engineMatch = pEngine.includes(engNorm) || engNorm.includes(pEngine);
                     }
 
@@ -3379,39 +3433,6 @@
 
                     return false;
                 });
-            },
-
-            getExternalParts(make) {
-                const db = {
-                    'honda': [
-                        { name: 'Yağ filtri', code: '15400-PLM-A02', price: 25.99, supplier: 'partsouq.com' },
-                        { name: 'Hava filtri', code: '17220-5A2-A00', price: 18.50, supplier: 'emex.ru' },
-                        { name: 'Əyləc diskləri', code: '45251-SDA-A00', price: 89.99, supplier: 'partsouq.com' },
-                    ],
-                    'bmw': [
-                        { name: 'Yağ filtri', code: '11-42-7-632-943', price: 29.99, supplier: 'emex.ru' },
-                        { name: 'Hava filtri', code: '13-71-8-615-367', price: 22.50, supplier: 'partsouq.com' },
-                        { name: 'Əyləc diskləri', code: '34-11-6-852-981', price: 120.00, supplier: 'emex.ru' },
-                    ],
-                    'toyota': [
-                        { name: 'Yağ filtri', code: '90915-YZZE1', price: 22.99, supplier: 'partsouq.com' },
-                        { name: 'Hava filtri', code: '17801-0V010', price: 16.50, supplier: 'emex.ru' },
-                        { name: 'Əyləc diskləri', code: '43512-0W050', price: 75.00, supplier: 'partsouq.com' },
-                    ],
-                    'mercedes': [
-                        { name: 'Yağ filtri', code: 'A0001805409', price: 34.99, supplier: 'emex.ru' },
-                        { name: 'Hava filtri', code: 'A2760940304', price: 28.50, supplier: 'partsouq.com' },
-                    ],
-                    'audi': [
-                        { name: 'Yağ filtri', code: '06L115562J', price: 32.99, supplier: 'emex.ru' },
-                        { name: 'Hava filtri', code: '8K0133843A', price: 26.50, supplier: 'partsouq.com' },
-                    ],
-                };
-                const key = Object.keys(db).find(k => make.toLowerCase().includes(k) || k.includes(make.toLowerCase()));
-                return key ? db[key] : [
-                    { name: 'Yağ filtri (universal)', code: 'OIL-001', price: 19.99, supplier: 'partsouq.com' },
-                    { name: 'Hava filtri (universal)', code: 'AIR-001', price: 14.50, supplier: 'emex.ru' },
-                ];
             }
         };
 
@@ -3438,15 +3459,52 @@
                 `;
             },
 
-            renderResult(vin, vehicle, source, matchedProducts, externalParts) {
+            renderResult(vin, vehicle, source, matchedProducts) {
                 const container = document.getElementById('vinResult');
+
+                // Bütün sahələri müəyyənləşdir və göstər
+                const fields = [
+                    { label: 'Marka', key: 'make' },
+                    { label: 'Model', key: 'model' },
+                    { label: 'İl', key: 'year' },
+                    { label: 'Kuzov', key: 'bodyClass' },
+                    { label: 'Series', key: 'series' },
+                    { label: 'Trim', key: 'trim' },
+                    { label: 'Mühərrik silindr', key: 'engineCylinders' },
+                    { label: 'Mühərrik həcmi (L)', key: 'displacementL' },
+                    { label: 'Mühərrik modeli', key: 'engineModel' },
+                    { label: 'Mühərrik konfiqurasiyası', key: 'engineConfiguration' },
+                    { label: 'Yanacaq növü', key: 'fuelType' },
+                    { label: 'Yanacaq vurma sistemi', key: 'fuelInjectionType' },
+                    { label: 'Transmissiya', key: 'transmission' },
+                    { label: 'Ötürücü sistemi', key: 'driveType' },
+                    { label: 'İstehsal ölkəsi', key: 'plantCountry' },
+                    { label: 'Xarici rəng', key: 'exteriorColor' },
+                    { label: 'Daxili rəng', key: 'interiorColor' },
+                    { label: 'Qapı sayı', key: 'doors' },
+                    { label: 'Sükan tərəfi', key: 'steering' },
+                    { label: 'Nəqliyyat növü', key: 'vehicleType' },
+                    { label: 'WMI', key: 'wmi' },
+                    { label: 'VDS', key: 'vds' },
+                    { label: 'VIS', key: 'vis' },
+                ];
+
+                let specsHtml = fields.map(f => {
+                    const value = vehicle[f.key] || 'Məlumat tapılmadı';
+                    return `
+                        <div class="vin-spec-item">
+                            <div class="label">${f.label}</div>
+                            <div class="value">${value}</div>
+                        </div>
+                    `;
+                }).join('');
 
                 let html = `
                     <div class="vin-vehicle-card">
                         <div class="flex-between">
                             <div>
                                 <div class="vehicle-title">${vehicle.make} ${vehicle.model}</div>
-                                <div class="vehicle-subtitle">${vehicle.year} • ${vehicle.bodyClass}</div>
+                                <div class="vehicle-subtitle">${vehicle.year}</div>
                             </div>
                             <div style="font-size:0.8rem;color:var(--surface-text-secondary);font-family:monospace;text-align:right;">
                                 <div>${vin}</div>
@@ -3459,30 +3517,12 @@
                         </div>
 
                         <div class="vin-specs-grid">
-                            <div class="vin-spec-item"><div class="label">Marka</div><div class="value">${vehicle.make}</div></div>
-                            <div class="vin-spec-item"><div class="label">Model</div><div class="value">${vehicle.model}</div></div>
-                            <div class="vin-spec-item"><div class="label">İl</div><div class="value">${vehicle.year}</div></div>
-                            <div class="vin-spec-item"><div class="label">Kuzov</div><div class="value">${vehicle.bodyClass}</div></div>
-                            <div class="vin-spec-item"><div class="label">Mühərrik</div><div class="value">${vehicle.engineCylinders} sil. ${vehicle.displacementL !== 'Məlumat tapılmadı' ? vehicle.displacementL + 'L' : ''}</div></div>
-                            <div class="vin-spec-item"><div class="label">Yanacaq</div><div class="value">${vehicle.fuelType}</div></div>
-                            <div class="vin-spec-item"><div class="label">Transmissiya</div><div class="value">${vehicle.transmission}</div></div>
-                            <div class="vin-spec-item"><div class="label">Ötürücü</div><div class="value">${vehicle.driveType}</div></div>
-                            <div class="vin-spec-item"><div class="label">İstehsal ölkəsi</div><div class="value">${vehicle.plantCountry}</div></div>
-                            <div class="vin-spec-item"><div class="label">Xarici rəng</div><div class="value">${vehicle.exteriorColor}</div></div>
-                            <div class="vin-spec-item"><div class="label">Daxili rəng</div><div class="value">${vehicle.interiorColor}</div></div>
-                            <div class="vin-spec-item"><div class="label">Trim</div><div class="value">${vehicle.trim}</div></div>
-                            <div class="vin-spec-item"><div class="label">WMI</div><div class="value" style="font-family:monospace;">${vehicle.wmi}</div></div>
-                            <div class="vin-spec-item"><div class="label">VDS</div><div class="value" style="font-family:monospace;">${vehicle.vds}</div></div>
-                            <div class="vin-spec-item"><div class="label">VIS</div><div class="value" style="font-family:monospace;">${vehicle.vis}</div></div>
-                        </div>
-
-                        <div class="vin-external-links">
-                            <a href="https://partsouq.com/en/search/search?q=${vin}" target="_blank"><i class="fas fa-external-link-alt"></i> Partsouq.com</a>
-                            <a href="https://emex.ru/search?vin=${vin}" target="_blank"><i class="fas fa-external-link-alt"></i> Emex.ru</a>
+                            ${specsHtml}
                         </div>
                     </div>
                 `;
 
+                // Anbar məhsulları
                 if (matchedProducts && matchedProducts.length > 0) {
                     html += `
                         <div class="vin-vehicle-card">
@@ -3518,28 +3558,6 @@
                                 <i class="fas fa-box-open"></i>
                                 <p>Bu avtomobil üçün anbarımızda uyğun məhsul tapılmadı.</p>
                                 <p class="text-muted fs-small">"Məhsullar" səhifəsindən yeni məhsul əlavə edə bilərsiniz.</p>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                if (externalParts && externalParts.length > 0) {
-                    html += `
-                        <div class="vin-vehicle-card">
-                            <div class="vin-parts-section" style="border-top:none;padding-top:0;">
-                                <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--surface-text-secondary);font-weight:500;">
-                                    <i class="fas fa-globe"></i> Xarici Saytlardan Tövsiyələr
-                                </h4>
-                                <div class="vin-parts-grid">
-                                    ${externalParts.map(part => `
-                                        <div class="vin-part-card" onclick="window.open('https://${part.supplier}/search?q=${part.code}', '_blank')">
-                                            <div class="part-name">${part.name}</div>
-                                            <div class="part-code">${part.code}</div>
-                                            <div class="part-price">${part.price.toFixed(2)} ₼</div>
-                                            <div class="part-supplier"><i class="fas fa-store"></i> ${part.supplier}</div>
-                                        </div>
-                                    `).join('')}
-                                </div>
                             </div>
                         </div>
                     `;
@@ -3602,8 +3620,7 @@
                 const vehicle = result.data;
                 const products = getProducts();
                 const matchedProducts = VinMatcher.matchProducts(products, vehicle);
-                const externalParts = VinMatcher.getExternalParts(vehicle.make);
-                VinUI.renderResult(vin, vehicle, result.source, matchedProducts, externalParts);
+                VinUI.renderResult(vin, vehicle, result.source, matchedProducts);
             } catch (error) {
                 console.error('Axtarış xətası:', error);
                 VinUI.showError(error.message || 'VIN axtarışı zamanı xəta baş verdi.');
@@ -3734,7 +3751,7 @@
         console.log('✅ 366 AUTO — Yalnız VIN axtarışı aktivdir!');
         console.log('📦 Modullar: VinAPI, VinCache, VinMatcher, VinUI, VinController');
         console.log('📊 Məlumatlar localStorage-də saxlanılır.');
-        console.log('🔍 VIN axtarışı: NHTSA (əsas) + DB.VIN (ehtiyat)');
+        console.log('🔍 VIN axtarışı: NHTSA DecodeVinValues (əsas) → NHTSA DecodeVin (ehtiyat) → DB.VIN (son ehtiyat)');
         console.log('✨ 20,000 hissəcikli parallax sfera');
         console.log('⌨️ Ctrl+Shift+B - backup bərpa');
     </script>

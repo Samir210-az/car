@@ -15,7 +15,7 @@
 
     <style>
         /* ============================================================
-           AUROS DESIGN SYSTEM — 366 AUTO (qorunub)
+           AUROS DESIGN SYSTEM — 366 AUTO
            ============================================================ */
         :root {
             --color-liquid-abyss: #012624;
@@ -1271,7 +1271,7 @@
                 <button class="nav-item" data-page="debts"><i class="fas fa-hand-holding-usd"></i> Borclar</button>
                 <button class="nav-item" data-page="customers"><i class="fas fa-address-book"></i> Müştərilər</button>
                 <button class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Hesabatlar</button>
-                <button class="nav-item active" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
+                <button class="nav-item" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
             </div>
             <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
             <div class="user-badge">
@@ -1542,7 +1542,7 @@
 
 
     <!-- ============================================================ -->
-    <!-- MODALLAR (əvvəlki kimi, toxunulmayıb) -->
+    <!-- MODALLAR (əvvəlki kimi) -->
     <!-- ============================================================ -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
@@ -1832,7 +1832,7 @@
 
 
         // =============================================================
-        // MÖVCUD STATE (dəyişməz)
+        // MÖVCUD STATE
         // =============================================================
         const state = {
             user: { username: 'admin', role: 'admin', name: 'Admin' },
@@ -1853,7 +1853,7 @@
         };
 
         // =============================================================
-        // MÖVCUD HELPERS (dəyişməz)
+        // MÖVCUD HELPERS
         // =============================================================
         function $(id) { return document.getElementById(id); }
 
@@ -1934,7 +1934,7 @@
 
 
         // =============================================================
-        // MÖVCUD INIT (dəyişməz)
+        // MÖVCUD INIT
         // =============================================================
         function initApp() {
             state.products = loadFromStorage('products');
@@ -2127,7 +2127,7 @@
 
 
         // =============================================================
-        // MÖVCUD DASHBOARD (dəyişməz)
+        // MÖVCUD DASHBOARD
         // =============================================================
         function renderDashboard() {
             const products = getProducts();
@@ -2232,7 +2232,7 @@
 
 
         // =============================================================
-        // MÖVCUD PRODUCTS (dəyişməz)
+        // MÖVCUD PRODUCTS
         // =============================================================
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
@@ -3386,9 +3386,7 @@
             // VIN doğrulaması
             validateVin(vin) {
                 if (!vin || vin.length !== 17) return false;
-                // Sadə doğrulama: I, O, Q istisna
                 if (/[IOQ]/.test(vin)) return false;
-                // Check digit (sadələşdirilmiş)
                 const weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
                 const chars = '0123456789X';
                 let sum = 0;
@@ -3472,7 +3470,6 @@
                     let modelMatch = false;
                     if (pModel && modelNorm) {
                         modelMatch = pModel.includes(modelNorm) || modelNorm.includes(pModel);
-                        // Qısaldılmış variant
                         if (!modelMatch) {
                             const pShort = pModel.replace(/[^a-z0-9]/g, '');
                             const mShort = modelNorm.replace(/[^a-z0-9]/g, '');
@@ -3756,7 +3753,6 @@
                 // Marka/Model, Mühərrik, OEM axtarışı
                 VinUI.showLoading();
                 try {
-                    // Simulyasiya: birbaşa məhsullarda axtar
                     const products = getProducts();
                     let results = [];
                     const q = query.toLowerCase().trim();
@@ -3785,7 +3781,6 @@
                         );
                     }
 
-                    // Nəticələri göstər (məhsullar kart şəklində)
                     const container = document.getElementById('vinResult');
                     if (results.length > 0) {
                         const matchedProducts = results.slice(0, 20);
@@ -3834,7 +3829,7 @@
             }
         }
 
-        // Qlobal funksiya (index.html-də çağırmaq üçün)
+        // Qlobal funksiya
         function searchByVin() {
             performSearch();
         }
@@ -3845,7 +3840,6 @@
             if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
             if ((product.stock || 0) < 1) { toast('Stokda yoxdur!', 'danger'); return; }
 
-            // POS cart-a əlavə et
             const existing = state.posCart.find(item => item.productId === productId);
             if (existing) {
                 if ((product.stock || 0) <= existing.qty) { toast('Stokda kifayət qədər yoxdur!', 'warning'); return; }
@@ -3860,7 +3854,6 @@
             }
 
             toast(`${product.name} səbətə əlavə edildi!`, 'success');
-            // POS səhifəsinə keç
             setTimeout(() => {
                 const salesBtn = document.querySelector('.nav-item[data-page="sales"]');
                 if (salesBtn) salesBtn.click();
@@ -3869,7 +3862,7 @@
 
 
         // =============================================================
-        // BACKUP (dəyişməz)
+        // BACKUP
         // =============================================================
         function autoBackup() {
             try {
@@ -3914,7 +3907,7 @@
         // =============================================================
         initApp();
 
-        // Global funksiyalar (mövcud + yeni)
+        // Global funksiyalar
         window.openProductModal = openProductModal;
         window.editProduct = editProduct;
         window.deleteProduct = deleteProduct;

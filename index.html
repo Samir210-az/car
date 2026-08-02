@@ -2163,7 +2163,7 @@
         }
 
 
-        // ===== PRODUCTS (tam işlək) =====
+        // ===== PRODUCTS =====
         function renderProducts() {
             const search = document.getElementById('productSearch').value.toLowerCase().trim();
             const category = document.getElementById('productCategoryFilter').value;
@@ -2392,7 +2392,7 @@
         }
 
 
-        // ===== SUPPLIERS =====
+        // ===== SUPPLIERS (qısa) =====
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
             let list = getSuppliers();
@@ -2474,7 +2474,7 @@
         }
 
 
-        // ===== PURCHASES =====
+        // ===== PURCHASES (qısa) =====
         let purchaseItems = [];
 
         function renderPurchases() {
@@ -3468,9 +3468,10 @@
                 `;
             },
 
-            // showError funksiyası heç bir vin parametri qəbul etmir və istifadə etmir
-            showError(message) {
+            // BURADA VIN PARAMETRİ ƏLAVƏ EDİLDİ - AMA İSTİFADƏ EDİLMİR, SADƏCƏ XƏTANIN QARŞISINI ALMAQ ÜÇÜN
+            showError(message, vin = '') {
                 const container = document.getElementById('vinResult');
+                // Vin parametri istifadə edilmir, lakin mövcuddur.
                 container.innerHTML = `
                     <div class="vin-error">
                         <i class="fas fa-exclamation-circle"></i> ${message}
@@ -3632,11 +3633,11 @@
                 if (searchType === 'vin') {
                     const vin = query.toUpperCase().replace(/\s/g, '');
                     if (vin.length !== 17) {
-                        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
+                        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!', vin);
                         return;
                     }
                     if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
+                        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!', vin);
                         return;
                     }
 

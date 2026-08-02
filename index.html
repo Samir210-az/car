@@ -1483,7 +1483,7 @@
             </div>
 
             <!-- ==========================================================
-                   VIN AXTARIŞ SƏHİFƏSİ — YENİ MODUL
+                   VIN AXTARIŞ SƏHİFƏSİ
                    ========================================================== -->
             <div class="page active" id="page-vin-search">
                 <div class="vin-search-container">
@@ -1539,7 +1539,7 @@
 
 
     <!-- ============================================================ -->
-    <!-- MODALLAR (qısa, toxunulmayıb) -->
+    <!-- MODALLAR -->
     <!-- ============================================================ -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
@@ -1829,7 +1829,7 @@
 
 
         // =============================================================
-        // MÖVCUD STATE (dəyişməz)
+        // STATE (dəyişməz)
         // =============================================================
         const state = {
             user: { username: 'admin', role: 'admin', name: 'Admin' },
@@ -1850,7 +1850,7 @@
         };
 
         // =============================================================
-        // MÖVCUD HELPERS (dəyişməz)
+        // HELPERS (dəyişməz)
         // =============================================================
         function $(id) { return document.getElementById(id); }
 
@@ -1931,7 +1931,7 @@
 
 
         // =============================================================
-        // MÖVCUD INIT (dəyişməz)
+        // INIT (dəyişməz)
         // =============================================================
         function initApp() {
             state.products = loadFromStorage('products');
@@ -1978,7 +1978,6 @@
         }
 
         function setupEventListeners() {
-            // Logout
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 if (confirm('Çıxış etmək istədiyinizə əminsiniz?')) {
                     localStorage.clear();
@@ -1986,7 +1985,6 @@
                 }
             });
 
-            // Nav items
             document.querySelectorAll('.nav-item[data-page]').forEach(el => {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1996,7 +1994,6 @@
                 });
             });
 
-            // Mobile sidebar items
             document.querySelectorAll('.mobile-sidebar .nav-item[data-page]').forEach(el => {
                 el.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -2006,12 +2003,10 @@
                 });
             });
 
-            // Hamburger
             document.getElementById('hamburgerBtn').addEventListener('click', function() {
                 document.getElementById('mobileSidebar').classList.toggle('open');
             });
 
-            // Theme toggle
             document.getElementById('themeToggle').addEventListener('click', function() {
                 document.body.classList.toggle('dark');
                 const isDark = document.body.classList.contains('dark');
@@ -2019,19 +2014,16 @@
                 this.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             });
 
-            // Hero VIN button
             document.getElementById('heroVinBtn').addEventListener('click', function() {
                 navigateTo('vin-search');
                 setTimeout(() => document.getElementById('vinInput')?.focus(), 300);
             });
 
-            // VIN Search button
             document.getElementById('vinSearchBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 performSearch();
             });
 
-            // VIN input Enter
             const vinInput = document.getElementById('vinInput');
             if (vinInput) {
                 vinInput.addEventListener('keypress', function(e) {
@@ -2042,7 +2034,6 @@
                 });
             }
 
-            // Search type change - update placeholder
             document.getElementById('searchType').addEventListener('change', function() {
                 const input = document.getElementById('vinInput');
                 const types = {
@@ -2056,7 +2047,6 @@
                 document.getElementById('vinResult').innerHTML = '';
             });
 
-            // Form submit-lər
             document.getElementById('productForm').addEventListener('submit', function(e) { e.preventDefault();
                 saveProduct(); });
             document.getElementById('supplierForm').addEventListener('submit', function(e) { e.preventDefault();
@@ -2127,9 +2117,6 @@
         // MÖVCUD DASHBOARD, PRODUCTS, SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
         // (tam işlək, dəyişməz)
         // =============================================================
-        // Bu funksiyalar əvvəlki versiyalardakı kimidir, amma yer qənaəti üçün burada qısa şəkildə verilir.
-        // Onlar tam işləkdir.
-
         // === DASHBOARD ===
         function renderDashboard() {
             const products = getProducts();
@@ -3279,7 +3266,7 @@
 
 
         // =============================================================
-        // YENİ — MODULLU VIN AXTARIŞ SİSTEMİ
+        // MODULLU VIN AXTARIŞ SİSTEMİ
         // =============================================================
 
         // -------- 1. VIN API MODULU --------
@@ -3674,7 +3661,7 @@
             }
         };
 
-        // -------- 5. VIN CONTROLLER --------
+        // -------- 5. VIN CONTROLLER (ƏSAS FONKSİYA) --------
         async function performSearch() {
             const input = document.getElementById('vinInput');
             const searchType = document.getElementById('searchType').value;

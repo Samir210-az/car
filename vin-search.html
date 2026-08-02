@@ -1,4 +1,4 @@
-<!-- vin-search.html - Müstəqil VIN Axtarış Modulu -->
+<!-- vin-search.html - VIN Axtarış + Mövcud Məhsullar -->
 <div class="vin-search-container">
     <div class="vin-header">
         <h2><i class="fas fa-search" style="color:var(--primary);"></i> VIN ilə Ehtiyat Hissələrinin Axtarışı</h2>
@@ -60,7 +60,6 @@
         border-color: var(--primary);
         box-shadow: 0 0 0 4px var(--primary-light);
     }
-    /* VIN nəticə kartları */
     .vin-vehicle-card {
         background: var(--surface);
         border-radius: var(--radius);
@@ -117,7 +116,7 @@
     }
     .vin-parts-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1rem;
     }
     .vin-part-card {
@@ -126,7 +125,6 @@
         padding: 1rem;
         border: 1px solid var(--border);
         transition: all var(--transition);
-        cursor: pointer;
     }
     .vin-part-card:hover {
         border-color: var(--primary);
@@ -135,6 +133,7 @@
     }
     .vin-part-card .part-name {
         font-weight: 600;
+        font-size: 1rem;
     }
     .vin-part-card .part-code {
         font-size: 0.8rem;
@@ -145,7 +144,56 @@
         font-weight: 700;
         color: var(--primary);
         margin-top: 0.3rem;
+        font-size: 1.1rem;
     }
+    .vin-part-card .part-stock {
+        font-size: 0.85rem;
+        margin-top: 0.2rem;
+    }
+    .vin-part-card .part-stock .in-stock { color: var(--success); font-weight: 600; }
+    .vin-part-card .part-stock .out-of-stock { color: var(--danger); font-weight: 600; }
+    .vin-part-card .part-actions {
+        margin-top: 0.6rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .vin-part-card .part-actions .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.8rem;
+    }
+    .vin-part-card .part-badge {
+        display: inline-block;
+        font-size: 0.7rem;
+        padding: 0.15rem 0.6rem;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+    .part-badge-available {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    .dark .part-badge-available {
+        background: #064e3b;
+        color: #6ee7b7;
+    }
+    .part-badge-unavailable {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    .dark .part-badge-unavailable {
+        background: #7f1d1d;
+        color: #fca5a5;
+    }
+    .part-badge-external {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    .dark .part-badge-external {
+        background: #1e3a5f;
+        color: #93c5fd;
+    }
+
     .vin-loading {
         text-align: center;
         padding: 3rem;
@@ -213,11 +261,21 @@
     .vin-external-links a i {
         font-size: 1.1rem;
     }
+    .vin-external-links a .fa-partsouq { color: #1a5cff; }
+    .vin-external-links a .fa-emex { color: #dc2626; }
+
+    /* Məhsulun sistemdə mövcudluğu üçün əlavə stil */
+    .vin-part-card.available-in-system {
+        border-left: 4px solid var(--success);
+    }
+    .vin-part-card.external-only {
+        border-left: 4px solid var(--warning);
+    }
 </style>
 
 <script>
     // =============================================================
-    // VIN AXTARIŞ MODULU
+    // VIN AXTARIŞ MODULU + MÖVCUD MƏHSULLAR
     // =============================================================
 
     // Nümunə ehtiyat hissələri verilənlər bazası (real API gələnə qədər)
@@ -341,6 +399,25 @@
         const partsouqUrl = `https://partsouq.com/en/search/search?q=${vin}`;
         const emexUrl = `https://emex.ru/search?vin=${vin}`;
 
+        // Mövcud məhsulları yoxla (sistemdə olanlar)
+        const products = getProducts();
+        const partsWithAvailability = parts.map(part => {
+            // Məhsulu adına və ya koduna görə axtar (case insensitive)
+            const found = products.find(p => 
+                p.name && p.name.toLowerCase().includes(part.name.toLowerCase()) ||
+                p.oem && p.oem.toLowerCase() === part.code.toLowerCase() ||
+                p.code && p.code.toLowerCase() === part.code.toLowerCase()
+            );
+            return {
+                ...part,
+                available: !!found,
+                product: found || null,
+                stock: found ? found.stock || 0 : 0,
+                sellPrice: found ? found.sellPrice || part.price : part.price,
+                id: found ? found.id : null,
+            };
+        });
+
         resultDiv.innerHTML = `
             <!-- Avtomobil məlumatları -->
             <div class="vin-vehicle-card">
@@ -393,18 +470,50 @@
                 <div class="vin-parts-section" style="border-top:none;padding-top:0;">
                     <h4><i class="fas fa-cogs" style="color:var(--primary);"></i> Uyğun Ehtiyat Hissələri</h4>
                     <p class="text-muted fs-small" style="margin-bottom:1rem;">
-                        <i class="fas fa-info-circle"></i> Bu hissələr ${make} avtomobili üçün tövsiyə olunur. 
-                        Dəqiq uyğunluq üçün yuxarıdaki linklərlə saytlarda yoxlayın.
+                        <i class="fas fa-info-circle"></i> 
+                        <span class="part-badge part-badge-available">● Mövcud</span> – sistemdə var, birbaşa sifariş edə bilərsiniz.
+                        <span class="part-badge part-badge-external">● Xarici</span> – sistemdə yoxdur, xarici saytdan sifariş etmək olar.
                     </p>
                     <div class="vin-parts-grid">
-                        ${parts.map(part => `
-                            <div class="vin-part-card" onclick="window.open('https://${part.supplier}/search?q=${part.code}', '_blank')">
-                                <div class="part-name">${part.name}</div>
-                                <div class="part-code">${part.code}</div>
-                                <div class="part-price">${part.price.toFixed(2)} ₼</div>
-                                <div style="font-size:0.7rem;color:var(--text3);margin-top:0.3rem;">
-                                    <i class="fas fa-store"></i> ${part.supplier}
+                        ${partsWithAvailability.map(part => `
+                            <div class="vin-part-card ${part.available ? 'available-in-system' : 'external-only'}">
+                                <div class="flex-between">
+                                    <div class="part-name">${part.name}</div>
+                                    <span class="part-badge ${part.available ? 'part-badge-available' : 'part-badge-external'}">
+                                        ${part.available ? '✅ Mövcud' : '🔗 Xarici'}
+                                    </span>
                                 </div>
+                                <div class="part-code">${part.code}</div>
+                                <div class="part-price">${part.sellPrice.toFixed(2)} ₼</div>
+                                ${part.available ? `
+                                    <div class="part-stock">
+                                        Stok: <span class="${part.stock > 0 ? 'in-stock' : 'out-of-stock'}">${part.stock} ədəd</span>
+                                        ${part.stock > 0 ? '✅' : '❌'}
+                                    </div>
+                                    <div class="part-actions">
+                                        ${part.stock > 0 ? `
+                                            <button class="btn btn-success btn-sm" onclick="addToCartFromVin('${part.id}')">
+                                                <i class="fas fa-shopping-cart"></i> Sat
+                                            </button>
+                                            <button class="btn btn-outline btn-sm" onclick="window.open('${part.supplier === 'partsouq.com' ? partsouqUrl : emexUrl}', '_blank')">
+                                                <i class="fas fa-external-link-alt"></i> Xarici
+                                            </button>
+                                        ` : `
+                                            <button class="btn btn-outline btn-sm" onclick="window.open('${part.supplier === 'partsouq.com' ? partsouqUrl : emexUrl}', '_blank')">
+                                                <i class="fas fa-external-link-alt"></i> Xarici saytdan al
+                                            </button>
+                                        `}
+                                    </div>
+                                ` : `
+                                    <div class="part-stock text-muted">
+                                        <i class="fas fa-store"></i> Mənbə: ${part.supplier}
+                                    </div>
+                                    <div class="part-actions">
+                                        <button class="btn btn-outline btn-sm" onclick="window.open('${part.supplier === 'partsouq.com' ? partsouqUrl : emexUrl}', '_blank')">
+                                            <i class="fas fa-external-link-alt"></i> ${part.supplier}-da bax
+                                        </button>
+                                    </div>
+                                `}
                             </div>
                         `).join('')}
                     </div>
@@ -424,6 +533,24 @@
         const partsouqUrl = `https://partsouq.com/en/search/search?q=${vin}`;
         const emexUrl = `https://emex.ru/search?vin=${vin}`;
 
+        // Mövcud məhsulları yoxla
+        const products = getProducts();
+        const partsWithAvailability = parts.map(part => {
+            const found = products.find(p => 
+                p.name && p.name.toLowerCase().includes(part.name.toLowerCase()) ||
+                p.oem && p.oem.toLowerCase() === part.code.toLowerCase() ||
+                p.code && p.code.toLowerCase() === part.code.toLowerCase()
+            );
+            return {
+                ...part,
+                available: !!found,
+                product: found || null,
+                stock: found ? found.stock || 0 : 0,
+                sellPrice: found ? found.sellPrice || part.price : part.price,
+                id: found ? found.id : null,
+            };
+        });
+
         resultDiv.innerHTML = `
             <div class="vin-vehicle-card" style="border-left:4px solid var(--warning);">
                 <div class="flex-between">
@@ -438,11 +565,7 @@
                 <div class="vin-success" style="margin-top:1rem;">
                     <i class="fas fa-info-circle"></i> 
                     <strong>Qeyd:</strong> Hal-hazırda VIN API müvəqqəti olaraq işləmir. 
-                    Aşağıdakı hissələr nümunə olaraq göstərilir. 
-                    <a href="${partsouqUrl}" target="_blank" style="color:var(--primary);font-weight:600;">Partsouq.com</a> 
-                    və ya 
-                    <a href="${emexUrl}" target="_blank" style="color:var(--primary);font-weight:600;">Emex.ru</a> 
-                    saytlarında VIN ilə axtarış edə bilərsiniz.
+                    Aşağıdakı hissələr nümunə olaraq göstərilir və sistemdəki məhsullarla uyğunluğu yoxlanılır.
                 </div>
                 <div class="vin-external-links" style="margin-top:1rem;">
                     <a href="${partsouqUrl}" target="_blank" rel="noopener">
@@ -456,15 +579,51 @@
             <div class="vin-vehicle-card">
                 <div class="vin-parts-section" style="border-top:none;padding-top:0;">
                     <h4><i class="fas fa-cogs" style="color:var(--primary);"></i> Tövsiyə Olunan Hissələr (Nümunə)</h4>
+                    <p class="text-muted fs-small" style="margin-bottom:1rem;">
+                        <i class="fas fa-info-circle"></i> 
+                        <span class="part-badge part-badge-available">● Mövcud</span> – sistemdə var, birbaşa sifariş edə bilərsiniz.
+                        <span class="part-badge part-badge-external">● Xarici</span> – sistemdə yoxdur, xarici saytdan sifariş etmək olar.
+                    </p>
                     <div class="vin-parts-grid">
-                        ${parts.map(part => `
-                            <div class="vin-part-card" onclick="window.open('https://${part.supplier}/search?q=${part.code}', '_blank')">
-                                <div class="part-name">${part.name}</div>
-                                <div class="part-code">${part.code}</div>
-                                <div class="part-price">${part.price.toFixed(2)} ₼</div>
-                                <div style="font-size:0.7rem;color:var(--text3);margin-top:0.3rem;">
-                                    <i class="fas fa-store"></i> ${part.supplier}
+                        ${partsWithAvailability.map(part => `
+                            <div class="vin-part-card ${part.available ? 'available-in-system' : 'external-only'}">
+                                <div class="flex-between">
+                                    <div class="part-name">${part.name}</div>
+                                    <span class="part-badge ${part.available ? 'part-badge-available' : 'part-badge-external'}">
+                                        ${part.available ? '✅ Mövcud' : '🔗 Xarici'}
+                                    </span>
                                 </div>
+                                <div class="part-code">${part.code}</div>
+                                <div class="part-price">${part.sellPrice.toFixed(2)} ₼</div>
+                                ${part.available ? `
+                                    <div class="part-stock">
+                                        Stok: <span class="${part.stock > 0 ? 'in-stock' : 'out-of-stock'}">${part.stock} ədəd</span>
+                                        ${part.stock > 0 ? '✅' : '❌'}
+                                    </div>
+                                    <div class="part-actions">
+                                        ${part.stock > 0 ? `
+                                            <button class="btn btn-success btn-sm" onclick="addToCartFromVin('${part.id}')">
+                                                <i class="fas fa-shopping-cart"></i> Sat
+                                            </button>
+                                            <button class="btn btn-outline btn-sm" onclick="window.open('${part.supplier === 'partsouq.com' ? partsouqUrl : emexUrl}', '_blank')">
+                                                <i class="fas fa-external-link-alt"></i> Xarici
+                                            </button>
+                                        ` : `
+                                            <button class="btn btn-outline btn-sm" onclick="window.open('${part.supplier === 'partsouq.com' ? partsouqUrl : emexUrl}', '_blank')">
+                                                <i class="fas fa-external-link-alt"></i> Xarici saytdan al
+                                            </button>
+                                        `}
+                                    </div>
+                                ` : `
+                                    <div class="part-stock text-muted">
+                                        <i class="fas fa-store"></i> Mənbə: ${part.supplier}
+                                    </div>
+                                    <div class="part-actions">
+                                        <button class="btn btn-outline btn-sm" onclick="window.open('${part.supplier === 'partsouq.com' ? partsouqUrl : emexUrl}', '_blank')">
+                                            <i class="fas fa-external-link-alt"></i> ${part.supplier}-da bax
+                                        </button>
+                                    </div>
+                                `}
                             </div>
                         `).join('')}
                     </div>
@@ -477,6 +636,34 @@
     function getValue(results, variable) {
         const item = results.find(r => r.Variable && r.Variable === variable);
         return item && item.Value ? item.Value : null;
+    }
+
+    // VIN-dən birbaşa səbətə əlavə et
+    function addToCartFromVin(productId) {
+        if (typeof window.addToCart === 'function') {
+            window.addToCart(productId);
+            // Səbətə əlavə edildikdən sonra səhifəni satış səhifəsinə keçir
+            setTimeout(() => {
+                if (typeof window.navigateTo === 'function') {
+                    window.navigateTo('sales');
+                }
+            }, 500);
+        } else {
+            toast('Məhsul səbətə əlavə edilə bilmədi', 'danger');
+        }
+    }
+
+    // getProducts funksiyasını qlobaldan al (index.html-dən)
+    function getProducts() {
+        if (typeof window.getProducts === 'function') {
+            return window.getProducts();
+        }
+        // Əgər window.getProducts yoxdursa, localStorage-dan oxu
+        try {
+            return JSON.parse(localStorage.getItem('autoparts_products')) || [];
+        } catch {
+            return [];
+        }
     }
 
     // Enter düyməsi ilə axtarış
@@ -508,8 +695,10 @@
     // Qlobal funksiyalar
     window.searchByVin = searchByVin;
     window.loadVinSearch = loadVinSearch;
+    window.addToCartFromVin = addToCartFromVin;
 
     console.log('🔍 VIN Axtarış modulu yükləndi!');
     console.log('📌 Nümunə VIN: 1HGCM82633A123456 (Honda)');
     console.log('📌 Nümunə VIN: WBA3A5C50EF359482 (BMW)');
+    console.log('🛒 Sistemdəki məhsullarla uyğunluq avtomatik yoxlanılır!');
 </script>

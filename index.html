@@ -3468,17 +3468,12 @@
                 `;
             },
 
-            // BURADA showError funksiyası vin parametri qəbul edir, amma istifadə etmir
-            // Bu, xətanı aradan qaldırmaq üçün əlavə edilib
-            showError(message, vin = '') {
+            // showError funksiyası heç bir vin parametri qəbul etmir və istifadə etmir
+            showError(message) {
                 const container = document.getElementById('vinResult');
-                let errorMsg = message;
-                if (vin) {
-                    errorMsg += ` (VIN: ${vin})`;
-                }
                 container.innerHTML = `
                     <div class="vin-error">
-                        <i class="fas fa-exclamation-circle"></i> ${errorMsg}
+                        <i class="fas fa-exclamation-circle"></i> ${message}
                         <br><small class="text-muted">Zəhmət olmasa VIN-i yoxlayın və yenidən cəhd edin.</small>
                     </div>
                 `;
@@ -3637,11 +3632,11 @@
                 if (searchType === 'vin') {
                     const vin = query.toUpperCase().replace(/\s/g, '');
                     if (vin.length !== 17) {
-                        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!', vin);
+                        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
                         return;
                     }
                     if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!', vin);
+                        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
                         return;
                     }
 

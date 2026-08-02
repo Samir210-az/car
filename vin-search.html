@@ -1,0 +1,515 @@
+<!-- vin-search.html - Müstəqil VIN Axtarış Modulu -->
+<div class="vin-search-container">
+    <div class="vin-header">
+        <h2><i class="fas fa-search" style="color:var(--primary);"></i> VIN ilə Ehtiyat Hissələrinin Axtarışı</h2>
+        <p class="text-muted">17 simvoldan ibarət VIN kodunu daxil edin və avtomobilinizə uyğun hissələri tapın</p>
+    </div>
+
+    <!-- Axtarış Formu -->
+    <div class="vin-search-box card">
+        <div class="form-row">
+            <div class="form-group" style="flex:3;">
+                <label><i class="fas fa-barcode"></i> VIN Kodu</label>
+                <input type="text" id="vinInput" placeholder="Məsələn: 1HGCM82633A123456" maxlength="17" 
+                       style="text-transform:uppercase;font-family:monospace;font-size:1.1rem;letter-spacing:1px;">
+            </div>
+            <div class="form-group" style="flex:1;display:flex;align-items:flex-end;">
+                <button class="btn btn-primary w-full" onclick="searchByVin()" style="justify-content:center;padding:0.7rem;">
+                    <i class="fas fa-search"></i> Axtar
+                </button>
+            </div>
+        </div>
+        <div class="flex gap-1" style="margin-top:0.5rem;">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('vinInput').value='1HGCM82633A123456';searchByVin();">
+                <i class="fas fa-car"></i> Nümunə (Honda)
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('vinInput').value='WBA3A5C50EF359482';searchByVin();">
+                <i class="fas fa-car"></i> Nümunə (BMW)
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('vinInput').value='';document.getElementById('vinResult').innerHTML='';">
+                <i class="fas fa-times"></i> Təmizlə
+            </button>
+        </div>
+    </div>
+
+    <!-- Nəticə -->
+    <div id="vinResult" style="margin-top:1.5rem;"></div>
+</div>
+
+<style>
+    .vin-search-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .vin-header {
+        margin-bottom: 1.5rem;
+    }
+    .vin-header h2 {
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+    .vin-search-box {
+        padding: 1.5rem;
+    }
+    #vinInput {
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    #vinInput:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-light);
+    }
+    /* VIN nəticə kartları */
+    .vin-vehicle-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        margin-bottom: 1.5rem;
+        animation: fadeUp 0.4s ease;
+    }
+    .vin-vehicle-card .vehicle-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+    .vin-vehicle-card .vehicle-subtitle {
+        color: var(--text2);
+        font-size: 0.95rem;
+    }
+    .vin-specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .vin-spec-item {
+        background: var(--surface2);
+        border-radius: var(--radius-sm);
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border);
+    }
+    .vin-spec-item .label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--text3);
+        letter-spacing: 0.04em;
+        font-weight: 600;
+    }
+    .vin-spec-item .value {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-top: 0.1rem;
+    }
+    .vin-parts-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--border);
+    }
+    .vin-parts-section h4 {
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .vin-parts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    .vin-part-card {
+        background: var(--surface2);
+        border-radius: var(--radius-sm);
+        padding: 1rem;
+        border: 1px solid var(--border);
+        transition: all var(--transition);
+        cursor: pointer;
+    }
+    .vin-part-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+    .vin-part-card .part-name {
+        font-weight: 600;
+    }
+    .vin-part-card .part-code {
+        font-size: 0.8rem;
+        color: var(--text3);
+        font-family: monospace;
+    }
+    .vin-part-card .part-price {
+        font-weight: 700;
+        color: var(--primary);
+        margin-top: 0.3rem;
+    }
+    .vin-loading {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text3);
+    }
+    .vin-loading .spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .vin-error {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-sm);
+        border-left: 5px solid var(--danger);
+    }
+    .dark .vin-error {
+        background: #7f1d1d;
+        color: #fca5a5;
+    }
+    .vin-success {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-sm);
+        border-left: 5px solid var(--success);
+    }
+    .dark .vin-success {
+        background: #064e3b;
+        color: #6ee7b7;
+    }
+    .vin-external-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    .vin-external-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.2rem;
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        text-decoration: none;
+        transition: all var(--transition);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    .vin-external-links a:hover {
+        border-color: var(--primary);
+        background: var(--primary-light);
+        transform: translateY(-2px);
+    }
+    .vin-external-links a i {
+        font-size: 1.1rem;
+    }
+</style>
+
+<script>
+    // =============================================================
+    // VIN AXTARIŞ MODULU
+    // =============================================================
+
+    // Nümunə ehtiyat hissələri verilənlər bazası (real API gələnə qədər)
+    // Bu hissəni real API sorğuları ilə əvəz etmək olar
+    const PARTS_DATABASE = {
+        'Honda': [
+            { name: 'Yağ filtri', code: '15400-PLM-A02', price: 25.99, supplier: 'partsouq.com' },
+            { name: 'Hava filtri', code: '17220-5A2-A00', price: 18.50, supplier: 'emex.ru' },
+            { name: 'Əyləc diskleri', code: '45251-SDA-A00', price: 89.99, supplier: 'partsouq.com' },
+            { name: 'Mühərrik yağı 5W-30', code: '08200-9010', price: 45.00, supplier: 'emex.ru' },
+            { name: 'Şamlar (4 ədəd)', code: '9807B-5617W', price: 32.00, supplier: 'partsouq.com' },
+        ],
+        'BMW': [
+            { name: 'Yağ filtri', code: '11-42-7-632-943', price: 29.99, supplier: 'emex.ru' },
+            { name: 'Hava filtri', code: '13-71-8-615-367', price: 22.50, supplier: 'partsouq.com' },
+            { name: 'Əyləc diskleri', code: '34-11-6-852-981', price: 120.00, supplier: 'emex.ru' },
+            { name: 'Mühərrik yağı 5W-30', code: '83-21-2-365-986', price: 52.00, supplier: 'partsouq.com' },
+            { name: 'Şamlar (4 ədəd)', code: '12-12-0-037-863', price: 38.00, supplier: 'emex.ru' },
+        ],
+        'Toyota': [
+            { name: 'Yağ filtri', code: '90915-YZZE1', price: 22.99, supplier: 'partsouq.com' },
+            { name: 'Hava filtri', code: '17801-0V010', price: 16.50, supplier: 'emex.ru' },
+            { name: 'Əyləc diskleri', code: '43512-0W050', price: 75.00, supplier: 'partsouq.com' },
+            { name: 'Mühərrik yağı 5W-30', code: '08880-83205', price: 42.00, supplier: 'emex.ru' },
+        ],
+        'Mercedes-Benz': [
+            { name: 'Yağ filtri', code: 'A 000 180 54 09', price: 34.99, supplier: 'emex.ru' },
+            { name: 'Hava filtri', code: 'A 276 094 03 04', price: 28.50, supplier: 'partsouq.com' },
+            { name: 'Əyləc diskleri', code: 'A 000 421 21 12', price: 145.00, supplier: 'emex.ru' },
+        ]
+    };
+
+    // Ümumi hissələr (marka tapılmadıqda)
+    const GENERIC_PARTS = [
+        { name: 'Yağ filtri (universal)', code: 'OIL-FILTER-001', price: 19.99, supplier: 'partsouq.com' },
+        { name: 'Hava filtri (universal)', code: 'AIR-FILTER-001', price: 14.50, supplier: 'emex.ru' },
+        { name: 'Mühərrik yağı 5W-30', code: 'ENGINE-OIL-5W30', price: 38.00, supplier: 'partsouq.com' },
+        { name: 'Şam dəsti', code: 'SPARK-PLUG-SET', price: 28.00, supplier: 'emex.ru' },
+    ];
+
+    let vinSearchLoaded = false;
+
+    // =============================================================
+    // ƏSAS FUNKSİYALAR
+    // =============================================================
+
+    function searchByVin() {
+        const vin = document.getElementById('vinInput').value.trim().toUpperCase();
+        const resultDiv = document.getElementById('vinResult');
+
+        // Validate VIN
+        if (!vin) {
+            resultDiv.innerHTML = `<div class="vin-error"><i class="fas fa-exclamation-circle"></i> Zəhmət olmasa VIN kodunu daxil edin!</div>`;
+            return;
+        }
+        if (vin.length !== 17) {
+            resultDiv.innerHTML = `<div class="vin-error"><i class="fas fa-exclamation-circle"></i> VIN kodu 17 simvoldan ibarət olmalıdır! (Hal-hazırda: ${vin.length})</div>`;
+            return;
+        }
+        if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+            resultDiv.innerHTML = `<div class="vin-error"><i class="fas fa-exclamation-circle"></i> VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!</div>`;
+            return;
+        }
+
+        // Loading
+        resultDiv.innerHTML = `
+            <div class="vin-loading">
+                <div class="spinner"></div>
+                <p style="margin-top:1rem;">VIN dekodlanır...</p>
+                <p class="text-muted fs-small">NHTSA məlumat bazasından avtomobil məlumatları alınır</p>
+            </div>
+        `;
+
+        // NHTSA API - Pulsuz VIN dekodlama
+        fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`)
+            .then(response => {
+                if (!response.ok) throw new Error('API xətası: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (!data.Results || data.Results.length === 0) {
+                    throw new Error('VIN üçün məlumat tapılmadı');
+                }
+                displayVinResult(vin, data.Results);
+            })
+            .catch(error => {
+                console.error('VIN API xətası:', error);
+                // API işləmədikdə nümunə məlumat göstər
+                displaySampleResult(vin);
+            });
+    }
+
+    function displayVinResult(vin, results) {
+        const resultDiv = document.getElementById('vinResult');
+
+        // Məlumatları çıxar
+        const make = getValue(results, 'Make') || 'Bilinmir';
+        const model = getValue(results, 'Model') || 'Bilinmir';
+        const modelYear = getValue(results, 'ModelYear') || 'Bilinmir';
+        const bodyClass = getValue(results, 'BodyClass') || 'Bilinmir';
+        const engineCylinders = getValue(results, 'EngineCylinders') || 'Bilinmir';
+        const displacementL = getValue(results, 'DisplacementL') || 'Bilinmir';
+        const fuelType = getValue(results, 'FuelTypePrimary') || 'Bilinmir';
+        const transmission = getValue(results, 'TransmissionStyle') || 'Bilinmir';
+        const driveType = getValue(results, 'DriveType') || 'Bilinmir';
+        const plantCountry = getValue(results, 'PlantCountry') || 'Bilinmir';
+
+        // Hissələri tap
+        let parts = [];
+        const makeKey = Object.keys(PARTS_DATABASE).find(key => 
+            make.toLowerCase().includes(key.toLowerCase()) || 
+            key.toLowerCase().includes(make.toLowerCase())
+        );
+        if (makeKey) {
+            parts = PARTS_DATABASE[makeKey];
+        } else {
+            parts = GENERIC_PARTS;
+        }
+
+        // Build URL-lər
+        const partsouqUrl = `https://partsouq.com/en/search/search?q=${vin}`;
+        const emexUrl = `https://emex.ru/search?vin=${vin}`;
+
+        resultDiv.innerHTML = `
+            <!-- Avtomobil məlumatları -->
+            <div class="vin-vehicle-card">
+                <div class="flex-between">
+                    <div>
+                        <div class="vehicle-title">${make} ${model}</div>
+                        <div class="vehicle-subtitle">${modelYear} • ${bodyClass}</div>
+                    </div>
+                    <div style="font-size:0.8rem;color:var(--text3);font-family:monospace;">
+                        <i class="fas fa-barcode"></i> ${vin}
+                    </div>
+                </div>
+                
+                <div class="vin-specs-grid">
+                    <div class="vin-spec-item">
+                        <div class="label">Mühərrik</div>
+                        <div class="value">${engineCylinders} silindr ${displacementL !== 'Bilinmir' ? `• ${displacementL}L` : ''}</div>
+                    </div>
+                    <div class="vin-spec-item">
+                        <div class="label">Yanacaq</div>
+                        <div class="value">${fuelType}</div>
+                    </div>
+                    <div class="vin-spec-item">
+                        <div class="label">Transmissiya</div>
+                        <div class="value">${transmission}</div>
+                    </div>
+                    <div class="vin-spec-item">
+                        <div class="label">Ötürücü</div>
+                        <div class="value">${driveType}</div>
+                    </div>
+                    <div class="vin-spec-item">
+                        <div class="label">İstehsal ölkəsi</div>
+                        <div class="value">${plantCountry}</div>
+                    </div>
+                </div>
+
+                <!-- Xarici saytlara keçidlər -->
+                <div class="vin-external-links">
+                    <a href="${partsouqUrl}" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt" style="color:#1a5cff;"></i> Partsouq.com-da bax
+                    </a>
+                    <a href="${emexUrl}" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt" style="color:#dc2626;"></i> Emex.ru-da bax
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ehtiyat hissələri -->
+            <div class="vin-vehicle-card">
+                <div class="vin-parts-section" style="border-top:none;padding-top:0;">
+                    <h4><i class="fas fa-cogs" style="color:var(--primary);"></i> Uyğun Ehtiyat Hissələri</h4>
+                    <p class="text-muted fs-small" style="margin-bottom:1rem;">
+                        <i class="fas fa-info-circle"></i> Bu hissələr ${make} avtomobili üçün tövsiyə olunur. 
+                        Dəqiq uyğunluq üçün yuxarıdaki linklərlə saytlarda yoxlayın.
+                    </p>
+                    <div class="vin-parts-grid">
+                        ${parts.map(part => `
+                            <div class="vin-part-card" onclick="window.open('https://${part.supplier}/search?q=${part.code}', '_blank')">
+                                <div class="part-name">${part.name}</div>
+                                <div class="part-code">${part.code}</div>
+                                <div class="part-price">${part.price.toFixed(2)} ₼</div>
+                                <div style="font-size:0.7rem;color:var(--text3);margin-top:0.3rem;">
+                                    <i class="fas fa-store"></i> ${part.supplier}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // API xətası olduqda nümunə məlumat göstər
+    function displaySampleResult(vin) {
+        const resultDiv = document.getElementById('vinResult');
+        // Nümunə avtomobil məlumatları
+        const sampleMakes = ['Toyota', 'Honda', 'BMW', 'Mercedes-Benz', 'Audi'];
+        const randomMake = sampleMakes[Math.floor(Math.random() * sampleMakes.length)];
+        const parts = PARTS_DATABASE[randomMake] || GENERIC_PARTS;
+
+        const partsouqUrl = `https://partsouq.com/en/search/search?q=${vin}`;
+        const emexUrl = `https://emex.ru/search?vin=${vin}`;
+
+        resultDiv.innerHTML = `
+            <div class="vin-vehicle-card" style="border-left:4px solid var(--warning);">
+                <div class="flex-between">
+                    <div>
+                        <div class="vehicle-title">${randomMake} (Nümunə)</div>
+                        <div class="vehicle-subtitle">VIN dekodlanması müvəqqəti olaraq işləmir</div>
+                    </div>
+                    <div style="font-size:0.8rem;color:var(--text3);font-family:monospace;">
+                        <i class="fas fa-barcode"></i> ${vin}
+                    </div>
+                </div>
+                <div class="vin-success" style="margin-top:1rem;">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>Qeyd:</strong> Hal-hazırda VIN API müvəqqəti olaraq işləmir. 
+                    Aşağıdakı hissələr nümunə olaraq göstərilir. 
+                    <a href="${partsouqUrl}" target="_blank" style="color:var(--primary);font-weight:600;">Partsouq.com</a> 
+                    və ya 
+                    <a href="${emexUrl}" target="_blank" style="color:var(--primary);font-weight:600;">Emex.ru</a> 
+                    saytlarında VIN ilə axtarış edə bilərsiniz.
+                </div>
+                <div class="vin-external-links" style="margin-top:1rem;">
+                    <a href="${partsouqUrl}" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt" style="color:#1a5cff;"></i> Partsouq.com-da bax
+                    </a>
+                    <a href="${emexUrl}" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt" style="color:#dc2626;"></i> Emex.ru-da bax
+                    </a>
+                </div>
+            </div>
+            <div class="vin-vehicle-card">
+                <div class="vin-parts-section" style="border-top:none;padding-top:0;">
+                    <h4><i class="fas fa-cogs" style="color:var(--primary);"></i> Tövsiyə Olunan Hissələr (Nümunə)</h4>
+                    <div class="vin-parts-grid">
+                        ${parts.map(part => `
+                            <div class="vin-part-card" onclick="window.open('https://${part.supplier}/search?q=${part.code}', '_blank')">
+                                <div class="part-name">${part.name}</div>
+                                <div class="part-code">${part.code}</div>
+                                <div class="part-price">${part.price.toFixed(2)} ₼</div>
+                                <div style="font-size:0.7rem;color:var(--text3);margin-top:0.3rem;">
+                                    <i class="fas fa-store"></i> ${part.supplier}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // NHTSA nəticələrindən dəyər çıxar
+    function getValue(results, variable) {
+        const item = results.find(r => r.Variable && r.Variable === variable);
+        return item && item.Value ? item.Value : null;
+    }
+
+    // Enter düyməsi ilə axtarış
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('vinInput');
+        if (input) {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchByVin();
+                }
+            });
+            // Avtomatik böyük hərfə çevir
+            input.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        }
+    });
+
+    // Xarici fayldan çağırıldıqda işə salmaq üçün
+    function loadVinSearch() {
+        if (!vinSearchLoaded) {
+            vinSearchLoaded = true;
+            // Əgər səhifə yükləndikdə avtomatik axtarış etmək istəyirsənsə
+            // searchByVin();
+        }
+    }
+
+    // Qlobal funksiyalar
+    window.searchByVin = searchByVin;
+    window.loadVinSearch = loadVinSearch;
+
+    console.log('🔍 VIN Axtarış modulu yükləndi!');
+    console.log('📌 Nümunə VIN: 1HGCM82633A123456 (Honda)');
+    console.log('📌 Nümunə VIN: WBA3A5C50EF359482 (BMW)');
+</script>

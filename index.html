@@ -631,6 +631,10 @@
             background: rgba(59, 130, 246, 0.15);
             color: #60a5fa;
         }
+        .badge-secondary {
+            background: rgba(108, 117, 125, 0.2);
+            color: #adb5bd;
+        }
 
         /* ===== TOOLBAR ===== */
         .toolbar {
@@ -837,7 +841,7 @@
         }
 
         /* ============================================================
-           VIN AXTARIŞ
+           VIN AXTARIŞ — XÜSUSI STILLƏR
            ============================================================ */
         .vin-search-container {
             max-width: 1200px;
@@ -1628,7 +1632,7 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT — MÖVCUD ERP + VIN AXTARIŞI (YALNIZ VIN, XƏTA DÜZƏLDİ) -->
+    <!-- JAVASCRIPT — MÖVCUD ERP + YENİ VIN AXTARIŞI (BİRLƏŞDİRİLMİŞ) -->
     <!-- ============================================================ -->
     <script>
         console.log('🚗 366 AUTO — VIN axtarışı ilə işə salındı');
@@ -2366,11 +2370,8 @@
 
 
         // =============================================================
-        // === MÖVCUD SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS (QISA) ===
+        // === MÖVCUD SUPPLIERS ===
         // =============================================================
-        // (Bu funksiyalar əvvəlki kimi tam işləkdir, yer qənaəti üçün burada qısa saxlanılır)
-
-        // === SUPPLIERS ===
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch').value.toLowerCase().trim();
             let list = getSuppliers();
@@ -2451,7 +2452,10 @@
             toast('Təchizatçı silindi!', 'danger');
         }
 
-        // === PURCHASES ===
+
+        // =============================================================
+        // === MÖVCUD PURCHASES ===
+        // =============================================================
         let purchaseItems = [];
 
         function renderPurchases() {
@@ -2599,7 +2603,10 @@
             document.getElementById('supplierList').innerHTML = getSuppliers().map(s =>
                 `<option value="${s.name}">`).join(''); }
 
-        // === FINANCE ===
+
+        // =============================================================
+        // === MÖVCUD FINANCE ===
+        // =============================================================
         function renderFinance() {
             const list = getFinance();
             const revenue = list.filter(f => f.type === 'gəlir').reduce((s, f) => s + f.amount, 0);
@@ -2653,7 +2660,10 @@
             toast('Xərc əlavə edildi!');
         }
 
-        // === EMPLOYEES ===
+
+        // =============================================================
+        // === MÖVCUD EMPLOYEES ===
+        // =============================================================
         function renderEmployees() {
             const list = getEmployees();
             const tbody = document.getElementById('employeesTable');
@@ -2746,7 +2756,10 @@
             renderDashboard();
         }
 
-        // === TAXES ===
+
+        // =============================================================
+        // === MÖVCUD TAXES ===
+        // =============================================================
         function renderTaxes() {
             const list = getTaxes();
             const quarters = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -2791,7 +2804,10 @@
             toast('Vergi ödənişi yadda saxlandı!');
         }
 
-        // === DEBTS ===
+
+        // =============================================================
+        // === MÖVCUD DEBTS ===
+        // =============================================================
         function renderDebts() {
             const list = getDebts();
             const tbody = document.getElementById('debtsTable');
@@ -2885,7 +2901,10 @@
             toast(`${fmtMoney(payAmount)} ödəniş edildi!`);
         }
 
-        // === CUSTOMERS ===
+
+        // =============================================================
+        // === MÖVCUD CUSTOMERS ===
+        // =============================================================
         function renderCustomers() {
             const search = document.getElementById('customerSearch').value.toLowerCase().trim();
             let list = getCustomers();
@@ -2964,7 +2983,10 @@
             toast('Müştəri silindi!', 'danger');
         }
 
-        // === POS ===
+
+        // =============================================================
+        // === MÖVCUD POS ===
+        // =============================================================
         function renderPosProducts() {
             const search = document.getElementById('posSearch').value.toLowerCase().trim();
             let list = getProducts();
@@ -3136,7 +3158,10 @@
             } else alert(receipt);
         }
 
-        // === REPORTS ===
+
+        // =============================================================
+        // === MÖVCUD REPORTS ===
+        // =============================================================
         function generateReport() {
             const start = document.getElementById('reportStart').value;
             const end = document.getElementById('reportEnd').value;
@@ -3189,10 +3214,339 @@
 
 
         // =============================================================
-        // === YENİ — YALNIZ VIN AXTARIŞI (XƏTASIZ) ===
+        // === YENİ — YERLİ VIN KATALOQU ===
         // =============================================================
+        const VinDatabase = {
+            wmiMap: {
+                '1HG': { make: 'Honda', country: 'USA' },
+                '2HG': { make: 'Honda', country: 'Canada' },
+                '3HG': { make: 'Honda', country: 'Mexico' },
+                'JHM': { make: 'Honda', country: 'Japan' },
+                '1F': { make: 'Ford', country: 'USA' },
+                '2F': { make: 'Ford', country: 'Canada' },
+                '3F': { make: 'Ford', country: 'Mexico' },
+                '1G': { make: 'Chevrolet', country: 'USA' },
+                '2G': { make: 'Chevrolet', country: 'Canada' },
+                '3G': { make: 'Chevrolet', country: 'Mexico' },
+                '1N': { make: 'Nissan', country: 'USA' },
+                '2N': { make: 'Nissan', country: 'Canada' },
+                'JN': { make: 'Nissan', country: 'Japan' },
+                '1T': { make: 'Toyota', country: 'USA' },
+                '2T': { make: 'Toyota', country: 'Canada' },
+                'JT': { make: 'Toyota', country: 'Japan' },
+                'WVG': { make: 'Volkswagen', country: 'Germany' },
+                'WVW': { make: 'Volkswagen', country: 'Germany' },
+                'WBA': { make: 'BMW', country: 'Germany' },
+                'WBS': { make: 'BMW', country: 'Germany' },
+                'WDB': { make: 'Mercedes-Benz', country: 'Germany' },
+                'WDC': { make: 'Mercedes-Benz', country: 'Germany' },
+                'WDD': { make: 'Mercedes-Benz', country: 'Germany' },
+                'SAJ': { make: 'Jaguar', country: 'UK' },
+                'SAL': { make: 'Land Rover', country: 'UK' },
+                'YV1': { make: 'Volvo', country: 'Sweden' },
+                'YV4': { make: 'Volvo', country: 'Sweden' },
+                'VF1': { make: 'Renault', country: 'France' },
+                'VF3': { make: 'Peugeot', country: 'France' },
+                'VF7': { make: 'Citroën', country: 'France' },
+                'ZFA': { make: 'Fiat', country: 'Italy' },
+                'ZFF': { make: 'Ferrari', country: 'Italy' },
+                'ZAM': { make: 'Maserati', country: 'Italy' },
+            },
 
-        // -------- 1. VinAPI --------
+            models: {
+                'Honda': {
+                    'Accord': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+                            2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları', 'Əyləc mayesi'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter', 'Qığılcım şamı'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri', 'Yanacaq filtri'] } },
+                    'Civic': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+                            2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları', 'Əyləc mayesi'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 45Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    'CR-V': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
+                            2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+                'Toyota': {
+                    'Camry': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
+                            2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    'Corolla': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+                            2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 45Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    'RAV4': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+                            2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+                'BMW': {
+                    '3 Series': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+                            2018, 2019, 2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 70Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    '5 Series': { years: [2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+                            2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 70Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+                'Mercedes-Benz': {
+                    'C-Class': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+                            2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 70Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    'E-Class': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+                            2019, 2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 70Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+                'Ford': {
+                    'Focus': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+                            2019, 2020, 2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    'Fiesta': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+                            2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 45Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+                'Chevrolet': {
+                    'Cruze': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+                            2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+                'Nissan': {
+                    'Altima': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
+                            2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 60Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                    'Sentra': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
+                            2021, 2022, 2023, 2024
+                        ],
+                        parts: { engine: ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti'],
+                            brake: ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları'],
+                            suspension: ['Ön amortizator', 'Arxa amortizator', 'Ön qolu', 'Mühərrik yastığı'],
+                            electrical: ['Akumulyator 45Ah', 'Generator', 'Starter'],
+                            filters: ['Yağ filtri', 'Hava filtri', 'Kabin filtri'] } },
+                },
+            },
+
+            getMakeFromWMI(wmi) {
+                const found = Object.keys(this.wmiMap).find(key => wmi.startsWith(key));
+                if (found) return this.wmiMap[found].make;
+                return null;
+            },
+
+            getModelData(make, model) {
+                const makeData = this.models[make];
+                if (!makeData) return null;
+                const modelKey = Object.keys(makeData).find(m => m.toLowerCase() === model.toLowerCase());
+                if (modelKey) return { model: modelKey, data: makeData[modelKey] };
+                return null;
+            },
+
+            lookupLocal(vin) {
+                const wmi = vin.substring(0, 3);
+                const make = this.getMakeFromWMI(wmi);
+                if (!make) return null;
+                return { make };
+            }
+        };
+
+
+        // =============================================================
+        // === YENİ — ÇOX SƏVİYYƏLİ MATCHER ===
+        // =============================================================
+        // VinMatcher obyektinə əlavələr
+        const VinMatcher = {
+            normalize(str) {
+                if (!str) return '';
+                return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+            },
+
+            matchProducts(products, vehicle) {
+                // Köhnə matchProducts (uyğunluq üçün)
+                if (!products || products.length === 0) return [];
+
+                const makeNorm = this.normalize(vehicle.make);
+                const modelNorm = this.normalize(vehicle.model);
+                const yearNorm = this.normalize(vehicle.year);
+
+                return products.filter(p => {
+                    const pMake = this.normalize(p.carBrand);
+                    const pModel = this.normalize(p.carModel);
+                    const pYear = this.normalize(String(p.carYear));
+                    const pEngine = this.normalize(p.engine);
+                    const pOem = this.normalize(p.oem);
+
+                    const makeMatch = pMake && (pMake.includes(makeNorm) || makeNorm.includes(pMake));
+
+                    let modelMatch = false;
+                    if (pModel && modelNorm) {
+                        modelMatch = pModel.includes(modelNorm) || modelNorm.includes(pModel);
+                        if (!modelMatch) {
+                            const pShort = pModel.replace(/[^a-z0-9]/g, '');
+                            const mShort = modelNorm.replace(/[^a-z0-9]/g, '');
+                            modelMatch = pShort.includes(mShort) || mShort.includes(pShort);
+                        }
+                    }
+
+                    let yearMatch = false;
+                    if (pYear && yearNorm && pYear.length > 0 && yearNorm.length > 0) {
+                        yearMatch = pYear === yearNorm || Math.abs(parseInt(pYear) - parseInt(yearNorm)) <= 2;
+                    }
+
+                    let engineMatch = false;
+                    if (pEngine && vehicle.engineModel) {
+                        const engNorm = this.normalize(vehicle.engineModel);
+                        engineMatch = pEngine.includes(engNorm) || engNorm.includes(pEngine);
+                    }
+
+                    let oemMatch = false;
+                    if (pOem && vehicle.oem) {
+                        const oemNorm = this.normalize(vehicle.oem);
+                        oemMatch = pOem.includes(oemNorm) || oemNorm.includes(pOem);
+                    }
+
+                    if (!makeMatch) return false;
+                    if (modelMatch) return true;
+                    if (yearMatch) return true;
+                    if (engineMatch) return true;
+                    if (oemMatch) return true;
+                    if (makeMatch && !pModel) return true;
+
+                    return false;
+                });
+            },
+
+            // YENİ: Çox səviyyəli matching
+            matchProductsMultiLevel(products, vehicle, localInfo) {
+                if (!products || products.length === 0) return { exact: [], yearRange: [], modelKeyword: [], fallback: [] };
+
+                const makeNorm = this.normalize(vehicle.make);
+                const modelNorm = this.normalize(vehicle.model);
+                const year = parseInt(vehicle.year) || 0;
+
+                const result = {
+                    exact: [],
+                    yearRange: [],
+                    modelKeyword: [],
+                    fallback: []
+                };
+
+                products.forEach(p => {
+                    const pMake = this.normalize(p.carBrand);
+                    const pModel = this.normalize(p.carModel);
+                    const pYear = parseInt(p.carYear) || 0;
+
+                    // 1. Dəqiq uyğun
+                    if (pMake === makeNorm && pModel === modelNorm && pYear === year) {
+                        result.exact.push(p);
+                        return;
+                    }
+
+                    // 2. İl diapazonu
+                    if (pMake === makeNorm && pModel === modelNorm && (pYear >= year - 3 && pYear <= year + 3)) {
+                        result.yearRange.push(p);
+                        return;
+                    }
+
+                    // 3. Model sözü
+                    if (pMake === makeNorm && pModel && modelNorm) {
+                        if (pModel.includes(modelNorm) || modelNorm.includes(pModel)) {
+                            result.modelKeyword.push(p);
+                            return;
+                        }
+                    }
+
+                    // 4. Fallback: yalnız marka
+                    if (pMake === makeNorm) {
+                        result.fallback.push(p);
+                    }
+                });
+
+                return result;
+            },
+
+            getRecommendedParts(vehicle) {
+                const make = vehicle.make;
+                const model = vehicle.model;
+                const localModelData = VinDatabase.getModelData(make, model);
+                if (localModelData) {
+                    return localModelData.data.parts;
+                }
+                const makeData = VinDatabase.models[make];
+                if (makeData) {
+                    const firstModel = Object.keys(makeData)[0];
+                    return makeData[firstModel].parts;
+                }
+                return null;
+            }
+        };
+
+
+        // =============================================================
+        // === YENİ — VIN API ===
+        // =============================================================
         const VinAPI = {
             async fetchNHTSA(vin) {
                 const response = await fetch(
@@ -3303,7 +3657,10 @@
             }
         };
 
-        // -------- 2. VinCache --------
+
+        // =============================================================
+        // === VIN CACHE ===
+        // =============================================================
         const VinCache = {
             TTL: 7 * 24 * 60 * 60 * 1000,
             get(key) {
@@ -3325,68 +3682,10 @@
             }
         };
 
-        // -------- 3. VinMatcher --------
-        const VinMatcher = {
-            normalize(str) {
-                if (!str) return '';
-                return str.toLowerCase().replace(/[^a-z0-9]/g, '');
-            },
-            matchProducts(products, vehicle) {
-                if (!products || products.length === 0) return [];
 
-                const makeNorm = this.normalize(vehicle.make);
-                const modelNorm = this.normalize(vehicle.model);
-                const yearNorm = this.normalize(vehicle.year);
-
-                return products.filter(p => {
-                    const pMake = this.normalize(p.carBrand);
-                    const pModel = this.normalize(p.carModel);
-                    const pYear = this.normalize(String(p.carYear));
-                    const pEngine = this.normalize(p.engine);
-                    const pOem = this.normalize(p.oem);
-
-                    const makeMatch = pMake && (pMake.includes(makeNorm) || makeNorm.includes(pMake));
-
-                    let modelMatch = false;
-                    if (pModel && modelNorm) {
-                        modelMatch = pModel.includes(modelNorm) || modelNorm.includes(pModel);
-                        if (!modelMatch) {
-                            const pShort = pModel.replace(/[^a-z0-9]/g, '');
-                            const mShort = modelNorm.replace(/[^a-z0-9]/g, '');
-                            modelMatch = pShort.includes(mShort) || mShort.includes(pShort);
-                        }
-                    }
-
-                    let yearMatch = false;
-                    if (pYear && yearNorm && pYear.length > 0 && yearNorm.length > 0) {
-                        yearMatch = pYear === yearNorm || Math.abs(parseInt(pYear) - parseInt(yearNorm)) <= 2;
-                    }
-
-                    let engineMatch = false;
-                    if (pEngine && vehicle.engineModel) {
-                        const engNorm = this.normalize(vehicle.engineModel);
-                        engineMatch = pEngine.includes(engNorm) || engNorm.includes(pEngine);
-                    }
-
-                    let oemMatch = false;
-                    if (pOem && vehicle.oem) {
-                        const oemNorm = this.normalize(vehicle.oem);
-                        oemMatch = pOem.includes(oemNorm) || oemNorm.includes(pOem);
-                    }
-
-                    if (!makeMatch) return false;
-                    if (modelMatch) return true;
-                    if (yearMatch) return true;
-                    if (engineMatch) return true;
-                    if (oemMatch) return true;
-                    if (makeMatch && !pModel) return true;
-
-                    return false;
-                });
-            }
-        };
-
-        // -------- 4. VinUI --------
+        // =============================================================
+        // === YENİ — VIN UI (ÜÇ SƏVİYYƏLİ RENDER) ===
+        // =============================================================
         const VinUI = {
             showLoading() {
                 const container = document.getElementById('vinResult');
@@ -3394,7 +3693,7 @@
                     <div class="vin-loading">
                         <div class="spinner"></div>
                         <p style="margin-top:1rem;">VIN dekodlanır...</p>
-                        <p class="text-muted fs-small">Məlumatlar çoxmənbəli sistemdən alınır</p>
+                        <p class="text-muted fs-small">Yerli kataloq və çoxmənbəli sistemdən məlumat alınır</p>
                     </div>
                 `;
             },
@@ -3409,47 +3708,20 @@
                 `;
             },
 
-            renderResult(vin, vehicle, source, matchedProducts) {
+            renderResult(vin, vehicle, source, matchedProducts, localInfo) {
                 const container = document.getElementById('vinResult');
-
-                // Əgər vehicle undefined-dirsə, boş obyekt yaradırıq
                 const v = vehicle || {};
+                const make = v.make || 'Məlumat tapılmadı';
+                const model = v.model || '';
+                const year = v.year || '';
 
-                const fields = [
-                    { label: 'Marka', key: 'make' },
-                    { label: 'Model', key: 'model' },
-                    { label: 'İl', key: 'year' },
-                    { label: 'Kuzov', key: 'bodyClass' },
-                    { label: 'Trim', key: 'trim' },
-                    { label: 'Mühərrik silindr', key: 'engineCylinders' },
-                    { label: 'Mühərrik həcmi (L)', key: 'displacementL' },
-                    { label: 'Yanacaq növü', key: 'fuelType' },
-                    { label: 'Transmissiya', key: 'transmission' },
-                    { label: 'Ötürücü sistemi', key: 'driveType' },
-                    { label: 'İstehsal ölkəsi', key: 'plantCountry' },
-                    { label: 'Xarici rəng', key: 'exteriorColor' },
-                    { label: 'Daxili rəng', key: 'interiorColor' },
-                    { label: 'WMI', key: 'wmi' },
-                    { label: 'VDS', key: 'vds' },
-                    { label: 'VIS', key: 'vis' },
-                ];
-
-                let specsHtml = fields.map(f => {
-                    const value = v[f.key] || 'Məlumat tapılmadı';
-                    return `
-                        <div class="vin-spec-item">
-                            <div class="label">${f.label}</div>
-                            <div class="value">${value}</div>
-                        </div>
-                    `;
-                }).join('');
-
+                // Səviyyə 1: VIN məlumatı
                 let html = `
                     <div class="vin-vehicle-card">
                         <div class="flex-between">
                             <div>
-                                <div class="vehicle-title">${v.make || 'Məlumat tapılmadı'} ${v.model || ''}</div>
-                                <div class="vehicle-subtitle">${v.year || ''}</div>
+                                <div class="vehicle-title">${make} ${model}</div>
+                                <div class="vehicle-subtitle">${year}</div>
                             </div>
                             <div style="font-size:0.8rem;color:var(--surface-text-secondary);font-family:monospace;text-align:right;">
                                 <div>${vin}</div>
@@ -3460,23 +3732,77 @@
                                 <div style="font-size:0.6rem;color:var(--surface-text-secondary);">Mənbə: ${source}</div>
                             </div>
                         </div>
-
                         <div class="vin-specs-grid">
-                            ${specsHtml}
+                            ${Object.entries({
+                                'Marka': v.make || 'Məlumat tapılmadı',
+                                'Model': v.model || 'Məlumat tapılmadı',
+                                'İl': v.year || 'Məlumat tapılmadı',
+                                'Kuzov': v.bodyClass || 'Məlumat tapılmadı',
+                                'Mühərrik': `${v.engineCylinders || '?'} sil. ${v.displacementL || ''}`,
+                                'Yanacaq': v.fuelType || 'Məlumat tapılmadı',
+                                'Transmissiya': v.transmission || 'Məlumat tapılmadı',
+                                'Ötürücü': v.driveType || 'Məlumat tapılmadı',
+                                'İstehsal ölkəsi': v.plantCountry || 'Məlumat tapılmadı',
+                                'Xarici rəng': v.exteriorColor || 'Məlumat tapılmadı',
+                                'Daxili rəng': v.interiorColor || 'Məlumat tapılmadı',
+                            }).map(([key, val]) => `
+                                <div class="vin-spec-item">
+                                    <div class="label">${key}</div>
+                                    <div class="value">${val}</div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
 
-                // Anbar məhsulları
-                if (matchedProducts && matchedProducts.length > 0) {
+                // Səviyyə 2: Kateqoriyalı hissə tövsiyələri
+                const recommendedParts = VinMatcher.getRecommendedParts(v);
+                if (recommendedParts) {
+                    html += `
+                        <div class="vin-vehicle-card">
+                            <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--surface-text-secondary);font-weight:500;margin-bottom:1rem;">
+                                <i class="fas fa-cogs" style="color:var(--color-lavender-phosphor);"></i> Tövsiyə olunan hissələr (${make} ${model})
+                            </h4>
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+                                ${Object.entries(recommendedParts).map(([category, items]) => `
+                                    <div style="background:var(--color-liquid-deep);border-radius:var(--radius-sm);padding:0.8rem;border:1px solid rgba(255,255,255,0.04);">
+                                        <div style="font-size:0.7rem;text-transform:uppercase;color:var(--surface-text-secondary);letter-spacing:0.06em;font-weight:600;margin-bottom:0.4rem;">${category}</div>
+                                        <ul style="list-style:none;padding:0;margin:0;">
+                                            ${items.map(item => `
+                                                <li style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;font-size:0.85rem;">
+                                                    <span>${item}</span>
+                                                    <span style="color:var(--surface-accent);font-weight:600;">OEM</span>
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Səviyyə 3: Anbar məhsulları
+                const multiMatch = matchedProducts || { exact: [], yearRange: [], modelKeyword: [], fallback: [] };
+                const allMatched = [...multiMatch.exact, ...multiMatch.yearRange, ...multiMatch.modelKeyword, ...multiMatch
+                    .fallback
+                ];
+
+                if (allMatched.length > 0) {
                     html += `
                         <div class="vin-vehicle-card">
                             <div class="vin-parts-section" style="border-top:none;padding-top:0;">
                                 <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--surface-text-secondary);font-weight:500;">
-                                    <i class="fas fa-warehouse" style="color:#34d399;"></i> Anbarımızdakı Uyğun Məhsullar (${matchedProducts.length})
+                                    <i class="fas fa-warehouse" style="color:#34d399;"></i> Anbarımızdakı Uyğun Məhsullar (${allMatched.length})
                                 </h4>
+                                <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--surface-text-secondary);">
+                                    <span class="badge badge-success">Dəqiq: ${multiMatch.exact.length}</span>
+                                    <span class="badge badge-info">İl diapazonu: ${multiMatch.yearRange.length}</span>
+                                    <span class="badge badge-warning">Model söz: ${multiMatch.modelKeyword.length}</span>
+                                    <span class="badge badge-secondary">Marka: ${multiMatch.fallback.length}</span>
+                                </div>
                                 <div class="vin-parts-grid">
-                                    ${matchedProducts.map(p => `
+                                    ${allMatched.map(p => `
                                         <div class="vin-part-card">
                                             ${p.image ? `<img src="${p.image}" class="part-image" alt="${p.name}">` : `<div class="part-image" style="display:flex;align-items:center;justify-content:center;color:var(--surface-text-secondary);"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
                                             <div class="part-name">${p.name}</div>
@@ -3497,47 +3823,79 @@
                         </div>
                     `;
                 } else {
+                    // FALLBACK: heç bir məhsul tapılmadı
+                    const fallbackProducts = getProducts().filter(p =>
+                        VinMatcher.normalize(p.carBrand) === VinMatcher.normalize(make)
+                    );
+
                     html += `
-                        <div class="vin-vehicle-card">
-                            <div class="no-products-found">
-                                <i class="fas fa-box-open"></i>
-                                <p>Bu avtomobil üçün anbarımızda uyğun məhsul tapılmadı.</p>
-                                <p class="text-muted fs-small">"Məhsullar" səhifəsindən yeni məhsul əlavə edə bilərsiniz.</p>
+                        <div class="vin-vehicle-card" style="border-left:4px solid #f59e0b;">
+                            <div style="display:flex;flex-direction:column;align-items:center;padding:1rem 0;">
+                                <i class="fas fa-box-open" style="font-size:3rem;opacity:0.3;margin-bottom:1rem;"></i>
+                                <p style="font-weight:600;">Bu VIN-ə uyğun anbar məhsulu tapılmadı.</p>
+                                <p class="text-muted fs-small">Aşağıdakı alternativləri sınayın:</p>
+                                <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:0.5rem;">
+                                    <a href="https://partsouq.com/en/search/search?q=${vin}" target="_blank" class="btn btn-outline btn-sm">
+                                        <i class="fas fa-external-link-alt"></i> Partsouq.com
+                                    </a>
+                                    <a href="https://emex.ru/search?vin=${vin}" target="_blank" class="btn btn-outline btn-sm">
+                                        <i class="fas fa-external-link-alt"></i> Emex.ru
+                                    </a>
+                                    <button class="btn btn-primary btn-sm" onclick="sendWhatsAppInquiry('${vin}')">
+                                        <i class="fab fa-whatsapp"></i> Sorğu göndər
+                                    </button>
+                                    <button class="btn btn-outline btn-sm" onclick="searchManual('${vin}')">
+                                        <i class="fas fa-search"></i> Əl ilə axtar
+                                    </button>
+                                </div>
                             </div>
+                            ${fallbackProducts.length > 0 ? `
+                                <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);">
+                                    <p class="text-muted fs-small"><i class="fas fa-info-circle"></i> Bəyənmiş ola biləcəyiniz <strong>${make}</strong> hissələri:</p>
+                                    <div class="vin-parts-grid">
+                                        ${fallbackProducts.slice(0, 6).map(p => `
+                                            <div class="vin-part-card" style="cursor:pointer;" onclick="editProduct('${p.id}')">
+                                                <div class="part-name">${p.name}</div>
+                                                <div class="part-code">${p.oem || p.code || ''}</div>
+                                                <div class="part-price">${fmtMoney(p.sellPrice || 0)}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 }
 
                 container.innerHTML = html;
-            },
-
-            renderFallback(vin) {
-                const container = document.getElementById('vinResult');
-                container.innerHTML = `
-                    <div class="vin-vehicle-card" style="border-left:4px solid #f59e0b;">
-                        <div class="flex-between">
-                            <div>
-                                <div class="vehicle-title">VIN Məlumatı</div>
-                                <div class="vehicle-subtitle" style="color:#fbbf24;">API müvəqqəti olaraq işləmir</div>
-                            </div>
-                            <div style="font-size:0.8rem;color:var(--surface-text-secondary);font-family:monospace;">${vin}</div>
-                        </div>
-                        <div class="vin-success" style="margin-top:1rem;">
-                            <i class="fas fa-info-circle"></i> Aşağıdakı linklərlə birbaşa saytlarda axtarış edə bilərsiniz.
-                        </div>
-                        <div class="vin-external-links">
-                            <a href="https://partsouq.com/en/search/search?q=${vin}" target="_blank"><i class="fas fa-external-link-alt"></i> Partsouq.com</a>
-                            <a href="https://emex.ru/search?vin=${vin}" target="_blank"><i class="fas fa-external-link-alt"></i> Emex.ru</a>
-                        </div>
-                        <div style="margin-top:1rem;padding:1rem;background:var(--color-liquid-deep);border-radius:var(--radius-sm);">
-                            <p class="text-muted fs-small">Siz həmçinin "Məhsullar" səhifəsindən əl ilə axtarış edə bilərsiniz.</p>
-                        </div>
-                    </div>
-                `;
             }
         };
 
-        // -------- 5. VIN Controller --------
+
+        // =============================================================
+        // === FALLBACK KÖMƏKÇİ FUNKSİYALAR ===
+        // =============================================================
+        function sendWhatsAppInquiry(vin) {
+            const message = `Salam! Mən ${vin} VIN-li avtomobil üçün ehtiyat hissə axtarıram. Zəhmət olmasa mənə kömək edə bilərsinizmi?`;
+            const url = `https://api.whatsapp.com/send?phone=+994501234567&text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        function searchManual(vin) {
+            navigateTo('products');
+            setTimeout(() => {
+                const searchInput = document.getElementById('productSearch');
+                if (searchInput) {
+                    searchInput.value = vin;
+                    searchInput.dispatchEvent(new Event('input'));
+                }
+            }, 300);
+        }
+
+
+        // =============================================================
+        // === YENİ performSearch (BİRLƏŞDİRİLMİŞ) ===
+        // =============================================================
         async function performSearch() {
             const input = document.getElementById('vinInput');
             const query = input.value.trim();
@@ -3560,20 +3918,60 @@
 
             VinUI.showLoading();
 
+            let vehicle = {};
+            let source = 'Yerli kataloq';
+            let localInfo = null;
+
+            // 1. Yerli kataloqdan yoxla
             try {
-                const result = await VinAPI.search(vin);
-                // ✅ Əgər result.data undefined-dirsə, boş obyekt yaradırıq
-                const vehicle = result.data || {};
-                const products = getProducts();
-                const matchedProducts = VinMatcher.matchProducts(products, vehicle);
-                VinUI.renderResult(vin, vehicle, result.source, matchedProducts);
-            } catch (error) {
-                console.error('Axtarış xətası:', error);
-                VinUI.showError(error.message || 'VIN axtarışı zamanı xəta baş verdi.');
+                const local = VinDatabase.lookupLocal(vin);
+                if (local && local.make) {
+                    vehicle.make = local.make;
+                    source = 'Yerli kataloq (WMI)';
+                    localInfo = local;
+                }
+            } catch (e) { console.warn('Local lookup error:', e); }
+
+            // 2. API çağırışları
+            if (!vehicle.make) {
+                try {
+                    const result = await VinAPI.search(vin);
+                    vehicle = result.data || {};
+                    source = result.source || 'API';
+                } catch (error) {
+                    console.warn('API error:', error);
+                    if (localInfo && localInfo.make) {
+                        vehicle.make = localInfo.make;
+                        source = 'Yerli kataloq (API xətası)';
+                    } else {
+                        VinUI.showError(error.message || 'VIN axtarışı zamanı xəta baş verdi.');
+                        return;
+                    }
+                }
             }
+
+            // Model və il üçün API məlumatlarını yerli ilə birləşdir
+            if (!vehicle.model && localInfo && localInfo.model) {
+                vehicle.model = localInfo.model;
+            }
+            if (!vehicle.year && localInfo && localInfo.year) {
+                vehicle.year = localInfo.year;
+            }
+
+            // Məhsulları yüklə
+            const products = getProducts();
+
+            // Çox səviyyəli matching
+            const matched = VinMatcher.matchProductsMultiLevel(products, vehicle, localInfo);
+
+            // Nəticəni göstər
+            VinUI.renderResult(vin, vehicle, source, matched, localInfo);
         }
 
-        // -------- KÖMƏKÇİ FUNKSİYALAR --------
+
+        // =============================================================
+        // === KÖMƏKÇİ FUNKSİYALAR (search üçün) ===
+        // =============================================================
         function addToCartFromSearch(productId) {
             if (typeof window.addToCart === 'function') {
                 window.addToCart(productId);
@@ -3688,6 +4086,8 @@
         window.performSearch = performSearch;
         window.addToCartFromSearch = addToCartFromSearch;
         window.setVinExample = setVinExample;
+        window.sendWhatsAppInquiry = sendWhatsAppInquiry;
+        window.searchManual = searchManual;
 
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.shiftKey && e.key === 'B') {
@@ -3695,10 +4095,10 @@
             }
         });
 
-        console.log('✅ 366 AUTO — VIN axtarışı aktivdir!');
-        console.log('📦 Modullar: VinAPI, VinCache, VinMatcher, VinUI, VinController');
+        console.log('✅ 366 AUTO — Yerli VIN kataloqu və çox səviyyəli matching ilə işə salındı!');
+        console.log('📦 Modullar: VinDatabase, VinAPI, VinCache, VinMatcher, VinUI, VinController');
         console.log('📊 Məlumatlar localStorage-də saxlanılır.');
-        console.log('🔍 VIN axtarışı: NHTSA (əsas) + DB.VIN (ehtiyat)');
+        console.log('🔍 VIN axtarışı: Yerli kataloq → NHTSA → DB.VIN');
         console.log('✨ 20,000 hissəcikli parallax sfera');
         console.log('⌨️ Ctrl+Shift+B - backup bərpa');
     </script>

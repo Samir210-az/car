@@ -1231,7 +1231,7 @@
                 <button class="nav-item" data-page="debts"><i class="fas fa-hand-holding-usd"></i> Borclar</button>
                 <button class="nav-item" data-page="customers"><i class="fas fa-address-book"></i> Müştərilər</button>
                 <button class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Hesabatlar</button>
-                <button class="nav-item" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
+                <button class="nav-item active" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
             </div>
             <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
             <div class="user-badge">
@@ -1254,7 +1254,7 @@
             <button class="nav-item" data-page="debts"><i class="fas fa-hand-holding-usd"></i> Borclar</button>
             <button class="nav-item" data-page="customers"><i class="fas fa-address-book"></i> Müştərilər</button>
             <button class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i> Hesabatlar</button>
-            <button class="nav-item" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
+            <button class="nav-item active" data-page="vin-search"><i class="fas fa-search"></i> VIN Axtar</button>
         </div>
 
         <!-- ===== MAIN CONTENT ===== -->
@@ -1310,7 +1310,7 @@
                     </div>
                 </div>
                 <div class="toolbar">
-                    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="productSearch" placeholder="Axtar..." oninput="renderProducts()"></div>
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="productSearch" placeholder="Ad, OEM, barkod, marka, model üzrə axtar..." oninput="renderProducts()"></div>
                     <select id="productCategoryFilter" onchange="renderProducts()" style="padding:0.5rem 0.8rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-family:var(--font-primary);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;"><option value="">Bütün kateqoriyalar</option></select>
                     <button class="btn btn-outline btn-sm" onclick="renderProducts()"><i class="fas fa-sync"></i> Yenilə</button>
                 </div>
@@ -1446,7 +1446,7 @@
             </div>
 
             <!-- ==========================================================
-                   VIN AXTARIŞ SƏHİFƏSİ
+                   VIN AXTARIŞ SƏHİFƏSİ (TAM İŞLƏK)
                    ========================================================== -->
             <div class="page active" id="page-vin-search">
                 <div class="vin-search-container">
@@ -1489,7 +1489,7 @@
 
 
     <!-- ============================================================ -->
-    <!-- MODALLAR (qısa) -->
+    <!-- MODALLAR -->
     <!-- ============================================================ -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
@@ -1632,10 +1632,10 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT — BİRLƏŞDİRİLMİŞ VIN AXTARIŞI -->
+    <!-- JAVASCRIPT — BİRLƏŞDİRİLMİŞ VIN AXTARIŞI + MƏHSULLAR + SƏHİFƏLƏMƏ -->
     <!-- ============================================================ -->
     <script>
-        console.log('🚗 366 AUTO — VIN axtarışı ilə işə salındı');
+        console.log('🚗 366 AUTO — VIN axtarışı + Məhsul axtarışı + Səhifələmə işə salındı');
 
         // =============================================================
         // PARALLAX HERO
@@ -1683,7 +1683,6 @@
                 blending: THREE.AdditiveBlending, sizeAttenuation: true });
             const particles = new THREE.Points(geometry, material);
             scene.add(particles);
-            // Car icon
             const canvas = document.createElement('canvas');
             canvas.width = 256;
             canvas.height = 256;
@@ -1759,7 +1758,7 @@
 
 
         // =============================================================
-        // STATE & HELPERS (əvvəlki kimi)
+        // STATE & HELPERS
         // =============================================================
         const state = {
             user: { username: 'admin', role: 'admin', name: 'Admin' },
@@ -1858,7 +1857,7 @@
 
 
         // =============================================================
-        // INIT (əvvəlki kimi)
+        // INIT
         // =============================================================
         function initApp() {
             state.products = loadFromStorage('products');
@@ -1870,6 +1869,29 @@
             state.taxes = loadFromStorage('taxes');
             state.debts = loadFromStorage('debts');
             state.customers = loadFromStorage('customers');
+
+            // Əgər məhsul yoxdursa, nümunə məhsullar əlavə et
+            if (state.products.length === 0) {
+                state.products = [
+                    { id: 'p1', name: 'Yağ Filtri', oem: 'OEM-001', category: 'Filtirlər', stock: 45, buyPrice: 8.50,
+                        sellPrice: 15.00, carBrand: 'Toyota', carModel: 'Camry', carYear: '2020' },
+                    { id: 'p2', name: 'Hava Filtri', oem: 'OEM-002', category: 'Filtirlər', stock: 32, buyPrice: 12.00,
+                        sellPrice: 22.00, carBrand: 'Honda', carModel: 'Accord', carYear: '2019' },
+                    { id: 'p3', name: 'Ön Əyləc Diskləri', oem: 'OEM-003', category: 'Əyləc Sistemi', stock: 18,
+                        buyPrice: 45.00, sellPrice: 75.00, carBrand: 'BMW', carModel: '3 Series', carYear: '2021' },
+                    { id: 'p4', name: 'Mühərrik Yağı 5W-30', oem: 'OEM-004', category: 'Yağlar', stock: 60, buyPrice: 22.00,
+                        sellPrice: 35.00, carBrand: 'Mercedes-Benz', carModel: 'C-Class', carYear: '2022' },
+                    { id: 'p5', name: 'Akumulyator 60Ah', oem: 'OEM-005', category: 'Elektrik', stock: 12, buyPrice: 85.00,
+                        sellPrice: 140.00, carBrand: 'Toyota', carModel: 'Camry', carYear: '2021' },
+                    { id: 'p6', name: 'Arxa Amortizator', oem: 'OEM-006', category: 'Süspansiyon', stock: 8, buyPrice: 55.00,
+                        sellPrice: 95.00, carBrand: 'Honda', carModel: 'Civic', carYear: '2018' },
+                    { id: 'p7', name: 'Şam Dəsti', oem: 'OEM-007', category: 'Mühərrik', stock: 25, buyPrice: 15.00,
+                        sellPrice: 28.00, carBrand: 'Ford', carModel: 'Focus', carYear: '2020' },
+                    { id: 'p8', name: 'Kabin Filtri', oem: 'OEM-008', category: 'Filtirlər', stock: 40, buyPrice: 7.50,
+                        sellPrice: 14.00, carBrand: 'Toyota', carModel: 'Corolla', carYear: '2019' },
+                ];
+                saveToStorage('products', state.products);
+            }
 
             document.getElementById('userName').textContent = state.user.name;
             document.getElementById('userAvatar').textContent = state.user.name[0].toUpperCase();
@@ -1906,7 +1928,7 @@
 
 
         // =============================================================
-        // EVENT LISTENERS (əvvəlki kimi)
+        // EVENT LISTENERS
         // =============================================================
         function setupEventListeners() {
             document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -2031,11 +2053,117 @@
 
 
         // =============================================================
-        // DASHBOARD, PRODUCTS, SUPPLIERS, PURCHASES, FINANCE, EMPLOYEES, TAXES, DEBTS, CUSTOMERS, POS, REPORTS
-        // (əvvəlki kimi tam işlək, yer qənaəti üçün qısa saxlanılır)
+        // MƏHSULLAR — AXTARIŞ + SƏHİFƏLƏMƏ (TAM İŞLƏK)
         // =============================================================
-        // Bu funksiyalar əvvəlki versiyalardakı kimidir və tam işləkdir.
-        // ... (qısa saxlanılır)
+
+        function renderProducts() {
+            const search = document.getElementById('productSearch')?.value?.toLowerCase() || '';
+            const category = document.getElementById('productCategoryFilter')?.value || '';
+            const allProducts = getProducts();
+
+            // Filtrasiya
+            let filtered = allProducts.filter(p => {
+                const matchSearch =
+                    p.name?.toLowerCase().includes(search) ||
+                    p.oem?.toLowerCase().includes(search) ||
+                    p.code?.toLowerCase().includes(search) ||
+                    p.barcode?.toLowerCase().includes(search) ||
+                    p.carBrand?.toLowerCase().includes(search) ||
+                    p.carModel?.toLowerCase().includes(search) ||
+                    p.category?.toLowerCase().includes(search) ||
+                    p.sku?.toLowerCase().includes(search);
+                const matchCategory = category === '' || p.category === category;
+                return matchSearch && matchCategory;
+            });
+
+            // Kateqoriya filter dropdown-unu yenilə
+            const catSelect = document.getElementById('productCategoryFilter');
+            if (catSelect) {
+                const currentVal = catSelect.value;
+                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+                catSelect.innerHTML = '<option value="">Bütün kateqoriyalar</option>' +
+                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                catSelect.value = currentVal;
+            }
+
+            // Səhifələmə
+            const pageSize = state.productPageSize || 15;
+            const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+            if (state.productPage > totalPages) state.productPage = totalPages;
+            if (state.productPage < 1) state.productPage = 1;
+
+            const start = (state.productPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filtered.length);
+            const pageItems = filtered.slice(start, end);
+
+            // Cədvəli doldur
+            const tbody = document.getElementById('productsTable');
+            if (!tbody) return;
+
+            if (pageItems.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="10" class="text-center text-muted" style="padding:2rem;">🔍 Heç bir məhsul tapılmadı</td></tr>`;
+            } else {
+                tbody.innerHTML = pageItems.map((p, idx) => {
+                    const profit = (p.sellPrice && p.buyPrice) ? (((p.sellPrice - p.buyPrice) / p.buyPrice) * 100)
+                        .toFixed(1) : '-';
+                    return `
+                        <tr>
+                            <td>${start + idx + 1}</td>
+                            <td>${p.image ? `<img src="${p.image}" style="width:40px;height:40px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,0.04);">` : '<i class="fas fa-image" style="opacity:0.3;font-size:20px;"></i>'}</td>
+                            <td><strong>${p.name || '—'}</strong></td>
+                            <td><code style="font-size:0.75rem;background:var(--color-liquid-deep);padding:2px 6px;border-radius:4px;">${p.oem || '—'}</code></td>
+                            <td>${p.category || '—'}</td>
+                            <td style="color:${(p.stock || 0) < (p.minStock || 5) ? '#f87171' : '#34d399'}">${p.stock || 0}</td>
+                            <td>${fmtMoney(p.buyPrice || 0)}</td>
+                            <td>${fmtMoney(p.sellPrice || 0)}</td>
+                            <td style="color:${profit !== '-' && profit < 0 ? '#f87171' : '#34d399'}">${profit}%</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-outline btn-sm" onclick="generateBarcode('${p.id}')"><i class="fas fa-barcode"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Səhifələmə məlumatları
+            document.getElementById('productCount').textContent = `${filtered.length} məhsul`;
+            document.getElementById('productPageInfo').textContent = `${state.productPage} / ${totalPages}`;
+        }
+
+        function prevProductPage() {
+            if (state.productPage > 1) {
+                state.productPage--;
+                renderProducts();
+            }
+        }
+
+        function nextProductPage() {
+            const all = getProducts();
+            const search = document.getElementById('productSearch')?.value?.toLowerCase() || '';
+            const category = document.getElementById('productCategoryFilter')?.value || '';
+            const filtered = all.filter(p => {
+                const matchSearch =
+                    p.name?.toLowerCase().includes(search) ||
+                    p.oem?.toLowerCase().includes(search) ||
+                    p.code?.toLowerCase().includes(search) ||
+                    p.barcode?.toLowerCase().includes(search) ||
+                    p.carBrand?.toLowerCase().includes(search) ||
+                    p.carModel?.toLowerCase().includes(search) ||
+                    p.category?.toLowerCase().includes(search) ||
+                    p.sku?.toLowerCase().includes(search);
+                const matchCategory = category === '' || p.category === category;
+                return matchSearch && matchCategory;
+            });
+            const totalPages = Math.ceil(filtered.length / (state.productPageSize || 15)) || 1;
+            if (state.productPage < totalPages) {
+                state.productPage++;
+                renderProducts();
+            }
+        }
+
 
         // =============================================================
         // YENİ — YERLİ VIN KATALOQU
@@ -2170,7 +2298,7 @@
 
 
         // =============================================================
-        // YENİ — VIN MATCHER (Çox səviyyəli)
+        // VIN MATCHER
         // =============================================================
         const VinMatcher = {
             normalize(str) {
@@ -2231,7 +2359,7 @@
 
 
         // =============================================================
-        // YENİ — VIN UI
+        // VIN UI
         // =============================================================
         const VinUI = {
             showLoading() {
@@ -2262,7 +2390,6 @@
                 const model = v.model || '';
                 const year = v.year || '';
 
-                // Səviyyə 1: VIN məlumatı
                 let html = `
                     <div class="vin-vehicle-card">
                         <div class="flex-between">
@@ -2300,7 +2427,6 @@
                     </div>
                 `;
 
-                // Səviyyə 2: Kateqoriyalı hissə tövsiyələri
                 const recommendedParts = VinMatcher.getRecommendedParts(v);
                 if (recommendedParts) {
                     html += `
@@ -2327,7 +2453,6 @@
                     `;
                 }
 
-                // Səviyyə 3: Anbar məhsulları
                 const multiMatch = matchedProducts || { exact: [], yearRange: [], modelKeyword: [], fallback: [] };
                 const allMatched = [...multiMatch.exact, ...multiMatch.yearRange, ...multiMatch.modelKeyword, ...multiMatch
                     .fallback
@@ -2368,7 +2493,6 @@
                         </div>
                     `;
                 } else {
-                    // FALLBACK
                     const fallbackProducts = getProducts().filter(p =>
                         VinMatcher.normalize(p.carBrand) === VinMatcher.normalize(make)
                     );
@@ -2418,101 +2542,7 @@
 
 
         // =============================================================
-        // YENİ — performSearch (XƏTASIZ)
-        // =============================================================
-        async function performSearch() {
-            const input = document.getElementById('vinInput');
-            const query = input.value.trim();
-
-            if (!query) {
-                VinUI.showError('Zəhmət olmasa VIN kodunu daxil edin!');
-                return;
-            }
-
-            const vin = query.toUpperCase().replace(/\s/g, '');
-
-            if (vin.length !== 17) {
-                VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
-                return;
-            }
-            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
-                return;
-            }
-
-            VinUI.showLoading();
-
-            let vehicle = {};
-            let source = 'Yerli kataloq';
-            let localInfo = null;
-
-            // 1. Yerli kataloqdan yoxla
-            try {
-                const local = VinDatabase.lookupLocal(vin);
-                if (local && local.make) {
-                    vehicle.make = local.make;
-                    source = 'Yerli kataloq (WMI)';
-                    localInfo = local;
-                }
-            } catch (e) { console.warn('Local lookup error:', e); }
-
-            // 2. API çağırışları (yerli kataloqda make yoxdursa)
-            let apiSuccess = false;
-            if (!vehicle.make) {
-                try {
-                    const result = await VinAPI.search(vin);
-                    vehicle = result.data || {};
-                    source = result.source || 'API';
-                    apiSuccess = true;
-                } catch (error) {
-                    console.warn('API error:', error);
-                    if (localInfo && localInfo.make) {
-                        vehicle.make = localInfo.make;
-                        source = 'Yerli kataloq (API xətası)';
-                    } else {
-                        VinUI.showError('VIN məlumatı tapılmadı. Zəhmət olmasa VIN-i yoxlayın və ya "Əl ilə axtar" düyməsini istifadə edin.');
-                        return;
-                    }
-                }
-            } else {
-                // Yerli kataloqdan make var, API-dən əlavə məlumat almağa cəhd edək
-                try {
-                    const result = await VinAPI.search(vin);
-                    if (result && result.data) {
-                        if (result.data.make) vehicle.make = result.data.make;
-                        if (result.data.model) vehicle.model = result.data.model;
-                        if (result.data.year) vehicle.year = result.data.year;
-                        if (result.data.bodyClass) vehicle.bodyClass = result.data.bodyClass;
-                        if (result.data.engineCylinders) vehicle.engineCylinders = result.data.engineCylinders;
-                        if (result.data.displacementL) vehicle.displacementL = result.data.displacementL;
-                        if (result.data.fuelType) vehicle.fuelType = result.data.fuelType;
-                        if (result.data.transmission) vehicle.transmission = result.data.transmission;
-                        if (result.data.driveType) vehicle.driveType = result.data.driveType;
-                        if (result.data.plantCountry) vehicle.plantCountry = result.data.plantCountry;
-                        source = result.source || 'API + Yerli';
-                        apiSuccess = true;
-                    }
-                } catch (e) {
-                    console.warn('API əlavə məlumat alınmadı:', e);
-                }
-            }
-
-            // VIN doğrulaması
-            if (vehicle.vinValid === undefined) {
-                vehicle.vinValid = true;
-            }
-
-            // Məhsulları yüklə və uyğunlaşdır
-            const products = getProducts();
-            const matched = VinMatcher.matchProductsMultiLevel(products, vehicle);
-
-            // Nəticəni göstər
-            VinUI.renderResult(vin, vehicle, source, matched);
-        }
-
-
-        // =============================================================
-        // VIN API (əvvəlki kimi)
+        // VIN API
         // =============================================================
         const VinAPI = {
             async fetchNHTSA(vin) {
@@ -2648,6 +2678,94 @@
 
 
         // =============================================================
+        // VIN performSearch (XƏTASIZ)
+        // =============================================================
+        async function performSearch() {
+            const input = document.getElementById('vinInput');
+            const query = input.value.trim();
+
+            if (!query) {
+                VinUI.showError('Zəhmət olmasa VIN kodunu daxil edin!');
+                return;
+            }
+
+            const vin = query.toUpperCase().replace(/\s/g, '');
+
+            if (vin.length !== 17) {
+                VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
+                return;
+            }
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
+                return;
+            }
+
+            VinUI.showLoading();
+
+            let vehicle = {};
+            let source = 'Yerli kataloq';
+            let localInfo = null;
+
+            try {
+                const local = VinDatabase.lookupLocal(vin);
+                if (local && local.make) {
+                    vehicle.make = local.make;
+                    source = 'Yerli kataloq (WMI)';
+                    localInfo = local;
+                }
+            } catch (e) { console.warn('Local lookup error:', e); }
+
+            let apiSuccess = false;
+            if (!vehicle.make) {
+                try {
+                    const result = await VinAPI.search(vin);
+                    vehicle = result.data || {};
+                    source = result.source || 'API';
+                    apiSuccess = true;
+                } catch (error) {
+                    console.warn('API error:', error);
+                    if (localInfo && localInfo.make) {
+                        vehicle.make = localInfo.make;
+                        source = 'Yerli kataloq (API xətası)';
+                    } else {
+                        VinUI.showError('VIN məlumatı tapılmadı. Zəhmət olmasa VIN-i yoxlayın və ya "Əl ilə axtar" düyməsini istifadə edin.');
+                        return;
+                    }
+                }
+            } else {
+                try {
+                    const result = await VinAPI.search(vin);
+                    if (result && result.data) {
+                        if (result.data.make) vehicle.make = result.data.make;
+                        if (result.data.model) vehicle.model = result.data.model;
+                        if (result.data.year) vehicle.year = result.data.year;
+                        if (result.data.bodyClass) vehicle.bodyClass = result.data.bodyClass;
+                        if (result.data.engineCylinders) vehicle.engineCylinders = result.data.engineCylinders;
+                        if (result.data.displacementL) vehicle.displacementL = result.data.displacementL;
+                        if (result.data.fuelType) vehicle.fuelType = result.data.fuelType;
+                        if (result.data.transmission) vehicle.transmission = result.data.transmission;
+                        if (result.data.driveType) vehicle.driveType = result.data.driveType;
+                        if (result.data.plantCountry) vehicle.plantCountry = result.data.plantCountry;
+                        source = result.source || 'API + Yerli';
+                        apiSuccess = true;
+                    }
+                } catch (e) {
+                    console.warn('API əlavə məlumat alınmadı:', e);
+                }
+            }
+
+            if (vehicle.vinValid === undefined) {
+                vehicle.vinValid = true;
+            }
+
+            const products = getProducts();
+            const matched = VinMatcher.matchProductsMultiLevel(products, vehicle);
+
+            VinUI.renderResult(vin, vehicle, source, matched);
+        }
+
+
+        // =============================================================
         // FALLBACK KÖMƏKÇİ FUNKSİYALAR
         // =============================================================
         function sendWhatsAppInquiry(vin) {
@@ -2675,6 +2793,1120 @@
                     const salesBtn = document.querySelector('.nav-item[data-page="sales"]');
                     if (salesBtn) salesBtn.click();
                 }, 600);
+            }
+        }
+
+
+        // =============================================================
+        // DASHBOARD (QISA)
+        // =============================================================
+        function renderDashboard() {
+            const products = getProducts();
+            const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+            const lowStock = products.filter(p => (p.stock || 0) < (p.minStock || 5)).length;
+            const totalValue = products.reduce((sum, p) => sum + (p.stock || 0) * (p.sellPrice || 0), 0);
+
+            document.getElementById('statStockCount').textContent = totalStock;
+            document.getElementById('statLowStock').textContent = lowStock;
+            document.getElementById('statTotalRevenue').textContent = fmtMoney(totalValue);
+
+            // Son məhsullar
+            const recent = products.slice(-5).reverse();
+            const tbody = document.getElementById('recentProducts');
+            if (tbody) {
+                tbody.innerHTML = recent.map(p => `
+                    <tr><td>${p.name || '—'}</td><td>${p.stock || 0}</td><td>${fmtMoney(p.sellPrice || 0)}</td></tr>
+                `).join('');
+            }
+        }
+
+
+        // =============================================================
+        // SUPPLIERS (QISA)
+        // =============================================================
+        function renderSuppliers() {
+            const search = document.getElementById('supplierSearch')?.value?.toLowerCase() || '';
+            const suppliers = getSuppliers().filter(s =>
+                s.name?.toLowerCase().includes(search) ||
+                s.phone?.includes(search) ||
+                s.email?.toLowerCase().includes(search)
+            );
+            const tbody = document.getElementById('suppliersTable');
+            if (!tbody) return;
+            if (suppliers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:2rem;">Heç bir təchizatçı tapılmadı</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = suppliers.map(s => `
+                <tr>
+                    <td><strong>${s.name || '—'}</strong></td>
+                    <td>${s.phone || '—'}</td>
+                    <td>${s.email || '—'}</td>
+                    <td>${s.address || '—'}</td>
+                    <td>${s.voen || '—'}</td>
+                    <td>${fmtMoney(s.debt || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editSupplier('${s.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSupplier('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+
+        // =============================================================
+        // PURCHASES (QISA)
+        // =============================================================
+        function renderPurchases() {
+            const purchases = getPurchases();
+            const tbody = document.getElementById('purchasesTable');
+            if (!tbody) return;
+            if (purchases.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:2rem;">Heç bir alış yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = purchases.slice(-20).reverse().map((p, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${p.supplier || '—'}</td>
+                    <td>${p.date || '—'}</td>
+                    <td>${(p.items || []).length} məhsul</td>
+                    <td>${fmtMoney(p.total || 0)}</td>
+                    <td><span class="badge badge-success">${p.status || 'tamamlandı'}</span></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="viewPurchase('${p.id}')"><i class="fas fa-eye"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+
+        // =============================================================
+        // FINANCE (QISA)
+        // =============================================================
+        function renderFinance() {
+            const finance = getFinance();
+            const totalIncome = finance.filter(f => f.type === 'income').reduce((s, f) => s + (f.amount || 0), 0);
+            const totalExpense = finance.filter(f => f.type === 'expense').reduce((s, f) => s + (f.amount || 0), 0);
+            document.getElementById('finRevenue').textContent = fmtMoney(totalIncome);
+            document.getElementById('finExpense').textContent = fmtMoney(totalExpense);
+            document.getElementById('finNet').textContent = fmtMoney(totalIncome - totalExpense);
+
+            const tbody = document.getElementById('financeTable');
+            if (!tbody) return;
+            if (finance.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem;">Heç bir əməliyyat yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = finance.slice(-20).reverse().map(f => `
+                <tr>
+                    <td>${f.date || '—'}</td>
+                    <td><span class="badge ${f.type === 'income' ? 'badge-success' : 'badge-danger'}">${f.type === 'income' ? 'Gəlir' : 'Xərc'}</span></td>
+                    <td>${f.category || '—'}</td>
+                    <td style="color:${f.type === 'income' ? '#34d399' : '#f87171'}">${fmtMoney(f.amount || 0)}</td>
+                    <td>${f.note || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+
+        // =============================================================
+        // EMPLOYEES (QISA)
+        // =============================================================
+        function renderEmployees() {
+            const employees = getEmployees();
+            const tbody = document.getElementById('employeesTable');
+            if (!tbody) return;
+            if (employees.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding:2rem;">Heç bir işçi yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = employees.map(e => `
+                <tr>
+                    <td><strong>${e.name || '—'} ${e.surname || ''}</strong></td>
+                    <td>${e.position || '—'}</td>
+                    <td>${e.phone || '—'}</td>
+                    <td>${fmtMoney(e.salary || 0)}</td>
+                    <td>${fmtMoney(e.bonus || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editEmployee('${e.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEmployee('${e.id}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="paySalary('${e.id}')"><i class="fas fa-money-bill-wave"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+
+        // =============================================================
+        // TAXES (QISA)
+        // =============================================================
+        function renderTaxes() {
+            const taxes = getTaxes();
+            const tbody = document.getElementById('taxTable');
+            if (!tbody) return;
+            if (taxes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem;">Heç bir vergi ödənişi yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = taxes.slice(-20).reverse().map(t => `
+                <tr>
+                    <td>${t.date || '—'}</td>
+                    <td>${t.quarter || '—'}</td>
+                    <td>${fmtMoney(t.amount || 0)}</td>
+                    <td><span class="badge ${t.status === 'ödənilib' ? 'badge-success' : t.status === 'gecikib' ? 'badge-danger' : 'badge-warning'}">${t.status || '—'}</span></td>
+                    <td>${t.note || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+
+        // =============================================================
+        // DEBTS (QISA)
+        // =============================================================
+        function renderDebts() {
+            const debts = getDebts();
+            const tbody = document.getElementById('debtsTable');
+            if (!tbody) return;
+            if (debts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted" style="padding:2rem;">Heç bir borc yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = debts.map(d => {
+                const remaining = (d.total || 0) - (d.paid || 0);
+                return `
+                    <tr>
+                        <td><span class="badge ${d.type === 'bizeborcludur' ? 'badge-success' : 'badge-danger'}">${d.type === 'bizeborcludur' ? 'Bizə borcludur' : 'Borcluyuq'}</span></td>
+                        <td>${d.person || '—'}</td>
+                        <td>${fmtMoney(d.total || 0)}</td>
+                        <td>${fmtMoney(d.paid || 0)}</td>
+                        <td style="color:${remaining > 0 ? '#f87171' : '#34d399'}">${fmtMoney(remaining)}</td>
+                        <td>${d.due || '—'}</td>
+                        <td><span class="badge ${d.status === 'aktiv' ? 'badge-warning' : 'badge-success'}">${d.status || '—'}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editDebt('${d.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-outline btn-sm" onclick="payDebt('${d.id}')"><i class="fas fa-hand-holding-usd"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+
+        // =============================================================
+        // CUSTOMERS (QISA)
+        // =============================================================
+        function renderCustomers() {
+            const search = document.getElementById('customerSearch')?.value?.toLowerCase() || '';
+            const customers = getCustomers().filter(c =>
+                c.name?.toLowerCase().includes(search) ||
+                c.phone?.includes(search) ||
+                c.carBrand?.toLowerCase().includes(search) ||
+                c.carModel?.toLowerCase().includes(search) ||
+                c.plate?.toLowerCase().includes(search)
+            );
+            const tbody = document.getElementById('customersTable');
+            if (!tbody) return;
+            if (customers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding:2rem;">Heç bir müştəri tapılmadı</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = customers.map(c => `
+                <tr>
+                    <td><strong>${c.name || '—'}</strong></td>
+                    <td>${c.phone || '—'}</td>
+                    <td>${c.carBrand || '—'} ${c.carModel || ''}</td>
+                    <td>${c.plate || '—'}</td>
+                    <td>${fmtMoney(c.debt || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editCustomer('${c.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${c.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+
+        // =============================================================
+        // POS (QISA)
+        // =============================================================
+        function renderPosProducts() {
+            const search = document.getElementById('posSearch')?.value?.toLowerCase() || '';
+            const products = getProducts().filter(p =>
+                p.name?.toLowerCase().includes(search) ||
+                p.oem?.toLowerCase().includes(search) ||
+                p.barcode?.toLowerCase().includes(search)
+            );
+            const container = document.getElementById('posProductList');
+            if (!container) return;
+            if (products.length === 0) {
+                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Heç bir məhsul tapılmadı</div>`;
+                return;
+            }
+            container.innerHTML = products.slice(0, 50).map(p => `
+                <div class="pos-item" onclick="addToCart('${p.id}')">
+                    <span><strong>${p.name || '—'}</strong> <span class="text-muted fs-small">${p.oem || ''}</span></span>
+                    <span>${fmtMoney(p.sellPrice || 0)} <span class="text-muted fs-small">(${p.stock || 0})</span></span>
+                </div>
+            `).join('');
+        }
+
+        function filterPosProducts() { renderPosProducts(); }
+
+        function addToCart(productId) {
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            if ((product.stock || 0) < 1) { toast('Stokda yoxdur!', 'warning'); return; }
+            const existing = state.posCart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty++;
+            } else {
+                state.posCart.push({ ...product, qty: 1 });
+            }
+            renderPosCart();
+            toast(`${product.name} səbətə əlavə edildi!`);
+        }
+
+        function renderPosCart() {
+            const container = document.getElementById('posCartItems');
+            if (!container) return;
+            if (state.posCart.length === 0) {
+                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Səbət boşdur</div>`;
+                updatePosTotal();
+                return;
+            }
+            container.innerHTML = state.posCart.map(item => `
+                <div class="cart-item">
+                    <span><strong>${item.name || '—'}</strong> <span class="text-muted fs-small">${fmtMoney(item.sellPrice || 0)}</span></span>
+                    <div class="qty-control">
+                        <button onclick="changeCartQty('${item.id}', -1)">−</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeCartQty('${item.id}', 1)">+</button>
+                        <button onclick="removeFromCart('${item.id}')" style="background:none;border:none;color:#f87171;padding:0 4px;"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            updatePosTotal();
+        }
+
+        function changeCartQty(productId, delta) {
+            const item = state.posCart.find(i => i.id === productId);
+            if (!item) return;
+            item.qty = Math.max(1, item.qty + delta);
+            if (item.qty === 0) {
+                state.posCart = state.posCart.filter(i => i.id !== productId);
+            }
+            renderPosCart();
+        }
+
+        function removeFromCart(productId) {
+            state.posCart = state.posCart.filter(i => i.id !== productId);
+            renderPosCart();
+        }
+
+        function clearPosCart() {
+            if (state.posCart.length === 0) return;
+            if (confirm('Səbəti təmizləmək istədiyinizə əminsiniz?')) {
+                state.posCart = [];
+                renderPosCart();
+                toast('Səbət təmizləndi!');
+            }
+        }
+
+        function updatePosTotal() {
+            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
+            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
+            const finalTotal = Math.max(0, total - discount);
+            document.getElementById('posTotal').textContent = fmtMoney(finalTotal);
+            document.getElementById('posDiscountDisplay').textContent = fmtMoney(discount);
+        }
+
+        function completeSale() {
+            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
+            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
+            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
+            const finalTotal = Math.max(0, total - discount);
+            const method = document.getElementById('posPaymentMethod')?.value || 'nağd';
+
+            const sale = {
+                id: 'sale_' + randId(),
+                items: state.posCart.map(item => ({ ...item })),
+                total: finalTotal,
+                discount: discount,
+                method: method,
+                date: now(),
+                timestamp: Date.now(),
+            };
+
+            // Stoku azalt
+            const products = getProducts();
+            state.posCart.forEach(cartItem => {
+                const prod = products.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.stock = Math.max(0, (prod.stock || 0) - cartItem.qty);
+                }
+            });
+            setProducts(products);
+
+            const sales = getSales();
+            sales.push(sale);
+            setSales(sales);
+            toast(`Satış tamamlandı! Cəmi: ${fmtMoney(finalTotal)}`, 'success');
+            state.posCart = [];
+            renderPosCart();
+            renderDashboard();
+        }
+
+        function printReceipt() {
+            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
+            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
+            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
+            const finalTotal = Math.max(0, total - discount);
+            let receipt = '=== 366 AUTO ===\n';
+            receipt += `Tarix: ${now()}\n`;
+            receipt += '---\n';
+            state.posCart.forEach(item => {
+                receipt += `${item.name} x${item.qty} = ${fmtMoney((item.sellPrice || 0) * item.qty)}\n`;
+            });
+            receipt += '---\n';
+            receipt += `Cəmi: ${fmtMoney(total)}\n`;
+            receipt += `Endirim: ${fmtMoney(discount)}\n`;
+            receipt += `Ödəniləcək: ${fmtMoney(finalTotal)}\n`;
+            receipt += '=== Xoş gəldiniz ===\n';
+            alert(receipt);
+        }
+
+
+        // =============================================================
+        // PRODUCT CRUD (QISA)
+        // =============================================================
+        function openProductModal(editId) {
+            const form = document.getElementById('productForm');
+            form.reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productModalTitle').textContent = 'Məhsul əlavə et';
+            if (editId) {
+                const p = getProducts().find(pr => pr.id === editId);
+                if (p) {
+                    document.getElementById('productId').value = p.id;
+                    document.getElementById('pName').value = p.name || '';
+                    document.getElementById('pOem').value = p.oem || '';
+                    document.getElementById('pCategory').value = p.category || '';
+                    document.getElementById('pSubcategory').value = p.subcategory || '';
+                    document.getElementById('pBrand').value = p.brand || '';
+                    document.getElementById('pCode').value = p.code || '';
+                    document.getElementById('pSku').value = p.sku || '';
+                    document.getElementById('pBarcode').value = p.barcode || '';
+                    document.getElementById('pCarBrand').value = p.carBrand || '';
+                    document.getElementById('pCarModel').value = p.carModel || '';
+                    document.getElementById('pCarYear').value = p.carYear || '';
+                    document.getElementById('pEngine').value = p.engine || '';
+                    document.getElementById('pCountry').value = p.country || '';
+                    document.getElementById('pSupplier').value = p.supplier || '';
+                    document.getElementById('pBuyPrice').value = p.buyPrice || '';
+                    document.getElementById('pSellPrice').value = p.sellPrice || '';
+                    document.getElementById('pMinPrice').value = p.minPrice || '';
+                    document.getElementById('pDiscount').value = p.discount || 0;
+                    document.getElementById('pStock').value = p.stock || 0;
+                    document.getElementById('pMinStock').value = p.minStock || 5;
+                    document.getElementById('pWarehouse').value = p.warehouse || '';
+                    document.getElementById('pShelf').value = p.shelf || '';
+                    document.getElementById('pNote').value = p.note || '';
+                    document.getElementById('pImage').value = p.image || '';
+                    document.getElementById('productModalTitle').textContent = 'Məhsulu redaktə et';
+                    calcProfit();
+                }
+            }
+            openModal('productModal');
+        }
+
+        function editProduct(id) { openProductModal(id); }
+
+        function saveProduct() {
+            const id = document.getElementById('productId').value;
+            const data = {
+                id: id || 'p_' + randId(),
+                name: document.getElementById('pName').value,
+                oem: document.getElementById('pOem').value,
+                category: document.getElementById('pCategory').value,
+                subcategory: document.getElementById('pSubcategory').value,
+                brand: document.getElementById('pBrand').value,
+                code: document.getElementById('pCode').value,
+                sku: document.getElementById('pSku').value,
+                barcode: document.getElementById('pBarcode').value,
+                carBrand: document.getElementById('pCarBrand').value,
+                carModel: document.getElementById('pCarModel').value,
+                carYear: document.getElementById('pCarYear').value,
+                engine: document.getElementById('pEngine').value,
+                country: document.getElementById('pCountry').value,
+                supplier: document.getElementById('pSupplier').value,
+                buyPrice: parseFloat(document.getElementById('pBuyPrice').value) || 0,
+                sellPrice: parseFloat(document.getElementById('pSellPrice').value) || 0,
+                minPrice: parseFloat(document.getElementById('pMinPrice').value) || 0,
+                discount: parseFloat(document.getElementById('pDiscount').value) || 0,
+                stock: parseInt(document.getElementById('pStock').value) || 0,
+                minStock: parseInt(document.getElementById('pMinStock').value) || 5,
+                warehouse: document.getElementById('pWarehouse').value,
+                shelf: document.getElementById('pShelf').value,
+                note: document.getElementById('pNote').value,
+                image: document.getElementById('pImage').value,
+            };
+
+            let products = getProducts();
+            if (id) {
+                const idx = products.findIndex(p => p.id === id);
+                if (idx > -1) products[idx] = { ...products[idx], ...data };
+            } else {
+                products.push(data);
+            }
+            setProducts(products);
+            closeModal('productModal');
+            renderProducts();
+            toast('Məhsul yadda saxlandı!');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Məhsulu silmək istədiyinizə əminsiniz?')) {
+                const products = getProducts().filter(p => p.id !== id);
+                setProducts(products);
+                renderProducts();
+                toast('Məhsul silindi!');
+            }
+        }
+
+        function generateBarcode(id) {
+            const p = getProducts().find(pr => pr.id === id);
+            if (!p) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            const barcode = p.barcode || p.code || p.oem || p.id;
+            toast(`Barkod: ${barcode} (klipboard-a kopyalandı)`);
+            navigator.clipboard?.writeText(barcode);
+        }
+
+        function calcProfit() {
+            const buy = parseFloat(document.getElementById('pBuyPrice').value) || 0;
+            const sell = parseFloat(document.getElementById('pSellPrice').value) || 0;
+            if (buy > 0 && sell > 0) {
+                const profit = ((sell - buy) / buy * 100).toFixed(1);
+                document.getElementById('pProfit').value = profit + '%';
+            } else {
+                document.getElementById('pProfit').value = '—';
+            }
+        }
+
+        function exportProducts() {
+            const products = getProducts();
+            if (products.length === 0) { toast('Məhsul yoxdur!', 'warning'); return; }
+            const csv = ['#,Ad,OEM,Kateqoriya,Stok,Alış,Satış,Marka,Model']
+                .concat(products.map((p, i) =>
+                    `${i+1},"${p.name||''}","${p.oem||''}","${p.category||''}",${p.stock||0},${p.buyPrice||0},${p.sellPrice||0},"${p.carBrand||''}","${p.carModel||''}"`
+                )).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'məhsullar.csv';
+            link.click();
+            toast('Export edildi!');
+        }
+
+        function importProducts(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').filter(l => l.trim());
+                    if (lines.length < 2) { toast('Fayl boşdur!', 'warning'); return; }
+                    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                    const products = getProducts();
+                    for (let i = 1; i < lines.length; i++) {
+                        const vals = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                        const p = {};
+                        headers.forEach((h, idx) => {
+                            if (h === 'ad' || h === 'name') p.name = vals[idx] || '';
+                            else if (h === 'oem') p.oem = vals[idx] || '';
+                            else if (h === 'kateqoriya' || h === 'category') p.category = vals[idx] || '';
+                            else if (h === 'stok' || h === 'stock') p.stock = parseInt(vals[idx]) || 0;
+                            else if (h === 'alis' || h === 'buyprice') p.buyPrice = parseFloat(vals[idx]) || 0;
+                            else if (h === 'satis' || h === 'sellprice') p.sellPrice = parseFloat(vals[idx]) || 0;
+                            else if (h === 'marka' || h === 'carbrand') p.carBrand = vals[idx] || '';
+                            else if (h === 'model' || h === 'carmodel') p.carModel = vals[idx] || '';
+                        });
+                        if (p.name) {
+                            p.id = 'p_' + randId();
+                            products.push(p);
+                        }
+                    }
+                    setProducts(products);
+                    renderProducts();
+                    toast(`${products.length} məhsul import edildi!`);
+                } catch (err) { toast('Xəta: ' + err.message, 'danger'); }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+
+        // =============================================================
+        // SUPPLIER CRUD (QISA)
+        // =============================================================
+        function openSupplierModal(editId) {
+            document.getElementById('supplierForm').reset();
+            document.getElementById('supplierId').value = '';
+            document.getElementById('supplierModalTitle').textContent = 'Təchizatçı əlavə et';
+            if (editId) {
+                const s = getSuppliers().find(sup => sup.id === editId);
+                if (s) {
+                    document.getElementById('supplierId').value = s.id;
+                    document.getElementById('sName').value = s.name || '';
+                    document.getElementById('sPhone').value = s.phone || '';
+                    document.getElementById('sWhatsapp').value = s.whatsapp || '';
+                    document.getElementById('sEmail').value = s.email || '';
+                    document.getElementById('sAddress').value = s.address || '';
+                    document.getElementById('sVoen').value = s.voen || '';
+                    document.getElementById('sBank').value = s.bank || '';
+                    document.getElementById('sNote').value = s.note || '';
+                    document.getElementById('supplierModalTitle').textContent = 'Təchizatçını redaktə et';
+                }
+            }
+            openModal('supplierModal');
+        }
+
+        function editSupplier(id) { openSupplierModal(id); }
+
+        function saveSupplier() {
+            const id = document.getElementById('supplierId').value;
+            const data = {
+                id: id || 's_' + randId(),
+                name: document.getElementById('sName').value,
+                phone: document.getElementById('sPhone').value,
+                whatsapp: document.getElementById('sWhatsapp').value,
+                email: document.getElementById('sEmail').value,
+                address: document.getElementById('sAddress').value,
+                voen: document.getElementById('sVoen').value,
+                bank: document.getElementById('sBank').value,
+                note: document.getElementById('sNote').value,
+                debt: 0,
+            };
+            let suppliers = getSuppliers();
+            if (id) {
+                const idx = suppliers.findIndex(s => s.id === id);
+                if (idx > -1) suppliers[idx] = { ...suppliers[idx], ...data };
+            } else {
+                suppliers.push(data);
+            }
+            setSuppliers(suppliers);
+            closeModal('supplierModal');
+            renderSuppliers();
+            toast('Təchizatçı yadda saxlandı!');
+        }
+
+        function deleteSupplier(id) {
+            if (confirm('Təchizatçını silmək istədiyinizə əminsiniz?')) {
+                const suppliers = getSuppliers().filter(s => s.id !== id);
+                setSuppliers(suppliers);
+                renderSuppliers();
+                toast('Təchizatçı silindi!');
+            }
+        }
+
+
+        // =============================================================
+        // PURCHASE CRUD (QISA)
+        // =============================================================
+        function openPurchaseModal() {
+            document.getElementById('purchaseForm').reset();
+            document.getElementById('purchaseItemsBody').innerHTML = '';
+            document.getElementById('purTotalDisplay').textContent = '0.00 ₼';
+            populatePurchaseSelects();
+            openModal('purchaseModal');
+        }
+
+        function populatePurchaseSelects() {
+            const supSelect = document.getElementById('purSupplier');
+            if (supSelect) {
+                const suppliers = getSuppliers();
+                supSelect.innerHTML = '<option value="">Təchizatçı seçin</option>' +
+                    suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            }
+            const prodSelect = document.getElementById('purProduct');
+            if (prodSelect) {
+                const products = getProducts();
+                prodSelect.innerHTML = '<option value="">Məhsul seçin</option>' +
+                    products.map(p => `<option value="${p.id}">${p.name} (${p.oem || ''})</option>`).join('');
+            }
+        }
+
+        let purchaseItems = [];
+
+        function addPurchaseItem() {
+            const productId = document.getElementById('purProduct').value;
+            const qty = parseInt(document.getElementById('purQty').value) || 1;
+            const price = parseFloat(document.getElementById('purPrice').value) || 0;
+            if (!productId) { toast('Məhsul seçin!', 'warning'); return; }
+            if (qty < 1) { toast('Miqdar düzgün deyil!', 'warning'); return; }
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            purchaseItems.push({
+                productId: product.id,
+                name: product.name,
+                qty: qty,
+                price: price,
+                total: qty * price
+            });
+            renderPurchaseItems();
+            calcPurchaseTotal();
+            toast('Məhsul əlavə edildi!');
+        }
+
+        function removePurchaseItem(index) {
+            purchaseItems.splice(index, 1);
+            renderPurchaseItems();
+            calcPurchaseTotal();
+        }
+
+        function renderPurchaseItems() {
+            const tbody = document.getElementById('purchaseItemsBody');
+            if (!tbody) return;
+            if (purchaseItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Heç bir məhsul əlavə edilməyib</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = purchaseItems.map((item, idx) => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${fmtMoney(item.price)}</td>
+                    <td>${fmtMoney(item.total)}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removePurchaseItem(${idx})"><i class="fas fa-times"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function calcPurchaseTotal() {
+            const tax = parseFloat(document.getElementById('purTax').value) || 0;
+            const discount = parseFloat(document.getElementById('purDiscount').value) || 0;
+            const shipping = parseFloat(document.getElementById('purShipping').value) || 0;
+            const other = parseFloat(document.getElementById('purOther').value) || 0;
+            const subtotal = purchaseItems.reduce((sum, item) => sum + item.total, 0);
+            const total = subtotal + (subtotal * tax / 100) - discount + shipping + other;
+            document.getElementById('purTotalDisplay').textContent = fmtMoney(total);
+            return total;
+        }
+
+        function completePurchase(e) {
+            e.preventDefault();
+            if (purchaseItems.length === 0) { toast('Heç bir məhsul əlavə edilməyib!', 'warning'); return; }
+            const supplierId = document.getElementById('purSupplier').value;
+            const supplier = getSuppliers().find(s => s.id === supplierId);
+            const total = calcPurchaseTotal();
+
+            const purchase = {
+                id: 'pur_' + randId(),
+                supplier: supplier?.name || 'Bilinməyən',
+                supplierId: supplierId || '',
+                items: [...purchaseItems],
+                total: total,
+                tax: parseFloat(document.getElementById('purTax').value) || 0,
+                discount: parseFloat(document.getElementById('purDiscount').value) || 0,
+                shipping: parseFloat(document.getElementById('purShipping').value) || 0,
+                other: parseFloat(document.getElementById('purOther').value) || 0,
+                date: today(),
+                status: 'tamamlandı',
+            };
+
+            // Stoku artır
+            const products = getProducts();
+            purchaseItems.forEach(item => {
+                const prod = products.find(p => p.id === item.productId);
+                if (prod) {
+                    prod.stock = (prod.stock || 0) + item.qty;
+                    if (item.price > 0) prod.buyPrice = item.price;
+                }
+            });
+            setProducts(products);
+
+            const purchases = getPurchases();
+            purchases.push(purchase);
+            setPurchases(purchases);
+
+            purchaseItems = [];
+            closeModal('purchaseModal');
+            renderPurchases();
+            toast('Alış tamamlandı!');
+        }
+
+        function viewPurchase(id) {
+            const purchase = getPurchases().find(p => p.id === id);
+            if (!purchase) { toast('Alış tapılmadı!', 'danger'); return; }
+            let msg = `=== Alış #${purchase.id} ===\n`;
+            msg += `Təchizatçı: ${purchase.supplier}\n`;
+            msg += `Tarix: ${purchase.date}\n`;
+            msg += '---\n';
+            purchase.items.forEach(item => {
+                msg += `${item.name} x${item.qty} = ${fmtMoney(item.total)}\n`;
+            });
+            msg += '---\n';
+            msg += `Cəmi: ${fmtMoney(purchase.total)}\n`;
+            msg += `ƏDV: ${purchase.tax || 0}%\n`;
+            msg += `Endirim: ${fmtMoney(purchase.discount || 0)}\n`;
+            msg += `Daşıma: ${fmtMoney(purchase.shipping || 0)}\n`;
+            msg += `Digər: ${fmtMoney(purchase.other || 0)}\n`;
+            alert(msg);
+        }
+
+
+        // =============================================================
+        // FINANCE CRUD (QISA)
+        // =============================================================
+        function openIncomeModal() {
+            document.getElementById('incomeForm').reset();
+            openModal('incomeModal');
+        }
+
+        function addIncome(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('incAmount').value) || 0;
+            if (amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const finance = getFinance();
+            finance.push({
+                id: 'fin_' + randId(),
+                type: 'income',
+                category: document.getElementById('incCategory').value,
+                amount: amount,
+                note: document.getElementById('incNote').value,
+                date: today(),
+            });
+            setFinance(finance);
+            closeModal('incomeModal');
+            renderFinance();
+            toast('Gəlir əlavə edildi!');
+        }
+
+        function openExpenseModal() {
+            document.getElementById('expenseForm').reset();
+            openModal('expenseModal');
+        }
+
+        function addExpense(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('expAmount').value) || 0;
+            if (amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const finance = getFinance();
+            finance.push({
+                id: 'fin_' + randId(),
+                type: 'expense',
+                category: document.getElementById('expCategory').value,
+                amount: amount,
+                note: document.getElementById('expNote').value,
+                date: today(),
+            });
+            setFinance(finance);
+            closeModal('expenseModal');
+            renderFinance();
+            toast('Xərc əlavə edildi!');
+        }
+
+
+        // =============================================================
+        // EMPLOYEE CRUD (QISA)
+        // =============================================================
+        function openEmployeeModal(editId) {
+            document.getElementById('employeeForm').reset();
+            document.getElementById('employeeId').value = '';
+            document.getElementById('employeeModalTitle').textContent = 'İşçi əlavə et';
+            if (editId) {
+                const e = getEmployees().find(emp => emp.id === editId);
+                if (e) {
+                    document.getElementById('employeeId').value = e.id;
+                    document.getElementById('eName').value = e.name || '';
+                    document.getElementById('eSurname').value = e.surname || '';
+                    document.getElementById('ePosition').value = e.position || '';
+                    document.getElementById('ePhone').value = e.phone || '';
+                    document.getElementById('eSalary').value = e.salary || '';
+                    document.getElementById('eBonus').value = e.bonus || 0;
+                    document.getElementById('eHireDate').value = e.hireDate || '';
+                    document.getElementById('employeeModalTitle').textContent = 'İşçini redaktə et';
+                }
+            }
+            openModal('employeeModal');
+        }
+
+        function editEmployee(id) { openEmployeeModal(id); }
+
+        function saveEmployee(e) {
+            e.preventDefault();
+            const id = document.getElementById('employeeId').value;
+            const data = {
+                id: id || 'e_' + randId(),
+                name: document.getElementById('eName').value,
+                surname: document.getElementById('eSurname').value,
+                position: document.getElementById('ePosition').value,
+                phone: document.getElementById('ePhone').value,
+                salary: parseFloat(document.getElementById('eSalary').value) || 0,
+                bonus: parseFloat(document.getElementById('eBonus').value) || 0,
+                hireDate: document.getElementById('eHireDate').value || today(),
+            };
+            let employees = getEmployees();
+            if (id) {
+                const idx = employees.findIndex(e => e.id === id);
+                if (idx > -1) employees[idx] = { ...employees[idx], ...data };
+            } else {
+                employees.push(data);
+            }
+            setEmployees(employees);
+            closeModal('employeeModal');
+            renderEmployees();
+            toast('İşçi yadda saxlandı!');
+        }
+
+        function deleteEmployee(id) {
+            if (confirm('İşçini silmək istədiyinizə əminsiniz?')) {
+                const employees = getEmployees().filter(e => e.id !== id);
+                setEmployees(employees);
+                renderEmployees();
+                toast('İşçi silindi!');
+            }
+        }
+
+        function paySalary(id) {
+            const emp = getEmployees().find(e => e.id === id);
+            if (!emp) { toast('İşçi tapılmadı!', 'danger'); return; }
+            const amount = (emp.salary || 0) + (emp.bonus || 0);
+            if (amount <= 0) { toast('Maaş 0-dır!', 'warning'); return; }
+            const finance = getFinance();
+            finance.push({
+                id: 'fin_' + randId(),
+                type: 'expense',
+                category: 'əməkhaqqı',
+                amount: amount,
+                note: `${emp.name} üçün maaş`,
+                date: today(),
+            });
+            setFinance(finance);
+            toast(`${emp.name} üçün ${fmtMoney(amount)} maaş ödənildi!`);
+            renderFinance();
+        }
+
+
+        // =============================================================
+        // TAX CRUD (QISA)
+        // =============================================================
+        function openTaxPaymentModal() {
+            document.getElementById('taxForm').reset();
+            document.getElementById('taxDate').value = today();
+            openModal('taxModal');
+        }
+
+        function saveTaxPayment(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('taxAmount').value) || 0;
+            if (amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const taxes = getTaxes();
+            taxes.push({
+                id: 'tax_' + randId(),
+                quarter: document.getElementById('taxQuarter').value,
+                amount: amount,
+                date: document.getElementById('taxDate').value || today(),
+                status: document.getElementById('taxStatus').value,
+                note: document.getElementById('taxNote').value,
+            });
+            setTaxes(taxes);
+            closeModal('taxModal');
+            renderTaxes();
+            toast('Vergi ödənişi yadda saxlandı!');
+        }
+
+
+        // =============================================================
+        // DEBT CRUD (QISA)
+        // =============================================================
+        function openDebtModal(editId) {
+            document.getElementById('debtForm').reset();
+            document.getElementById('debtId').value = '';
+            if (editId) {
+                const d = getDebts().find(debt => debt.id === editId);
+                if (d) {
+                    document.getElementById('debtId').value = d.id;
+                    document.getElementById('debtType').value = d.type || 'borcluyuq';
+                    document.getElementById('debtPerson').value = d.person || '';
+                    document.getElementById('debtTotal').value = d.total || 0;
+                    document.getElementById('debtPaid').value = d.paid || 0;
+                    document.getElementById('debtDue').value = d.due || '';
+                    document.getElementById('debtStatus').value = d.status || 'aktiv';
+                    document.getElementById('debtNote').value = d.note || '';
+                }
+            }
+            openModal('debtModal');
+        }
+
+        function editDebt(id) { openDebtModal(id); }
+
+        function saveDebt(e) {
+            e.preventDefault();
+            const id = document.getElementById('debtId').value;
+            const data = {
+                id: id || 'd_' + randId(),
+                type: document.getElementById('debtType').value,
+                person: document.getElementById('debtPerson').value,
+                total: parseFloat(document.getElementById('debtTotal').value) || 0,
+                paid: parseFloat(document.getElementById('debtPaid').value) || 0,
+                due: document.getElementById('debtDue').value || '',
+                status: document.getElementById('debtStatus').value,
+                note: document.getElementById('debtNote').value,
+            };
+            let debts = getDebts();
+            if (id) {
+                const idx = debts.findIndex(d => d.id === id);
+                if (idx > -1) debts[idx] = { ...debts[idx], ...data };
+            } else {
+                debts.push(data);
+            }
+            setDebts(debts);
+            closeModal('debtModal');
+            renderDebts();
+            toast('Borc yadda saxlandı!');
+        }
+
+        function payDebt(id) {
+            const debt = getDebts().find(d => d.id === id);
+            if (!debt) { toast('Borc tapılmadı!', 'danger'); return; }
+            const remaining = (debt.total || 0) - (debt.paid || 0);
+            if (remaining <= 0) { toast('Bu borc artıq bağlanıb!', 'warning'); return; }
+            const amount = prompt(`Ödəniləcək məbləğ (qalan: ${fmtMoney(remaining)}):`, remaining);
+            if (amount === null) return;
+            const val = parseFloat(amount);
+            if (isNaN(val) || val <= 0) { toast('Düzgün məbləğ daxil edin!', 'warning'); return; }
+            const payAmount = Math.min(val, remaining);
+            debt.paid = (debt.paid || 0) + payAmount;
+            if ((debt.total || 0) - (debt.paid || 0) <= 0) {
+                debt.status = 'bağlandı';
+            }
+            const debts = getDebts();
+            const idx = debts.findIndex(d => d.id === id);
+            if (idx > -1) debts[idx] = debt;
+            setDebts(debts);
+            renderDebts();
+            toast(`${fmtMoney(payAmount)} ödənildi!`);
+        }
+
+
+        // =============================================================
+        // CUSTOMER CRUD (QISA)
+        // =============================================================
+        function openCustomerModal(editId) {
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            document.getElementById('customerModalTitle').textContent = 'Müştəri əlavə et';
+            if (editId) {
+                const c = getCustomers().find(cust => cust.id === editId);
+                if (c) {
+                    document.getElementById('customerId').value = c.id;
+                    document.getElementById('cName').value = c.name || '';
+                    document.getElementById('cPhone').value = c.phone || '';
+                    document.getElementById('cWhatsapp').value = c.whatsapp || '';
+                    document.getElementById('cEmail').value = c.email || '';
+                    document.getElementById('cCarBrand').value = c.carBrand || '';
+                    document.getElementById('cCarModel').value = c.carModel || '';
+                    document.getElementById('cPlate').value = c.plate || '';
+                    document.getElementById('cNote').value = c.note || '';
+                    document.getElementById('customerModalTitle').textContent = 'Müştərini redaktə et';
+                }
+            }
+            openModal('customerModal');
+        }
+
+        function editCustomer(id) { openCustomerModal(id); }
+
+        function saveCustomer(e) {
+            e.preventDefault();
+            const id = document.getElementById('customerId').value;
+            const data = {
+                id: id || 'c_' + randId(),
+                name: document.getElementById('cName').value,
+                phone: document.getElementById('cPhone').value,
+                whatsapp: document.getElementById('cWhatsapp').value,
+                email: document.getElementById('cEmail').value,
+                carBrand: document.getElementById('cCarBrand').value,
+                carModel: document.getElementById('cCarModel').value,
+                plate: document.getElementById('cPlate').value,
+                note: document.getElementById('cNote').value,
+                debt: 0,
+            };
+            let customers = getCustomers();
+            if (id) {
+                const idx = customers.findIndex(c => c.id === id);
+                if (idx > -1) customers[idx] = { ...customers[idx], ...data };
+            } else {
+                customers.push(data);
+            }
+            setCustomers(customers);
+            closeModal('customerModal');
+            renderCustomers();
+            toast('Müştəri yadda saxlandı!');
+        }
+
+        function deleteCustomer(id) {
+            if (confirm('Müştərini silmək istədiyinizə əminsiniz?')) {
+                const customers = getCustomers().filter(c => c.id !== id);
+                setCustomers(customers);
+                renderCustomers();
+                toast('Müştəri silindi!');
+            }
+        }
+
+
+        // =============================================================
+        // REPORTS (QISA)
+        // =============================================================
+        function generateReport() {
+            const start = document.getElementById('reportStart').value;
+            const end = document.getElementById('reportEnd').value;
+            if (!start || !end) { toast('Tarix seçin!', 'warning'); return; }
+            const sales = getSales().filter(s => s.date >= start && s.date <= end);
+            const purchases = getPurchases().filter(p => p.date >= start && p.date <= end);
+            const totalSales = sales.reduce((sum, s) => sum + (s.total || 0), 0);
+            const totalPurchases = purchases.reduce((sum, p) => sum + (p.total || 0), 0);
+
+            const container = document.getElementById('reportContent');
+            container.innerHTML = `
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1rem;">
+                    <div class="stat-card"><div class="stat-label">Dövr</div><div class="stat-value" style="font-size:0.9rem;">${start} - ${end}</div></div>
+                    <div class="stat-card"><div class="stat-label">Satış</div><div class="stat-value success">${fmtMoney(totalSales)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Alış</div><div class="stat-value danger">${fmtMoney(totalPurchases)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Xalis</div><div class="stat-value accent">${fmtMoney(totalSales - totalPurchases)}</div></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div><h5 style="color:var(--surface-text-secondary);font-weight:500;font-size:0.8rem;text-transform:uppercase;">Satışlar (${sales.length})</h5>
+                        ${sales.length === 0 ? '<p class="text-muted">Heç bir satış yoxdur</p>' :
+                        sales.slice(0, 10).map(s => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${s.date}</span><span>${fmtMoney(s.total)}</span></div>`).join('')}
+                    </div>
+                    <div><h5 style="color:var(--surface-text-secondary);font-weight:500;font-size:0.8rem;text-transform:uppercase;">Alışlar (${purchases.length})</h5>
+                        ${purchases.length === 0 ? '<p class="text-muted">Heç bir alış yoxdur</p>' :
+                        purchases.slice(0, 10).map(p => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${p.date}</span><span>${fmtMoney(p.total)}</span></div>`).join('')}
+                    </div>
+                </div>
+            `;
+            toast('Hesabat yaradıldı!');
+        }
+
+        function exportReportExcel() {
+            toast('Excel export hazırlanır...');
+        }
+
+
+        // =============================================================
+        // POPULATE SELECTS
+        // =============================================================
+        function populateSelects() {
+            const products = getProducts();
+            const supplierList = document.getElementById('supplierList');
+            if (supplierList) {
+                const suppliers = getSuppliers();
+                supplierList.innerHTML = suppliers.map(s => `<option value="${s.name}">`).join('');
+            }
+            const catList = document.getElementById('catList');
+            if (catList) {
+                const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
+                catList.innerHTML = cats.map(c => `<option value="${c}">`).join('');
             }
         }
 
@@ -2763,7 +3995,6 @@
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.shiftKey && e.key === 'B') {
                 if (confirm('Backup bərpa etmək istədiyinizə əminsiniz? Cari məlumatlar itiriləcək.')) {
-                    // restoreBackup funksiyası əvvəlki kimi
                     const raw = localStorage.getItem('autoparts_backup');
                     if (!raw) { toast('Backup tapılmadı!', 'warning'); return; }
                     try {
@@ -2784,9 +4015,10 @@
             }
         });
 
-        console.log('✅ 366 AUTO — Yerli VIN kataloqu ilə işə salındı!');
+        console.log('✅ 366 AUTO — Yerli VIN kataloqu, Axtarış və Səhifələmə ilə işə salındı!');
         console.log('🔍 VIN axtarışı: Yerli kataloq → NHTSA → DB.VIN');
-        console.log('✨ 20,000 hissəcikli parallax sfera');
+        console.log('📦 Məhsul axtarışı: Ad, OEM, barkod, marka, model üzrə');
+        console.log('📄 Səhifələmə: Hər səhifədə 15 məhsul');
     </script>
 </body>
 </html>

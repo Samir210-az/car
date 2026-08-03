@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
     <style>
-        /* ===== BÜTÜN STILLƏR (əvvəlki ilə eyni, yer qənaəti üçün qısaldılıb) ===== */
+        /* ===== BÜTÜN STILLƏR (əvvəlki ilə eyni) ===== */
         :root {
             --color-liquid-abyss: #012624;
             --color-liquid-deep: #011d1c;
@@ -637,7 +637,7 @@
     </div><!-- /app -->
 
 
-    <!-- ===== MODALLAR (qısa) ===== -->
+    <!-- ===== MODALLAR ===== -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
             <div class="modal-header"><h3 id="productModalTitle">Məhsul əlavə et</h3><button class="modal-close" onclick="closeModal('productModal')">&times;</button></div>
@@ -779,12 +779,12 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT – TAM İŞLƏNƏN KOD (MƏHSUL SAYI 320+) -->
+    <!-- JAVASCRIPT – TAM İŞLƏNƏN KOD -->
     <!-- ============================================================ -->
     <script>
-        console.log('🚗 366 AUTO — Tam işlənmiş versiya (320+ məhsul)');
+        console.log('🚗 366 AUTO — Tam işlənmiş versiya (bütün funksiyalar aktiv)');
 
-        // ===== PARALLAX HERO =====
+        // ===== PARALLAX HERO (qısa) =====
         (function initParticleHero() {
             const container = document.getElementById('particle-hero');
             if (!container) return;
@@ -999,7 +999,7 @@
             saveToStorage('customers', c); }
 
 
-        // ===== GENİŞ VIN KATALOQU (qısa) =====
+        // ===== VIN KATALOQU (qısa) =====
         const VinDatabase = {
             wmiMap: {
                 '1HG': { make: 'Honda' },
@@ -1238,7 +1238,7 @@
         };
 
 
-        // ===== VIN MATCHER & UI (qısa) =====
+        // ===== VIN MATCHER & UI =====
         const VinMatcher = {
             normalize(str) {
                 if (!str) return '';
@@ -1633,391 +1633,7 @@
         }
 
 
-        // ===== MƏHSULLAR – RENDER =====
-        function renderProducts() {
-            const search = document.getElementById('productSearch')?.value?.toLowerCase() || '';
-            const category = document.getElementById('productCategoryFilter')?.value || '';
-            const allProducts = getProducts();
-
-            let filtered = allProducts.filter(p => {
-                const matchSearch =
-                    p.name?.toLowerCase().includes(search) ||
-                    p.oem?.toLowerCase().includes(search) ||
-                    p.code?.toLowerCase().includes(search) ||
-                    p.barcode?.toLowerCase().includes(search) ||
-                    p.carBrand?.toLowerCase().includes(search) ||
-                    p.carModel?.toLowerCase().includes(search) ||
-                    p.category?.toLowerCase().includes(search) ||
-                    p.sku?.toLowerCase().includes(search);
-                const matchCategory = category === '' || p.category === category;
-                return matchSearch && matchCategory;
-            });
-
-            const catSelect = document.getElementById('productCategoryFilter');
-            if (catSelect) {
-                const currentVal = catSelect.value;
-                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-                catSelect.innerHTML = '<option value="">Bütün kateqoriyalar</option>' +
-                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
-                catSelect.value = currentVal;
-            }
-
-            const pageSize = state.productPageSize || 15;
-            const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-            if (state.productPage > totalPages) state.productPage = totalPages;
-            if (state.productPage < 1) state.productPage = 1;
-
-            const start = (state.productPage - 1) * pageSize;
-            const end = Math.min(start + pageSize, filtered.length);
-            const pageItems = filtered.slice(start, end);
-
-            const tbody = document.getElementById('productsTable');
-            if (!tbody) return;
-
-            if (pageItems.length === 0) {
-                tbody.innerHTML =
-                    `<tr><td colspan="10" class="text-center text-muted" style="padding:2rem;">🔍 Heç bir məhsul tapılmadı</td></tr>`;
-            } else {
-                tbody.innerHTML = pageItems.map((p, idx) => {
-                    const profit = (p.sellPrice && p.buyPrice) ? (((p.sellPrice - p.buyPrice) / p.buyPrice) * 100)
-                        .toFixed(1) : '-';
-                    return `
-                        <tr>
-                            <td>${start + idx + 1}</td>
-                            <td>${p.image ? `<img src="${p.image}" style="width:40px;height:40px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,0.04);">` : '<i class="fas fa-image" style="opacity:0.3;font-size:20px;"></i>'}</td>
-                            <td><strong>${p.name || '—'}</strong></td>
-                            <td><code style="font-size:0.75rem;background:var(--color-liquid-deep);padding:2px 6px;border-radius:4px;">${p.oem || '—'}</code></td>
-                            <td>${p.category || '—'}</td>
-                            <td style="color:${(p.stock || 0) < (p.minStock || 5) ? '#f87171' : '#34d399'}">${p.stock || 0}</td>
-                            <td>${fmtMoney(p.buyPrice || 0)}</td>
-                            <td>${fmtMoney(p.sellPrice || 0)}</td>
-                            <td style="color:${profit !== '-' && profit < 0 ? '#f87171' : '#34d399'}">${profit}%</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
-                                <button class="btn btn-outline btn-sm" onclick="generateBarcode('${p.id}')"><i class="fas fa-barcode"></i></button>
-                                <button class="btn btn-success btn-sm" onclick="addToCart('${p.id}')"><i class="fas fa-cart-plus"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            }
-
-            document.getElementById('productCount').textContent = `${filtered.length} məhsul`;
-            document.getElementById('productPageInfo').textContent = `${state.productPage} / ${totalPages}`;
-        }
-
-        function prevProductPage() {
-            if (state.productPage > 1) { state.productPage--;
-                renderProducts(); }
-        }
-
-        function nextProductPage() {
-            const all = getProducts();
-            const search = document.getElementById('productSearch')?.value?.toLowerCase() || '';
-            const category = document.getElementById('productCategoryFilter')?.value || '';
-            const filtered = all.filter(p => {
-                const matchSearch =
-                    p.name?.toLowerCase().includes(search) ||
-                    p.oem?.toLowerCase().includes(search) ||
-                    p.code?.toLowerCase().includes(search) ||
-                    p.barcode?.toLowerCase().includes(search) ||
-                    p.carBrand?.toLowerCase().includes(search) ||
-                    p.carModel?.toLowerCase().includes(search) ||
-                    p.category?.toLowerCase().includes(search) ||
-                    p.sku?.toLowerCase().includes(search);
-                const matchCategory = category === '' || p.category === category;
-                return matchSearch && matchCategory;
-            });
-            const totalPages = Math.ceil(filtered.length / (state.productPageSize || 15)) || 1;
-            if (state.productPage < totalPages) { state.productPage++;
-                renderProducts(); }
-        }
-
-
-        // ===== SATIŞ (POS) – RENDER + FİLTRƏLƏR =====
-        function renderPosProducts() {
-            const search = document.getElementById('posSearch')?.value?.toLowerCase() || '';
-            const category = document.getElementById('posCategoryFilter')?.value || '';
-            const make = document.getElementById('posMakeFilter')?.value || '';
-            const model = document.getElementById('posModelFilter')?.value || '';
-            const year = document.getElementById('posYearFilter')?.value || '';
-
-            let products = getProducts().filter(p => {
-                const matchSearch =
-                    p.name?.toLowerCase().includes(search) ||
-                    p.oem?.toLowerCase().includes(search) ||
-                    p.barcode?.toLowerCase().includes(search);
-                const matchCategory = category === '' || p.category === category;
-                const matchMake = make === '' || p.carBrand === make;
-                const matchModel = model === '' || p.carModel === model;
-                const matchYear = year === '' || String(p.carYear) === year;
-                return matchSearch && matchCategory && matchMake && matchModel && matchYear;
-            });
-
-            // Filtr dropdown-larını yenilə
-            const allProducts = getProducts();
-            const catSelect = document.getElementById('posCategoryFilter');
-            if (catSelect) {
-                const currentVal = catSelect.value;
-                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-                catSelect.innerHTML = '<option value="">Kateqoriya</option>' +
-                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
-                catSelect.value = currentVal;
-            }
-            const makeSelect = document.getElementById('posMakeFilter');
-            if (makeSelect) {
-                const currentVal = makeSelect.value;
-                const makes = [...new Set(allProducts.map(p => p.carBrand).filter(Boolean))];
-                makeSelect.innerHTML = '<option value="">Marka</option>' +
-                    makes.map(m => `<option value="${m}">${m}</option>`).join('');
-                makeSelect.value = currentVal;
-            }
-            const modelSelect = document.getElementById('posModelFilter');
-            if (modelSelect) {
-                const currentVal = modelSelect.value;
-                const models = [...new Set(allProducts.map(p => p.carModel).filter(Boolean))];
-                modelSelect.innerHTML = '<option value="">Model</option>' +
-                    models.map(m => `<option value="${m}">${m}</option>`).join('');
-                modelSelect.value = currentVal;
-            }
-            const yearSelect = document.getElementById('posYearFilter');
-            if (yearSelect) {
-                const currentVal = yearSelect.value;
-                const years = [...new Set(allProducts.map(p => p.carYear).filter(Boolean))].sort();
-                yearSelect.innerHTML = '<option value="">İl</option>' +
-                    years.map(y => `<option value="${y}">${y}</option>`).join('');
-                yearSelect.value = currentVal;
-            }
-
-            const container = document.getElementById('posProductList');
-            if (!container) return;
-            if (products.length === 0) {
-                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Heç bir məhsul tapılmadı</div>`;
-                return;
-            }
-            container.innerHTML = products.slice(0, 50).map(p => `
-                <div class="pos-item" onclick="addToCart('${p.id}')">
-                    <span><strong>${p.name || '—'}</strong> <span class="text-muted fs-small">${p.oem || ''}</span></span>
-                    <span>${fmtMoney(p.sellPrice || 0)} <span class="text-muted fs-small">(${p.stock || 0})</span></span>
-                </div>
-            `).join('');
-        }
-
-
-        // ===== SƏBƏT FUNKSİYALARI =====
-        function addToCart(productId) {
-            const product = getProducts().find(p => p.id === productId);
-            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
-            if ((product.stock || 0) < 1) { toast('Stokda yoxdur!', 'warning'); return; }
-            const existing = state.posCart.find(item => item.id === productId);
-            if (existing) { existing.qty++; } else { state.posCart.push({ ...product, qty: 1 }); }
-            renderPosCart();
-            toast(`${product.name} səbətə əlavə edildi!`);
-        }
-
-        function renderPosCart() {
-            const container = document.getElementById('posCartItems');
-            if (!container) return;
-            if (state.posCart.length === 0) {
-                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Səbət boşdur</div>`;
-                updatePosTotal();
-                return;
-            }
-            container.innerHTML = state.posCart.map(item => `
-                <div class="cart-item">
-                    <span><strong>${item.name || '—'}</strong> <span class="text-muted fs-small">${fmtMoney(item.sellPrice || 0)}</span></span>
-                    <div class="qty-control">
-                        <button onclick="changeCartQty('${item.id}', -1)">−</button>
-                        <span>${item.qty}</span>
-                        <button onclick="changeCartQty('${item.id}', 1)">+</button>
-                        <button onclick="removeFromCart('${item.id}')" style="background:none;border:none;color:#f87171;padding:0 4px;"><i class="fas fa-times"></i></button>
-                    </div>
-                </div>
-            `).join('');
-            updatePosTotal();
-        }
-
-        function changeCartQty(productId, delta) {
-            const item = state.posCart.find(i => i.id === productId);
-            if (!item) return;
-            item.qty = Math.max(1, item.qty + delta);
-            if (item.qty === 0) {
-                state.posCart = state.posCart.filter(i => i.id !== productId);
-            }
-            renderPosCart();
-        }
-
-        function removeFromCart(productId) {
-            state.posCart = state.posCart.filter(i => i.id !== productId);
-            renderPosCart();
-        }
-
-        function clearPosCart() {
-            if (state.posCart.length === 0) return;
-            if (confirm('Səbəti təmizləmək istədiyinizə əminsiniz?')) {
-                state.posCart = [];
-                renderPosCart();
-                toast('Səbət təmizləndi!');
-            }
-        }
-
-        function updatePosTotal() {
-            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
-            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
-            const finalTotal = Math.max(0, total - discount);
-            document.getElementById('posTotal').textContent = fmtMoney(finalTotal);
-            document.getElementById('posDiscountDisplay').textContent = fmtMoney(discount);
-        }
-
-        function completeSale() {
-            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
-            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
-            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
-            const finalTotal = Math.max(0, total - discount);
-            const method = document.getElementById('posPaymentMethod')?.value || 'nağd';
-
-            const sale = {
-                id: 'sale_' + randId(),
-                items: state.posCart.map(item => ({ ...item })),
-                total: finalTotal,
-                discount: discount,
-                method: method,
-                date: now(),
-                timestamp: Date.now(),
-            };
-
-            // Stoku azalt
-            const products = getProducts();
-            state.posCart.forEach(cartItem => {
-                const prod = products.find(p => p.id === cartItem.id);
-                if (prod) {
-                    prod.stock = Math.max(0, (prod.stock || 0) - cartItem.qty);
-                }
-            });
-            setProducts(products);
-
-            // Satışı yadda saxla
-            const sales = getSales();
-            sales.push(sale);
-            setSales(sales);
-
-            // Maliyyəyə əlavə et (gəlir)
-            const finance = getFinance();
-            finance.push({
-                id: 'fin_' + randId(),
-                type: 'income',
-                category: 'satış',
-                amount: finalTotal,
-                note: `Satış #${sale.id}`,
-                date: today(),
-            });
-            setFinance(finance);
-
-            toast(`Satış tamamlandı! Cəmi: ${fmtMoney(finalTotal)}`, 'success');
-            state.posCart = [];
-            renderPosCart();
-            renderDashboard();
-            renderFinance();
-        }
-
-        function printReceipt() {
-            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
-            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
-            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
-            const finalTotal = Math.max(0, total - discount);
-            let receipt = '=== 366 AUTO ===\n';
-            receipt += `Tarix: ${now()}\n`;
-            receipt += '---\n';
-            state.posCart.forEach(item => {
-                receipt += `${item.name} x${item.qty} = ${fmtMoney((item.sellPrice || 0) * item.qty)}\n`;
-            });
-            receipt += '---\n';
-            receipt += `Cəmi: ${fmtMoney(total)}\n`;
-            receipt += `Endirim: ${fmtMoney(discount)}\n`;
-            receipt += `Ödəniləcək: ${fmtMoney(finalTotal)}\n`;
-            receipt += '=== Xoş gəldiniz ===\n';
-            alert(receipt);
-        }
-
-
-        // ===== CRUD FUNKSİYALARI (QISA) =====
-        function renderDashboard() {
-            const sales = getSales();
-            const todaySales = sales.filter(s => s.date?.startsWith(today())).reduce((sum, s) => sum + s.total, 0);
-            const monthSales = sales.filter(s => s.date?.startsWith(today().slice(0, 7))).reduce((sum, s) => sum + s.total, 0);
-            const totalRevenue = sales.reduce((sum, s) => sum + s.total, 0);
-            const totalExpense = getFinance().filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
-            const netProfit = totalRevenue - totalExpense;
-            const totalStock = getProducts().reduce((sum, p) => sum + (p.stock || 0), 0);
-            const lowStock = getProducts().filter(p => (p.stock || 0) < (p.minStock || 5)).length;
-
-            document.getElementById('statTodaySales').textContent = fmtMoney(todaySales);
-            document.getElementById('statMonthSales').textContent = fmtMoney(monthSales);
-            document.getElementById('statTotalRevenue').textContent = fmtMoney(totalRevenue);
-            document.getElementById('statTotalExpense').textContent = fmtMoney(totalExpense);
-            document.getElementById('statNetProfit').textContent = fmtMoney(netProfit);
-            document.getElementById('statStockCount').textContent = totalStock;
-            document.getElementById('statLowStock').textContent = lowStock;
-
-            // Son satışlar
-            const recentSales = sales.slice(-5).reverse();
-            const tbody = document.getElementById('recentSales');
-            if (tbody) {
-                tbody.innerHTML = recentSales.map(s =>
-                    `<tr><td>${s.items?.[0]?.name || '—'}</td><td>${s.items?.length || 0}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td></tr>`
-                ).join('');
-            }
-            // Son məhsullar
-            const recentProducts = getProducts().slice(-5).reverse();
-            const tbody2 = document.getElementById('recentProducts');
-            if (tbody2) {
-                tbody2.innerHTML = recentProducts.map(p =>
-                    `<tr><td>${p.name}</td><td>${p.stock}</td><td>${fmtMoney(p.sellPrice)}</td></tr>`
-                ).join('');
-            }
-        }
-
-        function renderFinance() {
-            const finance = getFinance();
-            const totalIncome = finance.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
-            const totalExpense = finance.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
-            document.getElementById('finRevenue').textContent = fmtMoney(totalIncome);
-            document.getElementById('finExpense').textContent = fmtMoney(totalExpense);
-            document.getElementById('finNet').textContent = fmtMoney(totalIncome - totalExpense);
-
-            const tbody = document.getElementById('financeTable');
-            if (!tbody) return;
-            if (finance.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem;">Heç bir əməliyyat yoxdur</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = finance.slice(-20).reverse().map(f => `
-                <tr>
-                    <td>${f.date || '—'}</td>
-                    <td><span class="badge ${f.type === 'income' ? 'badge-success' : 'badge-danger'}">${f.type === 'income' ? 'Gəlir' : 'Xərc'}</span></td>
-                    <td>${f.category || '—'}</td>
-                    <td style="color:${f.type === 'income' ? '#34d399' : '#f87171'}">${fmtMoney(f.amount || 0)}</td>
-                    <td>${f.note || '—'}</td>
-                </tr>
-            `).join('');
-        }
-
-        // Digər render funksiyaları (qısa)
-        function renderSuppliers() { /* ... */ }
-
-        function renderPurchases() { /* ... */ }
-
-        function renderEmployees() { /* ... */ }
-
-        function renderTaxes() { /* ... */ }
-
-        function renderDebts() { /* ... */ }
-
-        function renderCustomers() { /* ... */ }
-
-
-        // ===== SAMPLE PRODUCTS GENERATOR (320+) =====
+        // ===== 320+ MƏHSUL GENERATORU =====
         function generateSampleProducts() {
             const categories = [
                 'Mühərrik hissələri', 'Əyləc sistemi', 'Süspansiyon', 'Elektrik avadanlığı',
@@ -2133,7 +1749,521 @@
         }
 
 
-        // ===== CRUD FUNKSİYALARI (QISA) =====
+        // ===== RENDER FUNKSİYALARI =====
+        function renderProducts() {
+            const search = document.getElementById('productSearch')?.value?.toLowerCase() || '';
+            const category = document.getElementById('productCategoryFilter')?.value || '';
+            const allProducts = getProducts();
+
+            let filtered = allProducts.filter(p => {
+                const matchSearch =
+                    p.name?.toLowerCase().includes(search) ||
+                    p.oem?.toLowerCase().includes(search) ||
+                    p.code?.toLowerCase().includes(search) ||
+                    p.barcode?.toLowerCase().includes(search) ||
+                    p.carBrand?.toLowerCase().includes(search) ||
+                    p.carModel?.toLowerCase().includes(search) ||
+                    p.category?.toLowerCase().includes(search) ||
+                    p.sku?.toLowerCase().includes(search);
+                const matchCategory = category === '' || p.category === category;
+                return matchSearch && matchCategory;
+            });
+
+            const catSelect = document.getElementById('productCategoryFilter');
+            if (catSelect) {
+                const currentVal = catSelect.value;
+                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+                catSelect.innerHTML = '<option value="">Bütün kateqoriyalar</option>' +
+                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                catSelect.value = currentVal;
+            }
+
+            const pageSize = state.productPageSize || 15;
+            const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+            if (state.productPage > totalPages) state.productPage = totalPages;
+            if (state.productPage < 1) state.productPage = 1;
+
+            const start = (state.productPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filtered.length);
+            const pageItems = filtered.slice(start, end);
+
+            const tbody = document.getElementById('productsTable');
+            if (!tbody) return;
+
+            if (pageItems.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="10" class="text-center text-muted" style="padding:2rem;">🔍 Heç bir məhsul tapılmadı</td></tr>`;
+            } else {
+                tbody.innerHTML = pageItems.map((p, idx) => {
+                    const profit = (p.sellPrice && p.buyPrice) ? (((p.sellPrice - p.buyPrice) / p.buyPrice) * 100)
+                        .toFixed(1) : '-';
+                    return `
+                        <tr>
+                            <td>${start + idx + 1}</td>
+                            <td>${p.image ? `<img src="${p.image}" style="width:40px;height:40px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,0.04);">` : '<i class="fas fa-image" style="opacity:0.3;font-size:20px;"></i>'}</td>
+                            <td><strong>${p.name || '—'}</strong></td>
+                            <td><code style="font-size:0.75rem;background:var(--color-liquid-deep);padding:2px 6px;border-radius:4px;">${p.oem || '—'}</code></td>
+                            <td>${p.category || '—'}</td>
+                            <td style="color:${(p.stock || 0) < (p.minStock || 5) ? '#f87171' : '#34d399'}">${p.stock || 0}</td>
+                            <td>${fmtMoney(p.buyPrice || 0)}</td>
+                            <td>${fmtMoney(p.sellPrice || 0)}</td>
+                            <td style="color:${profit !== '-' && profit < 0 ? '#f87171' : '#34d399'}">${profit}%</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-outline btn-sm" onclick="generateBarcode('${p.id}')"><i class="fas fa-barcode"></i></button>
+                                <button class="btn btn-success btn-sm" onclick="addToCart('${p.id}')"><i class="fas fa-cart-plus"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('productCount').textContent = `${filtered.length} məhsul`;
+            document.getElementById('productPageInfo').textContent = `${state.productPage} / ${totalPages}`;
+        }
+
+        function prevProductPage() {
+            if (state.productPage > 1) { state.productPage--;
+                renderProducts(); }
+        }
+
+        function nextProductPage() {
+            const all = getProducts();
+            const search = document.getElementById('productSearch')?.value?.toLowerCase() || '';
+            const category = document.getElementById('productCategoryFilter')?.value || '';
+            const filtered = all.filter(p => {
+                const matchSearch =
+                    p.name?.toLowerCase().includes(search) ||
+                    p.oem?.toLowerCase().includes(search) ||
+                    p.code?.toLowerCase().includes(search) ||
+                    p.barcode?.toLowerCase().includes(search) ||
+                    p.carBrand?.toLowerCase().includes(search) ||
+                    p.carModel?.toLowerCase().includes(search) ||
+                    p.category?.toLowerCase().includes(search) ||
+                    p.sku?.toLowerCase().includes(search);
+                const matchCategory = category === '' || p.category === category;
+                return matchSearch && matchCategory;
+            });
+            const totalPages = Math.ceil(filtered.length / (state.productPageSize || 15)) || 1;
+            if (state.productPage < totalPages) { state.productPage++;
+                renderProducts(); }
+        }
+
+        function renderPosProducts() {
+            const search = document.getElementById('posSearch')?.value?.toLowerCase() || '';
+            const category = document.getElementById('posCategoryFilter')?.value || '';
+            const make = document.getElementById('posMakeFilter')?.value || '';
+            const model = document.getElementById('posModelFilter')?.value || '';
+            const year = document.getElementById('posYearFilter')?.value || '';
+
+            let products = getProducts().filter(p => {
+                const matchSearch =
+                    p.name?.toLowerCase().includes(search) ||
+                    p.oem?.toLowerCase().includes(search) ||
+                    p.barcode?.toLowerCase().includes(search);
+                const matchCategory = category === '' || p.category === category;
+                const matchMake = make === '' || p.carBrand === make;
+                const matchModel = model === '' || p.carModel === model;
+                const matchYear = year === '' || String(p.carYear) === year;
+                return matchSearch && matchCategory && matchMake && matchModel && matchYear;
+            });
+
+            // Filtr dropdown-larını yenilə
+            const allProducts = getProducts();
+            const catSelect = document.getElementById('posCategoryFilter');
+            if (catSelect) {
+                const currentVal = catSelect.value;
+                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+                catSelect.innerHTML = '<option value="">Kateqoriya</option>' +
+                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                catSelect.value = currentVal;
+            }
+            const makeSelect = document.getElementById('posMakeFilter');
+            if (makeSelect) {
+                const currentVal = makeSelect.value;
+                const makes = [...new Set(allProducts.map(p => p.carBrand).filter(Boolean))];
+                makeSelect.innerHTML = '<option value="">Marka</option>' +
+                    makes.map(m => `<option value="${m}">${m}</option>`).join('');
+                makeSelect.value = currentVal;
+            }
+            const modelSelect = document.getElementById('posModelFilter');
+            if (modelSelect) {
+                const currentVal = modelSelect.value;
+                const models = [...new Set(allProducts.map(p => p.carModel).filter(Boolean))];
+                modelSelect.innerHTML = '<option value="">Model</option>' +
+                    models.map(m => `<option value="${m}">${m}</option>`).join('');
+                modelSelect.value = currentVal;
+            }
+            const yearSelect = document.getElementById('posYearFilter');
+            if (yearSelect) {
+                const currentVal = yearSelect.value;
+                const years = [...new Set(allProducts.map(p => p.carYear).filter(Boolean))].sort();
+                yearSelect.innerHTML = '<option value="">İl</option>' +
+                    years.map(y => `<option value="${y}">${y}</option>`).join('');
+                yearSelect.value = currentVal;
+            }
+
+            const container = document.getElementById('posProductList');
+            if (!container) return;
+            if (products.length === 0) {
+                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Heç bir məhsul tapılmadı</div>`;
+                return;
+            }
+            container.innerHTML = products.slice(0, 50).map(p => `
+                <div class="pos-item" onclick="addToCart('${p.id}')">
+                    <span><strong>${p.name || '—'}</strong> <span class="text-muted fs-small">${p.oem || ''}</span></span>
+                    <span>${fmtMoney(p.sellPrice || 0)} <span class="text-muted fs-small">(${p.stock || 0})</span></span>
+                </div>
+            `).join('');
+        }
+
+        // ===== DASHBOARD, FINANCE, SUPPLIERS, PURCHASES, EMPLOYEES, TAXES, DEBTS, CUSTOMERS =====
+        function renderDashboard() {
+            const sales = getSales();
+            const todaySales = sales.filter(s => s.date?.startsWith(today())).reduce((sum, s) => sum + s.total, 0);
+            const monthSales = sales.filter(s => s.date?.startsWith(today().slice(0, 7))).reduce((sum, s) => sum + s.total, 0);
+            const totalRevenue = sales.reduce((sum, s) => sum + s.total, 0);
+            const totalExpense = getFinance().filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+            const netProfit = totalRevenue - totalExpense;
+            const totalStock = getProducts().reduce((sum, p) => sum + (p.stock || 0), 0);
+            const lowStock = getProducts().filter(p => (p.stock || 0) < (p.minStock || 5)).length;
+
+            document.getElementById('statTodaySales').textContent = fmtMoney(todaySales);
+            document.getElementById('statMonthSales').textContent = fmtMoney(monthSales);
+            document.getElementById('statTotalRevenue').textContent = fmtMoney(totalRevenue);
+            document.getElementById('statTotalExpense').textContent = fmtMoney(totalExpense);
+            document.getElementById('statNetProfit').textContent = fmtMoney(netProfit);
+            document.getElementById('statStockCount').textContent = totalStock;
+            document.getElementById('statLowStock').textContent = lowStock;
+
+            const recentSales = sales.slice(-5).reverse();
+            const tbody = document.getElementById('recentSales');
+            if (tbody) {
+                tbody.innerHTML = recentSales.map(s =>
+                    `<tr><td>${s.items?.[0]?.name || '—'}</td><td>${s.items?.length || 0}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td></tr>`
+                ).join('');
+            }
+            const recentProducts = getProducts().slice(-5).reverse();
+            const tbody2 = document.getElementById('recentProducts');
+            if (tbody2) {
+                tbody2.innerHTML = recentProducts.map(p =>
+                    `<tr><td>${p.name}</td><td>${p.stock}</td><td>${fmtMoney(p.sellPrice)}</td></tr>`
+                ).join('');
+            }
+        }
+
+        function renderFinance() {
+            const finance = getFinance();
+            const totalIncome = finance.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
+            const totalExpense = finance.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+            document.getElementById('finRevenue').textContent = fmtMoney(totalIncome);
+            document.getElementById('finExpense').textContent = fmtMoney(totalExpense);
+            document.getElementById('finNet').textContent = fmtMoney(totalIncome - totalExpense);
+
+            const tbody = document.getElementById('financeTable');
+            if (!tbody) return;
+            if (finance.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem;">Heç bir əməliyyat yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = finance.slice(-20).reverse().map(f => `
+                <tr>
+                    <td>${f.date || '—'}</td>
+                    <td><span class="badge ${f.type === 'income' ? 'badge-success' : 'badge-danger'}">${f.type === 'income' ? 'Gəlir' : 'Xərc'}</span></td>
+                    <td>${f.category || '—'}</td>
+                    <td style="color:${f.type === 'income' ? '#34d399' : '#f87171'}">${fmtMoney(f.amount || 0)}</td>
+                    <td>${f.note || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSuppliers() {
+            const search = document.getElementById('supplierSearch')?.value?.toLowerCase() || '';
+            const suppliers = getSuppliers().filter(s =>
+                s.name?.toLowerCase().includes(search) ||
+                s.phone?.includes(search) ||
+                s.email?.toLowerCase().includes(search)
+            );
+            const tbody = document.getElementById('suppliersTable');
+            if (!tbody) return;
+            if (suppliers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:2rem;">Heç bir təchizatçı tapılmadı</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = suppliers.map(s => `
+                <tr>
+                    <td><strong>${s.name || '—'}</strong></td>
+                    <td>${s.phone || '—'}</td>
+                    <td>${s.email || '—'}</td>
+                    <td>${s.address || '—'}</td>
+                    <td>${s.voen || '—'}</td>
+                    <td>${fmtMoney(s.debt || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editSupplier('${s.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSupplier('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPurchases() {
+            const purchases = getPurchases();
+            const tbody = document.getElementById('purchasesTable');
+            if (!tbody) return;
+            if (purchases.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:2rem;">Heç bir alış yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = purchases.slice(-20).reverse().map((p, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${p.supplier || '—'}</td>
+                    <td>${p.date || '—'}</td>
+                    <td>${(p.items || []).length} məhsul</td>
+                    <td>${fmtMoney(p.total || 0)}</td>
+                    <td><span class="badge badge-success">${p.status || 'tamamlandı'}</span></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="viewPurchase('${p.id}')"><i class="fas fa-eye"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderEmployees() {
+            const employees = getEmployees();
+            const tbody = document.getElementById('employeesTable');
+            if (!tbody) return;
+            if (employees.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding:2rem;">Heç bir işçi yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = employees.map(e => `
+                <tr>
+                    <td><strong>${e.name || '—'} ${e.surname || ''}</strong></td>
+                    <td>${e.position || '—'}</td>
+                    <td>${e.phone || '—'}</td>
+                    <td>${fmtMoney(e.salary || 0)}</td>
+                    <td>${fmtMoney(e.bonus || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editEmployee('${e.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEmployee('${e.id}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="paySalary('${e.id}')"><i class="fas fa-money-bill-wave"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTaxes() {
+            const taxes = getTaxes();
+            const tbody = document.getElementById('taxTable');
+            if (!tbody) return;
+            if (taxes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem;">Heç bir vergi ödənişi yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = taxes.slice(-20).reverse().map(t => `
+                <tr>
+                    <td>${t.date || '—'}</td>
+                    <td>${t.quarter || '—'}</td>
+                    <td>${fmtMoney(t.amount || 0)}</td>
+                    <td><span class="badge ${t.status === 'ödənilib' ? 'badge-success' : t.status === 'gecikib' ? 'badge-danger' : 'badge-warning'}">${t.status || '—'}</span></td>
+                    <td>${t.note || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderDebts() {
+            const debts = getDebts();
+            const tbody = document.getElementById('debtsTable');
+            if (!tbody) return;
+            if (debts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted" style="padding:2rem;">Heç bir borc yoxdur</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = debts.map(d => {
+                const remaining = (d.total || 0) - (d.paid || 0);
+                return `
+                    <tr>
+                        <td><span class="badge ${d.type === 'bizeborcludur' ? 'badge-success' : 'badge-danger'}">${d.type === 'bizeborcludur' ? 'Bizə borcludur' : 'Borcluyuq'}</span></td>
+                        <td>${d.person || '—'}</td>
+                        <td>${fmtMoney(d.total || 0)}</td>
+                        <td>${fmtMoney(d.paid || 0)}</td>
+                        <td style="color:${remaining > 0 ? '#f87171' : '#34d399'}">${fmtMoney(remaining)}</td>
+                        <td>${d.due || '—'}</td>
+                        <td><span class="badge ${d.status === 'aktiv' ? 'badge-warning' : 'badge-success'}">${d.status || '—'}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editDebt('${d.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-outline btn-sm" onclick="payDebt('${d.id}')"><i class="fas fa-hand-holding-usd"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCustomers() {
+            const search = document.getElementById('customerSearch')?.value?.toLowerCase() || '';
+            const customers = getCustomers().filter(c =>
+                c.name?.toLowerCase().includes(search) ||
+                c.phone?.includes(search) ||
+                c.carBrand?.toLowerCase().includes(search) ||
+                c.carModel?.toLowerCase().includes(search) ||
+                c.plate?.toLowerCase().includes(search)
+            );
+            const tbody = document.getElementById('customersTable');
+            if (!tbody) return;
+            if (customers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding:2rem;">Heç bir müştəri tapılmadı</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = customers.map(c => `
+                <tr>
+                    <td><strong>${c.name || '—'}</strong></td>
+                    <td>${c.phone || '—'}</td>
+                    <td>${c.carBrand || '—'} ${c.carModel || ''}</td>
+                    <td>${c.plate || '—'}</td>
+                    <td>${fmtMoney(c.debt || 0)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editCustomer('${c.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${c.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+
+        // ===== SƏBƏT FUNKSİYALARI =====
+        function addToCart(productId) {
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            if ((product.stock || 0) < 1) { toast('Stokda yoxdur!', 'warning'); return; }
+            const existing = state.posCart.find(item => item.id === productId);
+            if (existing) { existing.qty++; } else { state.posCart.push({ ...product, qty: 1 }); }
+            renderPosCart();
+            toast(`${product.name} səbətə əlavə edildi!`);
+        }
+
+        function renderPosCart() {
+            const container = document.getElementById('posCartItems');
+            if (!container) return;
+            if (state.posCart.length === 0) {
+                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Səbət boşdur</div>`;
+                updatePosTotal();
+                return;
+            }
+            container.innerHTML = state.posCart.map(item => `
+                <div class="cart-item">
+                    <span><strong>${item.name || '—'}</strong> <span class="text-muted fs-small">${fmtMoney(item.sellPrice || 0)}</span></span>
+                    <div class="qty-control">
+                        <button onclick="changeCartQty('${item.id}', -1)">−</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeCartQty('${item.id}', 1)">+</button>
+                        <button onclick="removeFromCart('${item.id}')" style="background:none;border:none;color:#f87171;padding:0 4px;"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            updatePosTotal();
+        }
+
+        function changeCartQty(productId, delta) {
+            const item = state.posCart.find(i => i.id === productId);
+            if (!item) return;
+            item.qty = Math.max(1, item.qty + delta);
+            if (item.qty === 0) {
+                state.posCart = state.posCart.filter(i => i.id !== productId);
+            }
+            renderPosCart();
+        }
+
+        function removeFromCart(productId) {
+            state.posCart = state.posCart.filter(i => i.id !== productId);
+            renderPosCart();
+        }
+
+        function clearPosCart() {
+            if (state.posCart.length === 0) return;
+            if (confirm('Səbəti təmizləmək istədiyinizə əminsiniz?')) {
+                state.posCart = [];
+                renderPosCart();
+                toast('Səbət təmizləndi!');
+            }
+        }
+
+        function updatePosTotal() {
+            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
+            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
+            const finalTotal = Math.max(0, total - discount);
+            document.getElementById('posTotal').textContent = fmtMoney(finalTotal);
+            document.getElementById('posDiscountDisplay').textContent = fmtMoney(discount);
+        }
+
+        function completeSale() {
+            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
+            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
+            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
+            const finalTotal = Math.max(0, total - discount);
+            const method = document.getElementById('posPaymentMethod')?.value || 'nağd';
+
+            const sale = {
+                id: 'sale_' + randId(),
+                items: state.posCart.map(item => ({ ...item })),
+                total: finalTotal,
+                discount: discount,
+                method: method,
+                date: now(),
+                timestamp: Date.now(),
+            };
+
+            const products = getProducts();
+            state.posCart.forEach(cartItem => {
+                const prod = products.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.stock = Math.max(0, (prod.stock || 0) - cartItem.qty);
+                }
+            });
+            setProducts(products);
+
+            const sales = getSales();
+            sales.push(sale);
+            setSales(sales);
+
+            const finance = getFinance();
+            finance.push({
+                id: 'fin_' + randId(),
+                type: 'income',
+                category: 'satış',
+                amount: finalTotal,
+                note: `Satış #${sale.id}`,
+                date: today(),
+            });
+            setFinance(finance);
+
+            toast(`Satış tamamlandı! Cəmi: ${fmtMoney(finalTotal)}`, 'success');
+            state.posCart = [];
+            renderPosCart();
+            renderDashboard();
+            renderFinance();
+        }
+
+        function printReceipt() {
+            if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
+            const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
+            const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
+            const finalTotal = Math.max(0, total - discount);
+            let receipt = '=== 366 AUTO ===\n';
+            receipt += `Tarix: ${now()}\n`;
+            receipt += '---\n';
+            state.posCart.forEach(item => {
+                receipt += `${item.name} x${item.qty} = ${fmtMoney((item.sellPrice || 0) * item.qty)}\n`;
+            });
+            receipt += '---\n';
+            receipt += `Cəmi: ${fmtMoney(total)}\n`;
+            receipt += `Endirim: ${fmtMoney(discount)}\n`;
+            receipt += `Ödəniləcək: ${fmtMoney(finalTotal)}\n`;
+            receipt += '=== Xoş gəldiniz ===\n';
+            alert(receipt);
+        }
+
+
+        // ===== CRUD FUNKSİYALARI =====
         function openProductModal(editId) {
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = '';
@@ -2299,26 +2429,210 @@
             event.target.value = '';
         }
 
-        function openSupplierModal(editId) { /* ... */ }
+        // ===== SUPPLIER CRUD =====
+        function openSupplierModal(editId) {
+            document.getElementById('supplierForm').reset();
+            document.getElementById('supplierId').value = '';
+            document.getElementById('supplierModalTitle').textContent = 'Təchizatçı əlavə et';
+            if (editId) {
+                const s = getSuppliers().find(sup => sup.id === editId);
+                if (s) {
+                    document.getElementById('supplierId').value = s.id;
+                    document.getElementById('sName').value = s.name || '';
+                    document.getElementById('sPhone').value = s.phone || '';
+                    document.getElementById('sWhatsapp').value = s.whatsapp || '';
+                    document.getElementById('sEmail').value = s.email || '';
+                    document.getElementById('sAddress').value = s.address || '';
+                    document.getElementById('sVoen').value = s.voen || '';
+                    document.getElementById('sBank').value = s.bank || '';
+                    document.getElementById('sNote').value = s.note || '';
+                    document.getElementById('supplierModalTitle').textContent = 'Təchizatçını redaktə et';
+                }
+            }
+            openModal('supplierModal');
+        }
 
         function editSupplier(id) { openSupplierModal(id); }
 
-        function saveSupplier() { /* ... */ }
+        function saveSupplier() {
+            const id = document.getElementById('supplierId').value;
+            const data = {
+                id: id || 's_' + randId(),
+                name: document.getElementById('sName').value,
+                phone: document.getElementById('sPhone').value,
+                whatsapp: document.getElementById('sWhatsapp').value,
+                email: document.getElementById('sEmail').value,
+                address: document.getElementById('sAddress').value,
+                voen: document.getElementById('sVoen').value,
+                bank: document.getElementById('sBank').value,
+                note: document.getElementById('sNote').value,
+                debt: 0,
+            };
+            let suppliers = getSuppliers();
+            if (id) {
+                const idx = suppliers.findIndex(s => s.id === id);
+                if (idx > -1) suppliers[idx] = { ...suppliers[idx], ...data };
+            } else {
+                suppliers.push(data);
+            }
+            setSuppliers(suppliers);
+            closeModal('supplierModal');
+            renderSuppliers();
+            toast('Təchizatçı yadda saxlandı!');
+        }
 
-        function deleteSupplier(id) { /* ... */ }
+        function deleteSupplier(id) {
+            if (confirm('Təchizatçını silmək istədiyinizə əminsiniz?')) {
+                const suppliers = getSuppliers().filter(s => s.id !== id);
+                setSuppliers(suppliers);
+                renderSuppliers();
+                toast('Təchizatçı silindi!');
+            }
+        }
 
-        function openPurchaseModal() { /* ... */ }
+        // ===== PURCHASE CRUD =====
+        let purchaseItems = [];
 
-        function addPurchaseItem() { /* ... */ }
+        function openPurchaseModal() {
+            document.getElementById('purchaseForm').reset();
+            purchaseItems = [];
+            renderPurchaseItems();
+            calcPurchaseTotal();
+            populatePurchaseSelects();
+            openModal('purchaseModal');
+        }
 
-        function removePurchaseItem(index) { /* ... */ }
+        function populatePurchaseSelects() {
+            const supSelect = document.getElementById('purSupplier');
+            if (supSelect) {
+                const suppliers = getSuppliers();
+                supSelect.innerHTML = '<option value="">Təchizatçı seçin</option>' +
+                    suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            }
+            const prodSelect = document.getElementById('purProduct');
+            if (prodSelect) {
+                const products = getProducts();
+                prodSelect.innerHTML = '<option value="">Məhsul seçin</option>' +
+                    products.map(p => `<option value="${p.id}">${p.name} (${p.oem || ''})</option>`).join('');
+            }
+        }
 
-        function calcPurchaseTotal() { /* ... */ }
+        function addPurchaseItem() {
+            const productId = document.getElementById('purProduct').value;
+            const qty = parseInt(document.getElementById('purQty').value) || 1;
+            const price = parseFloat(document.getElementById('purPrice').value) || 0;
+            if (!productId) { toast('Məhsul seçin!', 'warning'); return; }
+            if (qty < 1) { toast('Miqdar düzgün deyil!', 'warning'); return; }
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) { toast('Məhsul tapılmadı!', 'danger'); return; }
+            purchaseItems.push({
+                productId: product.id,
+                name: product.name,
+                qty: qty,
+                price: price,
+                total: qty * price
+            });
+            renderPurchaseItems();
+            calcPurchaseTotal();
+            toast('Məhsul əlavə edildi!');
+        }
 
-        function completePurchase(e) { /* ... */ }
+        function removePurchaseItem(index) {
+            purchaseItems.splice(index, 1);
+            renderPurchaseItems();
+            calcPurchaseTotal();
+        }
 
-        function viewPurchase(id) { /* ... */ }
+        function renderPurchaseItems() {
+            const tbody = document.getElementById('purchaseItemsBody');
+            if (!tbody) return;
+            if (purchaseItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Heç bir məhsul əlavə edilməyib</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = purchaseItems.map((item, idx) => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${fmtMoney(item.price)}</td>
+                    <td>${fmtMoney(item.total)}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removePurchaseItem(${idx})"><i class="fas fa-times"></i></button></td>
+                </tr>
+            `).join('');
+        }
 
+        function calcPurchaseTotal() {
+            const tax = parseFloat(document.getElementById('purTax').value) || 0;
+            const discount = parseFloat(document.getElementById('purDiscount').value) || 0;
+            const shipping = parseFloat(document.getElementById('purShipping').value) || 0;
+            const other = parseFloat(document.getElementById('purOther').value) || 0;
+            const subtotal = purchaseItems.reduce((sum, item) => sum + item.total, 0);
+            const total = subtotal + (subtotal * tax / 100) - discount + shipping + other;
+            document.getElementById('purTotalDisplay').textContent = fmtMoney(total);
+            return total;
+        }
+
+        function completePurchase(e) {
+            e.preventDefault();
+            if (purchaseItems.length === 0) { toast('Heç bir məhsul əlavə edilməyib!', 'warning'); return; }
+            const supplierId = document.getElementById('purSupplier').value;
+            const supplier = getSuppliers().find(s => s.id === supplierId);
+            const total = calcPurchaseTotal();
+
+            const purchase = {
+                id: 'pur_' + randId(),
+                supplier: supplier?.name || 'Bilinməyən',
+                supplierId: supplierId || '',
+                items: [...purchaseItems],
+                total: total,
+                tax: parseFloat(document.getElementById('purTax').value) || 0,
+                discount: parseFloat(document.getElementById('purDiscount').value) || 0,
+                shipping: parseFloat(document.getElementById('purShipping').value) || 0,
+                other: parseFloat(document.getElementById('purOther').value) || 0,
+                date: today(),
+                status: 'tamamlandı',
+            };
+
+            const products = getProducts();
+            purchaseItems.forEach(item => {
+                const prod = products.find(p => p.id === item.productId);
+                if (prod) {
+                    prod.stock = (prod.stock || 0) + item.qty;
+                    if (item.price > 0) prod.buyPrice = item.price;
+                }
+            });
+            setProducts(products);
+
+            const purchases = getPurchases();
+            purchases.push(purchase);
+            setPurchases(purchases);
+
+            purchaseItems = [];
+            closeModal('purchaseModal');
+            renderPurchases();
+            toast('Alış tamamlandı!');
+        }
+
+        function viewPurchase(id) {
+            const purchase = getPurchases().find(p => p.id === id);
+            if (!purchase) { toast('Alış tapılmadı!', 'danger'); return; }
+            let msg = `=== Alış #${purchase.id} ===\n`;
+            msg += `Təchizatçı: ${purchase.supplier}\n`;
+            msg += `Tarix: ${purchase.date}\n`;
+            msg += '---\n';
+            purchase.items.forEach(item => {
+                msg += `${item.name} x${item.qty} = ${fmtMoney(item.total)}\n`;
+            });
+            msg += '---\n';
+            msg += `Cəmi: ${fmtMoney(purchase.total)}\n`;
+            msg += `ƏDV: ${purchase.tax || 0}%\n`;
+            msg += `Endirim: ${fmtMoney(purchase.discount || 0)}\n`;
+            msg += `Daşıma: ${fmtMoney(purchase.shipping || 0)}\n`;
+            msg += `Digər: ${fmtMoney(purchase.other || 0)}\n`;
+            alert(msg);
+        }
+
+        // ===== FINANCE CRUD =====
         function openIncomeModal() { openModal('incomeModal'); }
 
         function addIncome(e) {
@@ -2361,36 +2675,243 @@
             toast('Xərc əlavə edildi!');
         }
 
-        function openEmployeeModal(editId) { /* ... */ }
+        // ===== EMPLOYEE CRUD =====
+        function openEmployeeModal(editId) {
+            document.getElementById('employeeForm').reset();
+            document.getElementById('employeeId').value = '';
+            document.getElementById('employeeModalTitle').textContent = 'İşçi əlavə et';
+            if (editId) {
+                const e = getEmployees().find(emp => emp.id === editId);
+                if (e) {
+                    document.getElementById('employeeId').value = e.id;
+                    document.getElementById('eName').value = e.name || '';
+                    document.getElementById('eSurname').value = e.surname || '';
+                    document.getElementById('ePosition').value = e.position || '';
+                    document.getElementById('ePhone').value = e.phone || '';
+                    document.getElementById('eSalary').value = e.salary || '';
+                    document.getElementById('eBonus').value = e.bonus || 0;
+                    document.getElementById('eHireDate').value = e.hireDate || '';
+                    document.getElementById('employeeModalTitle').textContent = 'İşçini redaktə et';
+                }
+            }
+            openModal('employeeModal');
+        }
 
         function editEmployee(id) { openEmployeeModal(id); }
 
-        function saveEmployee(e) { /* ... */ }
+        function saveEmployee(e) {
+            e.preventDefault();
+            const id = document.getElementById('employeeId').value;
+            const data = {
+                id: id || 'e_' + randId(),
+                name: document.getElementById('eName').value,
+                surname: document.getElementById('eSurname').value,
+                position: document.getElementById('ePosition').value,
+                phone: document.getElementById('ePhone').value,
+                salary: parseFloat(document.getElementById('eSalary').value) || 0,
+                bonus: parseFloat(document.getElementById('eBonus').value) || 0,
+                hireDate: document.getElementById('eHireDate').value || today(),
+            };
+            let employees = getEmployees();
+            if (id) {
+                const idx = employees.findIndex(e => e.id === id);
+                if (idx > -1) employees[idx] = { ...employees[idx], ...data };
+            } else {
+                employees.push(data);
+            }
+            setEmployees(employees);
+            closeModal('employeeModal');
+            renderEmployees();
+            toast('İşçi yadda saxlandı!');
+        }
 
-        function deleteEmployee(id) { /* ... */ }
+        function deleteEmployee(id) {
+            if (confirm('İşçini silmək istədiyinizə əminsiniz?')) {
+                const employees = getEmployees().filter(e => e.id !== id);
+                setEmployees(employees);
+                renderEmployees();
+                toast('İşçi silindi!');
+            }
+        }
 
-        function paySalary(id) { /* ... */ }
+        function paySalary(id) {
+            const emp = getEmployees().find(e => e.id === id);
+            if (!emp) { toast('İşçi tapılmadı!', 'danger'); return; }
+            const amount = (emp.salary || 0) + (emp.bonus || 0);
+            if (amount <= 0) { toast('Maaş 0-dır!', 'warning'); return; }
+            const finance = getFinance();
+            finance.push({
+                id: 'fin_' + randId(),
+                type: 'expense',
+                category: 'əməkhaqqı',
+                amount: amount,
+                note: `${emp.name} üçün maaş`,
+                date: today(),
+            });
+            setFinance(finance);
+            toast(`${emp.name} üçün ${fmtMoney(amount)} maaş ödənildi!`);
+            renderFinance();
+        }
 
-        function openTaxPaymentModal() { openModal('taxModal'); }
+        // ===== TAX CRUD =====
+        function openTaxPaymentModal() {
+            document.getElementById('taxForm').reset();
+            document.getElementById('taxDate').value = today();
+            openModal('taxModal');
+        }
 
-        function saveTaxPayment(e) { /* ... */ }
+        function saveTaxPayment(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('taxAmount').value) || 0;
+            if (amount <= 0) { toast('Məbləğ daxil edin!', 'warning'); return; }
+            const taxes = getTaxes();
+            taxes.push({
+                id: 'tax_' + randId(),
+                quarter: document.getElementById('taxQuarter').value,
+                amount: amount,
+                date: document.getElementById('taxDate').value || today(),
+                status: document.getElementById('taxStatus').value,
+                note: document.getElementById('taxNote').value,
+            });
+            setTaxes(taxes);
+            closeModal('taxModal');
+            renderTaxes();
+            toast('Vergi ödənişi yadda saxlandı!');
+        }
 
-        function openDebtModal(editId) { openModal('debtModal'); }
+        // ===== DEBT CRUD =====
+        function openDebtModal(editId) {
+            document.getElementById('debtForm').reset();
+            document.getElementById('debtId').value = '';
+            if (editId) {
+                const d = getDebts().find(debt => debt.id === editId);
+                if (d) {
+                    document.getElementById('debtId').value = d.id;
+                    document.getElementById('debtType').value = d.type || 'borcluyuq';
+                    document.getElementById('debtPerson').value = d.person || '';
+                    document.getElementById('debtTotal').value = d.total || 0;
+                    document.getElementById('debtPaid').value = d.paid || 0;
+                    document.getElementById('debtDue').value = d.due || '';
+                    document.getElementById('debtStatus').value = d.status || 'aktiv';
+                    document.getElementById('debtNote').value = d.note || '';
+                }
+            }
+            openModal('debtModal');
+        }
 
         function editDebt(id) { openDebtModal(id); }
 
-        function saveDebt(e) { /* ... */ }
+        function saveDebt(e) {
+            e.preventDefault();
+            const id = document.getElementById('debtId').value;
+            const data = {
+                id: id || 'd_' + randId(),
+                type: document.getElementById('debtType').value,
+                person: document.getElementById('debtPerson').value,
+                total: parseFloat(document.getElementById('debtTotal').value) || 0,
+                paid: parseFloat(document.getElementById('debtPaid').value) || 0,
+                due: document.getElementById('debtDue').value || '',
+                status: document.getElementById('debtStatus').value,
+                note: document.getElementById('debtNote').value,
+            };
+            let debts = getDebts();
+            if (id) {
+                const idx = debts.findIndex(d => d.id === id);
+                if (idx > -1) debts[idx] = { ...debts[idx], ...data };
+            } else {
+                debts.push(data);
+            }
+            setDebts(debts);
+            closeModal('debtModal');
+            renderDebts();
+            toast('Borc yadda saxlandı!');
+        }
 
-        function payDebt(id) { /* ... */ }
+        function payDebt(id) {
+            const debt = getDebts().find(d => d.id === id);
+            if (!debt) { toast('Borc tapılmadı!', 'danger'); return; }
+            const remaining = (debt.total || 0) - (debt.paid || 0);
+            if (remaining <= 0) { toast('Bu borc artıq bağlanıb!', 'warning'); return; }
+            const amount = prompt(`Ödəniləcək məbləğ (qalan: ${fmtMoney(remaining)}):`, remaining);
+            if (amount === null) return;
+            const val = parseFloat(amount);
+            if (isNaN(val) || val <= 0) { toast('Düzgün məbləğ daxil edin!', 'warning'); return; }
+            const payAmount = Math.min(val, remaining);
+            debt.paid = (debt.paid || 0) + payAmount;
+            if ((debt.total || 0) - (debt.paid || 0) <= 0) {
+                debt.status = 'bağlandı';
+            }
+            const debts = getDebts();
+            const idx = debts.findIndex(d => d.id === id);
+            if (idx > -1) debts[idx] = debt;
+            setDebts(debts);
+            renderDebts();
+            toast(`${fmtMoney(payAmount)} ödənildi!`);
+        }
 
-        function openCustomerModal(editId) { openModal('customerModal'); }
+        // ===== CUSTOMER CRUD =====
+        function openCustomerModal(editId) {
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            document.getElementById('customerModalTitle').textContent = 'Müştəri əlavə et';
+            if (editId) {
+                const c = getCustomers().find(cust => cust.id === editId);
+                if (c) {
+                    document.getElementById('customerId').value = c.id;
+                    document.getElementById('cName').value = c.name || '';
+                    document.getElementById('cPhone').value = c.phone || '';
+                    document.getElementById('cWhatsapp').value = c.whatsapp || '';
+                    document.getElementById('cEmail').value = c.email || '';
+                    document.getElementById('cCarBrand').value = c.carBrand || '';
+                    document.getElementById('cCarModel').value = c.carModel || '';
+                    document.getElementById('cPlate').value = c.plate || '';
+                    document.getElementById('cNote').value = c.note || '';
+                    document.getElementById('customerModalTitle').textContent = 'Müştərini redaktə et';
+                }
+            }
+            openModal('customerModal');
+        }
 
         function editCustomer(id) { openCustomerModal(id); }
 
-        function saveCustomer(e) { /* ... */ }
+        function saveCustomer(e) {
+            e.preventDefault();
+            const id = document.getElementById('customerId').value;
+            const data = {
+                id: id || 'c_' + randId(),
+                name: document.getElementById('cName').value,
+                phone: document.getElementById('cPhone').value,
+                whatsapp: document.getElementById('cWhatsapp').value,
+                email: document.getElementById('cEmail').value,
+                carBrand: document.getElementById('cCarBrand').value,
+                carModel: document.getElementById('cCarModel').value,
+                plate: document.getElementById('cPlate').value,
+                note: document.getElementById('cNote').value,
+                debt: 0,
+            };
+            let customers = getCustomers();
+            if (id) {
+                const idx = customers.findIndex(c => c.id === id);
+                if (idx > -1) customers[idx] = { ...customers[idx], ...data };
+            } else {
+                customers.push(data);
+            }
+            setCustomers(customers);
+            closeModal('customerModal');
+            renderCustomers();
+            toast('Müştəri yadda saxlandı!');
+        }
 
-        function deleteCustomer(id) { /* ... */ }
+        function deleteCustomer(id) {
+            if (confirm('Müştərini silmək istədiyinizə əminsiniz?')) {
+                const customers = getCustomers().filter(c => c.id !== id);
+                setCustomers(customers);
+                renderCustomers();
+                toast('Müştəri silindi!');
+            }
+        }
 
+        // ===== REPORT =====
         function generateReport() {
             const start = document.getElementById('reportStart').value;
             const end = document.getElementById('reportEnd').value;
@@ -2416,7 +2937,18 @@
             toast('Excel export hazırlanır...');
         }
 
-        function populateSelects() { /* ... */ }
+        function populateSelects() {
+            const supplierList = document.getElementById('supplierList');
+            if (supplierList) {
+                const suppliers = getSuppliers();
+                supplierList.innerHTML = suppliers.map(s => `<option value="${s.name}">`).join('');
+            }
+            const catList = document.getElementById('catList');
+            if (catList) {
+                const cats = [...new Set(getProducts().map(p => p.category).filter(Boolean))];
+                catList.innerHTML = cats.map(c => `<option value="${c}">`).join('');
+            }
+        }
 
         function autoBackup() {
             try {
@@ -2465,12 +2997,19 @@
 
         // ===== INIT =====
         function initApp() {
-            // Məhsulları yüklə, əgər 20-dən azdırsa yenidən yarat (320+ üçün)
+            // Məhsulları yüklə, yoxdursa 320+ yarat
             state.products = loadFromStorage('products');
-            if (state.products.length < 20) {
+            if (state.products.length === 0) {
                 state.products = generateSampleProducts();
                 saveToStorage('products', state.products);
-                console.log('✅ 320+ məhsul yenidən yaradıldı!');
+                console.log('✅ 320+ məhsul yaradıldı!');
+            } else {
+                // Əgər məhsul sayı 320-dən azdırsa, yenidən yarat
+                if (state.products.length < 300) {
+                    state.products = generateSampleProducts();
+                    saveToStorage('products', state.products);
+                    console.log('✅ 320+ məhsul yenidən yaradıldı!');
+                }
             }
 
             state.suppliers = loadFromStorage('suppliers');
@@ -2518,7 +3057,7 @@
 
             setupEventListeners();
             setInterval(autoBackup, 60000);
-            console.log(`✅ 366 AUTO — ${getProducts().length} məhsul ilə hazırdır!`);
+            console.log('✅ 366 AUTO — Tam işlənmiş versiya hazırdır!');
         }
 
         function applyRolePermissions() {
@@ -2583,16 +3122,17 @@
                 });
             }
 
+            // Bütün formalar üçün event listener-lər
             document.getElementById('productForm').addEventListener('submit', function(e) { e.preventDefault();
                 saveProduct(); });
             document.getElementById('supplierForm').addEventListener('submit', function(e) { e.preventDefault();
                 saveSupplier(); });
             document.getElementById('purchaseForm').addEventListener('submit', function(e) { e.preventDefault();
-                completePurchase(); });
+                completePurchase(e); });
             document.getElementById('employeeForm').addEventListener('submit', function(e) { e.preventDefault();
-                saveEmployee(); });
+                saveEmployee(e); });
             document.getElementById('customerForm').addEventListener('submit', function(e) { e.preventDefault();
-                saveCustomer(); });
+                saveCustomer(e); });
             document.getElementById('incomeForm').addEventListener('submit', function(e) { e.preventDefault();
                 addIncome(e); });
             document.getElementById('expenseForm').addEventListener('submit', function(e) { e.preventDefault();
@@ -2690,7 +3230,6 @@
         window.clearPosCart = clearPosCart;
         window.completeSale = completeSale;
         window.printReceipt = printReceipt;
-        window.filterPosProducts = filterPosProducts;
         window.renderPosProducts = renderPosProducts;
         window.generateReport = generateReport;
         window.exportReportExcel = exportReportExcel;
@@ -2731,6 +3270,8 @@
 
         console.log('✅ 366 AUTO — Bütün funksiyalar işlək vəziyyətdə!');
         console.log(`📦 Cəmi ${getProducts().length} məhsul`);
+        console.log(`👥 Cəmi ${getEmployees().length} işçi`);
+        console.log(`📦 Cəmi ${getSuppliers().length} təchizatçı`);
     </script>
 </body>
 </html>

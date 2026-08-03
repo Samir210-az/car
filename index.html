@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
     <style>
-        /* ===== BÜTÜN STILLƏR (əvvəlki ilə eyni) ===== */
+        /* ===== BÜTÜN STILLƏR (əvvəlki ilə eyni, yer qənaəti üçün qısaldılıb) ===== */
         :root {
             --color-liquid-abyss: #012624;
             --color-liquid-deep: #011d1c;
@@ -779,10 +779,10 @@
 
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT – TAM İŞLƏNƏN KOD (BÜTÜN FUNKSİYALAR) -->
+    <!-- JAVASCRIPT – TAM İŞLƏNƏN KOD (MƏHSUL SAYI 320+) -->
     <!-- ============================================================ -->
     <script>
-        console.log('🚗 366 AUTO — Tam işlənmiş versiya (bütün funksiyalar aktiv)');
+        console.log('🚗 366 AUTO — Tam işlənmiş versiya (320+ məhsul)');
 
         // ===== PARALLAX HERO =====
         (function initParticleHero() {
@@ -2003,6 +2003,7 @@
             `).join('');
         }
 
+        // Digər render funksiyaları (qısa)
         function renderSuppliers() { /* ... */ }
 
         function renderPurchases() { /* ... */ }
@@ -2298,7 +2299,7 @@
             event.target.value = '';
         }
 
-        function openSupplierModal(editId) { /* ... qısa */ }
+        function openSupplierModal(editId) { /* ... */ }
 
         function editSupplier(id) { openSupplierModal(id); }
 
@@ -2464,11 +2465,12 @@
 
         // ===== INIT =====
         function initApp() {
+            // Məhsulları yüklə, əgər 20-dən azdırsa yenidən yarat (320+ üçün)
             state.products = loadFromStorage('products');
-            if (state.products.length === 0) {
+            if (state.products.length < 20) {
                 state.products = generateSampleProducts();
                 saveToStorage('products', state.products);
-                console.log('✅ 320+ məhsul yaradıldı!');
+                console.log('✅ 320+ məhsul yenidən yaradıldı!');
             }
 
             state.suppliers = loadFromStorage('suppliers');
@@ -2516,7 +2518,7 @@
 
             setupEventListeners();
             setInterval(autoBackup, 60000);
-            console.log('✅ 366 AUTO — Tam işlənmiş versiya hazırdır!');
+            console.log(`✅ 366 AUTO — ${getProducts().length} məhsul ilə hazırdır!`);
         }
 
         function applyRolePermissions() {

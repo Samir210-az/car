@@ -3893,80 +3893,116 @@
         }
 
 
-        // =============================================================
-        // === YENİ performSearch (BİRLƏŞDİRİLMİŞ) ===
-        // =============================================================
-        async function performSearch() {
-            const input = document.getElementById('vinInput');
-            const query = input.value.trim();
+       // =============================================================
+// === YENİ performSearch (DÜZƏLDİLMİŞ — API xətasında yerli kataloq) ===
+// =============================================================
+async function performSearch() {
+    const input = document.getElementById('vinInput');
+    const query = input.value.trim();
 
-            if (!query) {
-                VinUI.showError('Zəhmət olmasa VIN kodunu daxil edin!');
-                return;
-            }
+    if (!query) {
+        VinUI.showError('Zəhmət olmasa VIN kodunu daxil edin!');
+        return;
+    }
 
-            const vin = query.toUpperCase().replace(/\s/g, '');
+    const vin = query.toUpperCase().replace(/\s/g, '');
 
-            if (vin.length !== 17) {
-                VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
-                return;
-            }
-            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
-                return;
-            }
+    if (vin.length !== 17) {
+        VinUI.showError('VIN kodu 17 simvoldan ibarət olmalıdır!');
+        return;
+    }
+    if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+        VinUI.showError('VIN kodu yalnız rəqəmlər və (I, O, Q istisna olmaqla) hərflərdən ibarət ola bilər!');
+        return;
+    }
 
-            VinUI.showLoading();
+    VinUI.showLoading();
 
-            let vehicle = {};
-            let source = 'Yerli kataloq';
-            let localInfo = null;
+    let vehicle = {};
+    let source = 'Yerli kataloq';
+    let localInfo = null;
+    let apiSuccess = false;
 
-            // 1. Yerli kataloqdan yoxla
-            try {
-                const local = VinDatabase.lookupLocal(vin);
-                if (local && local.make) {
-                    vehicle.make = local.make;
-                    source = 'Yerli kataloq (WMI)';
-                    localInfo = local;
-                }
-            } catch (e) { console.warn('Local lookup error:', e); }
-
-            // 2. API çağırışları
-            if (!vehicle.make) {
-                try {
-                    const result = await VinAPI.search(vin);
-                    vehicle = result.data || {};
-                    source = result.source || 'API';
-                } catch (error) {
-                    console.warn('API error:', error);
-                    if (localInfo && localInfo.make) {
-                        vehicle.make = localInfo.make;
-                        source = 'Yerli kataloq (API xətası)';
-                    } else {
-                        VinUI.showError(error.message || 'VIN axtarışı zamanı xəta baş verdi.');
-                        return;
-                    }
-                }
-            }
-
-            // Model və il üçün API məlumatlarını yerli ilə birləşdir
-            if (!vehicle.model && localInfo && localInfo.model) {
-                vehicle.model = localInfo.model;
-            }
-            if (!vehicle.year && localInfo && localInfo.year) {
-                vehicle.year = localInfo.year;
-            }
-
-            // Məhsulları yüklə
-            const products = getProducts();
-
-            // Çox səviyyəli matching
-            const matched = VinMatcher.matchProductsMultiLevel(products, vehicle, localInfo);
-
-            // Nəticəni göstər
-            VinUI.renderResult(vin, vehicle, source, matched, localInfo);
+    // 1. Yerli kataloqdan yoxla
+    try {
+        const local = VinDatabase.lookupLocal(vin);
+        if (local && local.make) {
+            vehicle.make = local.make;
+            source = 'Yerli kataloq (WMI)';
+            localInfo = local;
         }
+    } catch (e) { console.warn('Local lookup error:', e); }
+
+    // 2. API çağırışları (yalnız yerli kataloqda make yoxdursa)
+    if (!vehicle.make) {
+        try {
+            const result = await VinAPI.search(vin);
+            vehicle = result.data || {};
+            source = result.source || 'API';
+            apiSuccess = true;
+        } catch (error) {
+            console.warn('API error:', error);
+            // API xətası, amma yerli kataloqdan əldə etdiyimiz varsa istifadə edirik
+            if (localInfo && localInfo.make) {
+                vehicle.make = localInfo.make;
+                source = 'Yerli kataloq (API xətası)';
+            } else {
+                // Heç bir məlumat yoxdur, amma yenə də yerli kataloqa görə nəticə göstər
+                // Marka olmadan da modelləri göstərə bilərik
+                VinUI.showError('VIN məlumatı tapılmadı. Zəhmət olmasa VIN-i yoxlayın və ya "Əl ilə axtar" düyməsini istifadə edin.');
+                return;
+            }
+        }
+    } else {
+        // Yerli kataloqdan make tapıldı, amma model və il üçün API-dən yoxlayaq
+        try {
+            const result = await VinAPI.search(vin);
+            if (result && result.data) {
+                // API məlumatlarını yerli ilə birləşdir
+                if (result.data.make) vehicle.make = result.data.make;
+                if (result.data.model) vehicle.model = result.data.model;
+                if (result.data.year) vehicle.year = result.data.year;
+                if (result.data.bodyClass) vehicle.bodyClass = result.data.bodyClass;
+                if (result.data.engineCylinders) vehicle.engineCylinders = result.data.engineCylinders;
+                if (result.data.displacementL) vehicle.displacementL = result.data.displacementL;
+                if (result.data.fuelType) vehicle.fuelType = result.data.fuelType;
+                if (result.data.transmission) vehicle.transmission = result.data.transmission;
+                if (result.data.driveType) vehicle.driveType = result.data.driveType;
+                if (result.data.plantCountry) vehicle.plantCountry = result.data.plantCountry;
+                if (result.data.exteriorColor) vehicle.exteriorColor = result.data.exteriorColor;
+                if (result.data.interiorColor) vehicle.interiorColor = result.data.interiorColor;
+                if (result.data.trim) vehicle.trim = result.data.trim;
+                source = result.source || 'API + Yerli';
+                apiSuccess = true;
+            }
+        } catch (e) {
+            console.warn('API əlavə məlumat alınmadı:', e);
+            // Yerli məlumatlarla davam et
+        }
+    }
+
+    // Model və il üçün lokalInfo-dan məlumat əlavə et (əgər API-dən gəlməyibsə)
+    if (!vehicle.model && localInfo && localInfo.model) {
+        vehicle.model = localInfo.model;
+    }
+    if (!vehicle.year && localInfo && localInfo.year) {
+        vehicle.year = localInfo.year;
+    }
+
+    // VIN doğrulaması (əgər API-dən gəlməyibsə, özümüz yoxlayaq)
+    if (vehicle.vinValid === undefined) {
+        vehicle.vinValid = VinAPI.validateVin ? VinAPI.validateVin(vin) : true;
+    }
+
+    // Məhsulları yüklə
+    const products = getProducts();
+
+    // Çox səviyyəli matching
+    const matched = VinMatcher.matchProductsMultiLevel(products, vehicle, localInfo);
+
+    // Nəticəni göstər (hətta heç bir məlumat olmasa belə, yerli kataloqdan nə varsa göstər)
+    VinUI.renderResult(vin, vehicle, source, matched, localInfo);
+}
 
 
         // =============================================================

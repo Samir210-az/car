@@ -166,7 +166,10 @@
             try { return JSON.parse(localStorage.getItem('autoparts_' + key)) || []; } catch { return []; }
         }
 
-        function saveToStorage(key, data) { localStorage.setItem('autoparts_' + key, JSON.stringify(data)); }
+        function saveToStorage(key, data) {
+            localStorage.setItem('autoparts_' + key, JSON.stringify(data));
+            if (window.fbWrite) window.fbWrite(key, data);
+        }
 
         function getProducts() { return state.products; }
 
@@ -212,6 +215,59 @@
 
         function setCustomers(c) { state.customers = c;
             saveToStorage('customers', c); }
+
+
+        // ===== FIREBASE -> UI SİNXRONİZASİYASI =====
+        // Bulud tərəfdən (Firebase) yeni məlumat gələndə lokal state-i yeniləyir
+        // və yalnız aidiyyəti səhifəni yenidən çəkir. localStorage-ı da təzələyir
+        // ki, offline vəziyyətdə də ən son bulud versiyası keş kimi qalsın.
+        function applyFirebaseData(key, data) {
+            if (data === null || data === undefined) return; // hələ bulud boşdur, yerli demo datanı saxla
+            const arr = Array.isArray(data) ? data : Object.values(data);
+            localStorage.setItem('autoparts_' + key, JSON.stringify(arr));
+            switch (key) {
+                case 'products':
+                    state.products = arr;
+                    if (document.getElementById('page-products')) renderProducts();
+                    if (document.getElementById('page-sales')) renderPosProducts();
+                    if (document.getElementById('page-dashboard')) renderDashboard();
+                    break;
+                case 'suppliers':
+                    state.suppliers = arr;
+                    if (document.getElementById('page-suppliers')) renderSuppliers();
+                    break;
+                case 'purchases':
+                    state.purchases = arr;
+                    if (document.getElementById('page-purchases')) renderPurchases();
+                    break;
+                case 'sales':
+                    state.sales = arr;
+                    if (document.getElementById('page-dashboard')) renderDashboard();
+                    break;
+                case 'finance':
+                    state.finance = arr;
+                    if (document.getElementById('page-finance')) renderFinance();
+                    if (document.getElementById('page-dashboard')) renderDashboard();
+                    break;
+                case 'employees':
+                    state.employees = arr;
+                    if (document.getElementById('page-employees')) renderEmployees();
+                    break;
+                case 'taxes':
+                    state.taxes = arr;
+                    if (document.getElementById('page-taxes')) renderTaxes();
+                    break;
+                case 'debts':
+                    state.debts = arr;
+                    if (document.getElementById('page-debts')) renderDebts();
+                    break;
+                case 'customers':
+                    state.customers = arr;
+                    if (document.getElementById('page-customers')) renderCustomers();
+                    break;
+            }
+        }
+        window.applyFirebaseData = applyFirebaseData;
 
 
         // ===== VIN KATALOQU (qısa) =====

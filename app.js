@@ -1330,6 +1330,105 @@
             `).join('');
         }
 
+        // ===== BAZADA AXTAR (əsas axtarış — öz mallarımız üzrə) =====
+        function renderDbSearchProducts() {
+            const search = document.getElementById('dbSearchText')?.value?.toLowerCase() || '';
+            const make = document.getElementById('dbSearchMake')?.value || '';
+            const model = document.getElementById('dbSearchModel')?.value || '';
+            const year = document.getElementById('dbSearchYear')?.value || '';
+            const category = document.getElementById('dbSearchCategory')?.value || '';
+
+            const allProducts = getProducts();
+
+            let products = allProducts.filter(p => {
+                const matchSearch = search === '' ||
+                    p.name?.toLowerCase().includes(search) ||
+                    p.oem?.toLowerCase().includes(search) ||
+                    p.barcode?.toLowerCase().includes(search);
+                const matchMake = make === '' || p.carBrand === make;
+                const matchModel = model === '' || p.carModel === model;
+                const matchYear = year === '' || String(p.carYear) === year;
+                const matchCategory = category === '' || p.category === category;
+                return matchSearch && matchMake && matchModel && matchYear && matchCategory;
+            });
+
+            // Kaskad filtr: Marka → Model → İl, Kateqoriya müstəqil (POS ilə eyni məntiq)
+            const makeSelect = document.getElementById('dbSearchMake');
+            if (makeSelect) {
+                const currentVal = makeSelect.value;
+                const makes = [...new Set(allProducts.map(p => p.carBrand).filter(Boolean))].sort();
+                makeSelect.innerHTML = '<option value="">1. Marka seçin</option>' +
+                    makes.map(m => `<option value="${m}">${m}</option>`).join('');
+                makeSelect.value = makes.includes(currentVal) ? currentVal : '';
+            }
+            const modelSelect = document.getElementById('dbSearchModel');
+            if (modelSelect) {
+                const currentVal = modelSelect.value;
+                const poolForModel = make ? allProducts.filter(p => p.carBrand === make) : allProducts;
+                const models = [...new Set(poolForModel.map(p => p.carModel).filter(Boolean))].sort();
+                modelSelect.innerHTML = '<option value="">2. Model seçin</option>' +
+                    models.map(m => `<option value="${m}">${m}</option>`).join('');
+                modelSelect.value = models.includes(currentVal) ? currentVal : '';
+            }
+            const yearSelect = document.getElementById('dbSearchYear');
+            if (yearSelect) {
+                const currentVal = yearSelect.value;
+                let poolForYear = allProducts;
+                if (make) poolForYear = poolForYear.filter(p => p.carBrand === make);
+                if (modelSelect && modelSelect.value) poolForYear = poolForYear.filter(p => p.carModel === modelSelect.value);
+                const years = [...new Set(poolForYear.map(p => p.carYear).filter(Boolean))].sort();
+                yearSelect.innerHTML = '<option value="">3. İl seçin</option>' +
+                    years.map(y => `<option value="${y}">${y}</option>`).join('');
+                yearSelect.value = years.includes(currentVal) ? currentVal : '';
+            }
+            const catSelect = document.getElementById('dbSearchCategory');
+            if (catSelect) {
+                const currentVal = catSelect.value;
+                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+                catSelect.innerHTML = '<option value="">4. Kateqoriya seçin</option>' +
+                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                catSelect.value = cats.includes(currentVal) ? currentVal : '';
+            }
+
+            const container = document.getElementById('dbSearchResults');
+            if (!container) return;
+            if (search === '' && !make && !model && !year && !category) {
+                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;"><i class="fas fa-search" style="font-size:1.4rem;opacity:0.5;"></i><br>Axtarış üçün marka seçin və ya məhsul adı yazın</div>`;
+                return;
+            }
+            if (products.length === 0) {
+                container.innerHTML = `<div class="text-center text-muted" style="padding:2rem;">Heç bir məhsul tapılmadı</div>`;
+                return;
+            }
+            container.innerHTML = `<div style="max-height:480px;overflow-y:auto;">` + products.slice(0, 60).map(p => {
+                const inStock = (p.stock || 0) > 0;
+                return `
+                <div class="pos-item" style="cursor:default;">
+                    <span style="flex:1;">
+                        <strong>${p.name || '—'}</strong> <span class="text-muted fs-small">${p.oem || ''}</span><br>
+                        <span class="fs-small text-muted">${p.category || ''} · ${p.carBrand || ''} ${p.carModel || ''} ${p.carYear || ''}</span>
+                    </span>
+                    <span style="display:flex;align-items:center;gap:0.6rem;">
+                        <span class="badge" style="background:${inStock ? 'rgba(0,212,192,0.15)' : 'rgba(239,68,68,0.15)'};color:${inStock ? 'var(--color-bioluminescent)' : '#ef4444'};padding:0.2rem 0.6rem;border-radius:20px;font-size:0.7rem;">${inStock ? p.stock + ' ədəd' : 'Yoxdur'}</span>
+                        <strong>${fmtMoney(p.sellPrice || 0)}</strong>
+                        <button class="btn btn-primary btn-sm" ${inStock ? '' : 'disabled style="opacity:0.4;"'} onclick="addToCartFromSearch('${p.id}')"><i class="fas fa-cart-plus"></i></button>
+                    </span>
+                </div>`;
+            }).join('') + `</div>`;
+        }
+
+        function resetDbSearchFilters() {
+            ['dbSearchMake', 'dbSearchModel', 'dbSearchYear', 'dbSearchCategory'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            const searchEl = document.getElementById('dbSearchText');
+            if (searchEl) searchEl.value = '';
+            renderDbSearchProducts();
+        }
+        window.renderDbSearchProducts = renderDbSearchProducts;
+        window.resetDbSearchFilters = resetDbSearchFilters;
+
         // ===== DASHBOARD, FINANCE, SUPPLIERS, PURCHASES, EMPLOYEES, TAXES, DEBTS, CUSTOMERS =====
         function renderDashboard() {
             const sales = getSales();
@@ -2500,6 +2599,7 @@
             renderDebts();
             renderCustomers();
             renderPosProducts();
+            renderDbSearchProducts();
             populateSelects();
             populateManualSelects();
 
@@ -2639,7 +2739,8 @@
             if (page === 'sales') { renderPosProducts();
                 renderPosCart(); }
             if (page === 'vin-search') {
-                setTimeout(() => document.getElementById('vinInput')?.focus(), 200);
+                renderDbSearchProducts();
+                setTimeout(() => document.getElementById('dbSearchMake')?.focus(), 200);
             }
         }
 

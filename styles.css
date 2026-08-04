@@ -225,8 +225,9 @@
         .modal .modal-close:hover { color:var(--surface-text); }
         .pos-layout { display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-20); }
         .pos-products { max-height:440px; overflow-y:auto; }
-        .pos-products .pos-item { display:flex; justify-content:space-between; padding:0.5rem 0.8rem; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.04); margin-bottom:0.3rem; cursor:pointer; transition:all 0.25s ease; background:rgba(255,255,255,0.02); }
-        .pos-products .pos-item:hover { background:var(--surface-card); border-color:var(--color-bioluminescent); }
+        .pos-products .pos-item { display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.04); margin-bottom:0.4rem; cursor:pointer; transition:all 0.18s ease; background:rgba(255,255,255,0.02); font-size:0.95rem; min-height:52px; }
+        .pos-products .pos-item:hover { background:var(--surface-card); border-color:var(--color-bioluminescent); transform:translateX(2px); }
+        .pos-products .pos-item:active { transform:scale(0.98); background:var(--color-bioluminescent); }
         .pos-cart .cart-item { display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
         .pos-cart .cart-item .qty-control { display:flex; align-items:center; gap:0.3rem; }
         .pos-cart .cart-item .qty-control button { width:24px; height:24px; border-radius:50%; border:none; background:rgba(255,255,255,0.06); color:var(--surface-text); font-weight:700; transition:all 0.25s ease; cursor:pointer; }
@@ -315,3 +316,47 @@
             .page { display:block !important; }
             .page:not(.active) { display:none !important; }
         }
+
+        /* ===== ÜZƏN "YENİ SATIŞ" DÜYMƏSİ ===== */
+        .quick-sale-fab {
+            position: fixed; right: 24px; bottom: 24px; z-index: 4000;
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 1.3rem; border-radius: 50px; border: none; cursor: pointer;
+            background: var(--gradient-aurora); color: #0a1a19; font-weight: 700; font-size: 0.9rem;
+            font-family: var(--font-primary); letter-spacing: 0.01em;
+            box-shadow: 0 10px 34px rgba(0,130,124,0.45), 0 0 0 0 rgba(0,212,192,0.55);
+            animation: fabPulse 2.4s ease-in-out infinite;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .quick-sale-fab:hover { transform: translateY(-3px) scale(1.03); }
+        .quick-sale-fab:active { transform: translateY(0) scale(0.97); }
+        .quick-sale-fab i { font-size: 1.15rem; }
+        @keyframes fabPulse {
+            0%   { box-shadow: 0 10px 34px rgba(0,130,124,0.45), 0 0 0 0 rgba(0,212,192,0.5); }
+            60%  { box-shadow: 0 10px 34px rgba(0,130,124,0.45), 0 0 0 16px rgba(0,212,192,0); }
+            100% { box-shadow: 0 10px 34px rgba(0,130,124,0.45), 0 0 0 0 rgba(0,212,192,0); }
+        }
+        body.kiosk-mode .quick-sale-fab { display: none; }
+        @media (max-width: 480px) {
+            .quick-sale-fab { right: 14px; bottom: 14px; padding: 0.8rem 1rem; }
+            .quick-sale-fab-label { display: none; }
+        }
+
+        /* ===== KASSA (KİOSK) REJİMİ ===== */
+        /* Satış səhifəsi tək başına, diqqəti yayındırmadan, tam ekranda qalır. */
+        body.kiosk-mode .navbar,
+        body.kiosk-mode .mobile-sidebar,
+        body.kiosk-mode .hero-overlay,
+        body.kiosk-mode #particle-hero,
+        body.kiosk-mode .site-footer {
+            display: none !important;
+        }
+        body.kiosk-mode .main-content {
+            margin-top: 0 !important;
+            max-width: 100% !important;
+            padding: var(--spacing-20) !important;
+        }
+        body.kiosk-mode .page:not(#page-sales) { display: none !important; }
+        body.kiosk-mode #page-sales { display: block !important; animation: none; }
+        body.kiosk-mode .pos-products { max-height: calc(100vh - 260px); }
+        body.kiosk-mode #kioskToggleBtn i::before { content: "\f066"; } /* compress icon while active */

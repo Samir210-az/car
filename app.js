@@ -1452,7 +1452,7 @@
             const tbody = document.getElementById('recentSales');
             if (tbody) {
                 tbody.innerHTML = recentSales.map(s =>
-                    `<tr><td>${s.items?.[0]?.name || '—'}</td><td>${s.items?.length || 0}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td></tr>`
+                    `<tr><td>${s.items?.[0]?.name || '—'}</td><td>${s.items?.length || 0}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td><td><button class="btn btn-outline btn-sm" style="color:#f87171;border-color:#f87171;padding:0.2rem 0.5rem;" onclick="deleteSale('${s.id}')" title="Sil"><i class="fas fa-trash"></i></button></td></tr>`
                 ).join('');
             }
             const recentProducts = getProducts().slice(-5).reverse();
@@ -1485,9 +1485,30 @@
                     <td>${f.category || '—'}</td>
                     <td style="color:${f.type === 'income' ? '#34d399' : '#f87171'}">${fmtMoney(f.amount || 0)}</td>
                     <td>${f.note || '—'}</td>
+                    <td><button class="btn btn-outline btn-sm" style="color:#f87171;border-color:#f87171;padding:0.2rem 0.5rem;" onclick="deleteFinance('${f.id}')" title="Sil"><i class="fas fa-trash"></i></button></td>
                 </tr>
             `).join('');
         }
+
+        function deleteFinance(id) {
+            const entry = getFinance().find(f => f.id === id);
+            if (!entry) { toast('Əməliyyat tapılmadı!', 'danger'); return; }
+            if (entry.saleId) {
+                toast('Bu, bir satışa bağlıdır. Silmək üçün həmin satışı Dashboard-dan silin.', 'warning');
+                return;
+            }
+            if (entry.purchaseId) {
+                toast('Bu, bir alışa bağlıdır. Silmək üçün həmin alışı Alışlar bölməsindən silin.', 'warning');
+                return;
+            }
+            if (!confirm(`Bu ${entry.type === 'income' ? 'gəlir' : 'xərc'} qeydini (${fmtMoney(entry.amount)}) silmək istədiyinizə əminsiniz?`)) return;
+            const finance = getFinance().filter(f => f.id !== id);
+            setFinance(finance);
+            renderFinance();
+            renderDashboard();
+            toast('Əməliyyat silindi!');
+        }
+        window.deleteFinance = deleteFinance;
 
         function renderSuppliers() {
             const search = document.getElementById('supplierSearch')?.value?.toLowerCase() || '';
@@ -1534,7 +1555,7 @@
                     <td>${(p.items || []).length} məhsul</td>
                     <td>${fmtMoney(p.total || 0)}</td>
                     <td><span class="badge badge-success">${p.status || 'tamamlandı'}</span></td>
-                    <td><button class="btn btn-outline btn-sm" onclick="viewPurchase('${p.id}')"><i class="fas fa-eye"></i></button></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="viewPurchase('${p.id}')"><i class="fas fa-eye"></i></button> <button class="btn btn-outline btn-sm" style="color:#f87171;border-color:#f87171;" onclick="deletePurchase('${p.id}')" title="Sil"><i class="fas fa-trash"></i></button></td>
                 </tr>
             `).join('');
         }
@@ -1744,6 +1765,7 @@
                 amount: finalTotal,
                 note: `Satış #${sale.id}`,
                 date: today(),
+                saleId: sale.id,
             });
             setFinance(finance);
 
@@ -1753,6 +1775,36 @@
             renderDashboard();
             renderFinance();
         }
+
+        function deleteSale(id) {
+            const sale = getSales().find(s => s.id === id);
+            if (!sale) { toast('Satış tapılmadı!', 'danger'); return; }
+            if (!confirm(`Bu satışı (${fmtMoney(sale.total)}) silmək istədiyinizə əminsiniz? Anbar məhsulları geri qaytarılacaq.`)) return;
+
+            // 1) Anbarı geri qaytar
+            const products = getProducts();
+            (sale.items || []).forEach(item => {
+                const prod = products.find(p => p.id === item.id);
+                if (prod) prod.stock = (prod.stock || 0) + (item.qty || 0);
+            });
+            setProducts(products);
+
+            // 2) Satışı sil
+            const sales = getSales().filter(s => s.id !== id);
+            setSales(sales);
+
+            // 3) Bağlı maliyyə (gəlir) qeydini sil
+            const finance = getFinance().filter(f => f.saleId !== id);
+            setFinance(finance);
+
+            // 4) Hər yerdə yenilə
+            renderDashboard();
+            renderFinance();
+            renderProducts();
+            if (document.getElementById('page-sales')) renderPosProducts();
+            toast('Satış silindi, anbar bərpa olundu!');
+        }
+        window.deleteSale = deleteSale;
 
         function printReceipt() {
             if (state.posCart.length === 0) { toast('Səbət boşdur!', 'warning'); return; }
@@ -2166,11 +2218,56 @@
             purchases.push(purchase);
             setPurchases(purchases);
 
+            // Alış = xərcdir; əvvəllər Maliyyəyə heç yazılmırdı (uyğunsuzluq idi) — indi düzəldildi
+            const finance = getFinance();
+            finance.push({
+                id: 'fin_' + randId(),
+                type: 'expense',
+                category: 'alış',
+                amount: total,
+                note: `Alış #${purchase.id} — ${purchase.supplier}`,
+                date: today(),
+                purchaseId: purchase.id,
+            });
+            setFinance(finance);
+
             purchaseItems = [];
             closeModal('purchaseModal');
             renderPurchases();
+            renderFinance();
+            renderDashboard();
             toast('Alış tamamlandı!');
         }
+
+        function deletePurchase(id) {
+            const purchase = getPurchases().find(p => p.id === id);
+            if (!purchase) { toast('Alış tapılmadı!', 'danger'); return; }
+            if (!confirm(`Bu alışı (${fmtMoney(purchase.total)}) silmək istədiyinizə əminsiniz? Anbardan əlavə olunan miqdar geri çıxılacaq.`)) return;
+
+            // 1) Anbardan geri çıx
+            const products = getProducts();
+            (purchase.items || []).forEach(item => {
+                const prod = products.find(p => p.id === item.productId);
+                if (prod) prod.stock = Math.max(0, (prod.stock || 0) - (item.qty || 0));
+            });
+            setProducts(products);
+
+            // 2) Alışı sil
+            const purchases = getPurchases().filter(p => p.id !== id);
+            setPurchases(purchases);
+
+            // 3) Bağlı maliyyə (xərc) qeydini sil
+            const finance = getFinance().filter(f => f.purchaseId !== id);
+            setFinance(finance);
+
+            // 4) Hər yerdə yenilə
+            renderPurchases();
+            renderFinance();
+            renderDashboard();
+            renderProducts();
+            toast('Alış silindi, anbar bərpa olundu!');
+        }
+        window.deletePurchase = deletePurchase;
 
         function viewPurchase(id) {
             const purchase = getPurchases().find(p => p.id === id);
@@ -2476,24 +2573,53 @@
             const end = document.getElementById('reportEnd').value;
             if (!start || !end) { toast('Tarix seçin!', 'warning'); return; }
             const sales = getSales().filter(s => s.date >= start && s.date <= end);
+            const finance = getFinance().filter(f => f.date >= start && f.date <= end);
             const totalSales = sales.reduce((sum, s) => sum + s.total, 0);
+            const totalIncome = finance.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
+            const totalExpense = finance.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+            const netProfit = totalIncome - totalExpense;
+            state.lastReport = { start, end, sales, finance, totalSales, totalIncome, totalExpense, netProfit };
             const container = document.getElementById('reportContent');
             container.innerHTML = `
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1rem;">
                     <div class="stat-card"><div class="stat-label">Dövr</div><div class="stat-value" style="font-size:0.9rem;">${start} - ${end}</div></div>
                     <div class="stat-card"><div class="stat-label">Satış</div><div class="stat-value success">${fmtMoney(totalSales)}</div></div>
                     <div class="stat-card"><div class="stat-label">Satış sayı</div><div class="stat-value">${sales.length}</div></div>
+                    <div class="stat-card"><div class="stat-label">Xərc</div><div class="stat-value" style="color:#f87171;">${fmtMoney(totalExpense)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Xalis mənfəət</div><div class="stat-value" style="color:${netProfit >= 0 ? '#34d399' : '#f87171'};">${fmtMoney(netProfit)}</div></div>
                 </div>
                 <div><h5 style="color:var(--surface-text-secondary);font-weight:500;font-size:0.8rem;text-transform:uppercase;">Satışlar</h5>
                     ${sales.length === 0 ? '<p class="text-muted">Heç bir satış yoxdur</p>' :
-                    sales.slice(0, 20).map(s => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${s.date}</span><span>${fmtMoney(s.total)}</span></div>`).join('')}
+                    sales.slice(0, 20).map(s => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${s.date}</span><span style="color:#34d399;">${fmtMoney(s.total)}</span></div>`).join('')}
+                </div>
+                <div style="margin-top:var(--spacing-16);"><h5 style="color:var(--surface-text-secondary);font-weight:500;font-size:0.8rem;text-transform:uppercase;">Xərclər</h5>
+                    ${finance.filter(f => f.type === 'expense').length === 0 ? '<p class="text-muted">Heç bir xərc yoxdur</p>' :
+                    finance.filter(f => f.type === 'expense').slice(0, 20).map(f => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${f.date} — ${f.category || ''}</span><span style="color:#f87171;">${fmtMoney(f.amount)}</span></div>`).join('')}
                 </div>
             `;
             toast('Hesabat yaradıldı!');
         }
 
         function exportReportExcel() {
-            toast('Excel export hazırlanır...');
+            if (!state.lastReport) { toast('Əvvəlcə "Hesabat yarat" düyməsini sıxın!', 'warning'); return; }
+            const r = state.lastReport;
+            const rows = [
+                ['Hesabat dövrü', `${r.start} - ${r.end}`],
+                ['Ümumi satış', r.totalSales],
+                ['Ümumi gəlir', r.totalIncome],
+                ['Ümumi xərc', r.totalExpense],
+                ['Xalis mənfəət', r.netProfit],
+                [],
+                ['Tarix', 'Növ', 'Kateqoriya/Qeyd', 'Məbləğ'],
+                ...r.finance.map(f => [f.date, f.type === 'income' ? 'Gəlir' : 'Xərc', f.category || f.note || '', f.amount])
+            ];
+            const csv = rows.map(row => row.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `hesabat_${r.start}_${r.end}.csv`;
+            link.click();
+            toast('Hesabat CSV olaraq endirildi!');
         }
 
         function populateSelects() {

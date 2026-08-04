@@ -1123,56 +1123,68 @@
 
         function renderPosProducts() {
             const search = document.getElementById('posSearch')?.value?.toLowerCase() || '';
-            const category = document.getElementById('posCategoryFilter')?.value || '';
-            const make = document.getElementById('posMakeFilter')?.value || '';
             const model = document.getElementById('posModelFilter')?.value || '';
+            const make = document.getElementById('posMakeFilter')?.value || '';
             const year = document.getElementById('posYearFilter')?.value || '';
+            const category = document.getElementById('posCategoryFilter')?.value || '';
 
-            let products = getProducts().filter(p => {
+            const allProducts = getProducts();
+
+            let products = allProducts.filter(p => {
                 const matchSearch =
                     p.name?.toLowerCase().includes(search) ||
                     p.oem?.toLowerCase().includes(search) ||
                     p.barcode?.toLowerCase().includes(search);
-                const matchCategory = category === '' || p.category === category;
-                const matchMake = make === '' || p.carBrand === make;
                 const matchModel = model === '' || p.carModel === model;
+                const matchMake = make === '' || p.carBrand === make;
                 const matchYear = year === '' || String(p.carYear) === year;
-                return matchSearch && matchCategory && matchMake && matchModel && matchYear;
+                const matchCategory = category === '' || p.category === category;
+                return matchSearch && matchModel && matchMake && matchYear && matchCategory;
             });
 
-            // Filtr dropdown-larını yenilə
-            const allProducts = getProducts();
-            const catSelect = document.getElementById('posCategoryFilter');
-            if (catSelect) {
-                const currentVal = catSelect.value;
-                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
-                catSelect.innerHTML = '<option value="">Kateqoriya</option>' +
-                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
-                catSelect.value = currentVal;
-            }
-            const makeSelect = document.getElementById('posMakeFilter');
-            if (makeSelect) {
-                const currentVal = makeSelect.value;
-                const makes = [...new Set(allProducts.map(p => p.carBrand).filter(Boolean))];
-                makeSelect.innerHTML = '<option value="">Marka</option>' +
-                    makes.map(m => `<option value="${m}">${m}</option>`).join('');
-                makeSelect.value = currentVal;
-            }
+            // ===== KASKAD FİLTR: Model → Marka → İl (bütün bazadan) =====
+            // 1) MODEL — həmişə bütün bazadakı modelləri göstərir (ilk seçim addımı)
             const modelSelect = document.getElementById('posModelFilter');
             if (modelSelect) {
                 const currentVal = modelSelect.value;
-                const models = [...new Set(allProducts.map(p => p.carModel).filter(Boolean))];
-                modelSelect.innerHTML = '<option value="">Model</option>' +
+                const models = [...new Set(allProducts.map(p => p.carModel).filter(Boolean))].sort();
+                modelSelect.innerHTML = '<option value="">1. Model seçin</option>' +
                     models.map(m => `<option value="${m}">${m}</option>`).join('');
-                modelSelect.value = currentVal;
+                modelSelect.value = models.includes(currentVal) ? currentVal : '';
             }
+
+            // 2) MARKA — seçilmiş modelə uyğun markalarla məhdudlaşır
+            const makeSelect = document.getElementById('posMakeFilter');
+            if (makeSelect) {
+                const currentVal = makeSelect.value;
+                const poolForMake = model ? allProducts.filter(p => p.carModel === model) : allProducts;
+                const makes = [...new Set(poolForMake.map(p => p.carBrand).filter(Boolean))].sort();
+                makeSelect.innerHTML = '<option value="">2. Marka seçin</option>' +
+                    makes.map(m => `<option value="${m}">${m}</option>`).join('');
+                makeSelect.value = makes.includes(currentVal) ? currentVal : '';
+            }
+
+            // 3) İL — seçilmiş model + markaya uyğun illərlə məhdudlaşır
             const yearSelect = document.getElementById('posYearFilter');
             if (yearSelect) {
                 const currentVal = yearSelect.value;
-                const years = [...new Set(allProducts.map(p => p.carYear).filter(Boolean))].sort();
-                yearSelect.innerHTML = '<option value="">İl</option>' +
+                let poolForYear = allProducts;
+                if (model) poolForYear = poolForYear.filter(p => p.carModel === model);
+                if (makeSelect && makeSelect.value) poolForYear = poolForYear.filter(p => p.carBrand === makeSelect.value);
+                const years = [...new Set(poolForYear.map(p => p.carYear).filter(Boolean))].sort();
+                yearSelect.innerHTML = '<option value="">3. İl seçin</option>' +
                     years.map(y => `<option value="${y}">${y}</option>`).join('');
-                yearSelect.value = currentVal;
+                yearSelect.value = years.includes(currentVal) ? currentVal : '';
+            }
+
+            // 4) KATEQORİYA — müstəqildir, bütün bazadan
+            const catSelect = document.getElementById('posCategoryFilter');
+            if (catSelect) {
+                const currentVal = catSelect.value;
+                const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+                catSelect.innerHTML = '<option value="">4. Kateqoriya seçin</option>' +
+                    cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                catSelect.value = cats.includes(currentVal) ? currentVal : '';
             }
 
             const container = document.getElementById('posProductList');
@@ -2326,6 +2338,13 @@
 
             setupEventListeners();
             setInterval(autoBackup, 60000);
+
+            if (localStorage.getItem('autoparts_kiosk') === '1') {
+                document.body.classList.add('kiosk-mode');
+                navigateTo('sales');
+                const btn = document.getElementById('kioskToggleBtn');
+                if (btn) btn.innerHTML = '<i class="fas fa-compress"></i> Kassa rejimindən çıx';
+            }
         }
 
         function applyRolePermissions() {
@@ -2454,6 +2473,48 @@
             document.getElementById('vinInput').value = value;
             performSearch();
         }
+
+
+        // ===== SÜRƏTLİ SATIŞ (üzən düymə) & KASSA REJİMİ =====
+        function goToSalesQuick() {
+            navigateTo('sales');
+            document.getElementById('mobileSidebar')?.classList.remove('open');
+            document.getElementById('mainContent')?.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                document.getElementById('posModelFilter')?.focus();
+                document.getElementById('posSearch')?.focus();
+            }, 150);
+        }
+
+        function toggleKioskMode() {
+            const isKiosk = document.body.classList.toggle('kiosk-mode');
+            const btn = document.getElementById('kioskToggleBtn');
+            if (isKiosk) {
+                navigateTo('sales');
+                if (btn) btn.innerHTML = '<i class="fas fa-compress"></i> Kassa rejimindən çıx';
+                localStorage.setItem('autoparts_kiosk', '1');
+                document.documentElement.requestFullscreen?.().catch(() => {/* icazə verilmədi, problem deyil */ });
+                setTimeout(() => document.getElementById('posSearch')?.focus(), 200);
+                toast('Kassa rejimi aktivdir — çıxmaq üçün yenidən düyməyə basın', 'success');
+            } else {
+                if (btn) btn.innerHTML = '<i class="fas fa-expand"></i> Kassa rejimi';
+                localStorage.setItem('autoparts_kiosk', '0');
+                if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+            }
+        }
+        window.goToSalesQuick = goToSalesQuick;
+        window.toggleKioskMode = toggleKioskMode;
+
+        function resetPosFilters() {
+            ['posModelFilter', 'posMakeFilter', 'posYearFilter', 'posCategoryFilter'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            const searchEl = document.getElementById('posSearch');
+            if (searchEl) searchEl.value = '';
+            renderPosProducts();
+        }
+        window.resetPosFilters = resetPosFilters;
 
 
         // ===== BOOT / PIN QORUMASI =====

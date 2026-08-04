@@ -2,8 +2,8 @@
   "name": "366 AUTO — Avtomobil Ehtiyat Hissələri",
   "short_name": "366 AUTO",
   "description": "Avtomobil ehtiyat hissələri üçün peşəkar idarəetmə platforması. VIN ilə axtarış, real-time inventar, satış və maliyyə idarəetməsi.",
-  "start_url": "/car/",
-  "scope": "/car/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#012624",
@@ -11,13 +11,13 @@
   "lang": "az",
   "icons": [
     {
-      "src": "/car/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/car/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

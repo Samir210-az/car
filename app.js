@@ -2001,6 +2001,8 @@
             setProducts(products);
             closeModal('productModal');
             renderProducts();
+            if (document.getElementById('posProductList')) renderPosProducts();
+            if (document.getElementById('dbSearchResults')) renderDbSearchProducts();
             toast('Məhsul yadda saxlandı!');
         }
 
@@ -2009,6 +2011,8 @@
                 const products = getProducts().filter(p => p.id !== id);
                 setProducts(products);
                 renderProducts();
+                if (document.getElementById('posProductList')) renderPosProducts();
+                if (document.getElementById('dbSearchResults')) renderDbSearchProducts();
                 toast('Məhsul silindi!');
             }
         }

@@ -1480,8 +1480,13 @@
             const todaySales = sales.filter(s => s.date?.startsWith(today())).reduce((sum, s) => sum + s.total, 0);
             const monthSales = sales.filter(s => s.date?.startsWith(today().slice(0, 7))).reduce((sum, s) => sum + s.total, 0);
             const totalRevenue = sales.reduce((sum, s) => sum + s.total, 0);
+            const totalCogs = sales.reduce((sum, s) =>
+                sum + (s.items || []).reduce((isum, it) => isum + (it.buyPrice || 0) * (it.qty || 0), 0), 0);
             const totalExpense = getFinance().filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
-            const netProfit = totalRevenue - totalExpense;
+            // Xalis qazanc alışları (purchaseId) ayrıca çıxmır — çünki onların dəyəri satılanda
+            // "Malın maya dəyəri" (COGS) kimi artıq hesaba alınır. Əks halda eyni xərc 2 dəfə çıxılardı.
+            const otherExpenses = getFinance().filter(f => f.type === 'expense' && !f.purchaseId).reduce((sum, f) => sum + f.amount, 0);
+            const netProfit = totalRevenue - totalCogs - otherExpenses;
             const totalStock = getProducts().reduce((sum, p) => sum + (p.stock || 0), 0);
             const lowStock = getProducts().filter(p => (p.stock || 0) < (p.minStock || 5)).length;
 

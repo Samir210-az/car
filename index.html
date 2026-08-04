@@ -527,6 +527,54 @@
 
 
     <!-- ============================================================ -->
+    <!-- FIREBASE — car366/ path (an-psixoloji-33442 layihəsi) -->
+    <!-- ============================================================ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBhyGNzZRGgQShP_C9kwAzTm_g_0zJlzg",
+            authDomain: "an-psixoloji-33442.firebaseapp.com",
+            databaseURL: "https://an-psixoloji-33442-default-rtdb.firebaseio.com",
+            projectId: "an-psixoloji-33442",
+            storageBucket: "an-psixoloji-33442.firebasestorage.app",
+            messagingSenderId: "528809299356",
+            appId: "1:528809299356:web:59cae89a64e446dc520c59"
+        };
+        const fbApp = initializeApp(firebaseConfig);
+        const fbDb = getDatabase(fbApp);
+        const fbAuth = getAuth(fbApp);
+
+        const COLLECTIONS = ['products', 'suppliers', 'purchases', 'sales', 'finance', 'employees', 'taxes', 'debts', 'customers'];
+
+        // Yazma: hər hansı kolleksiya localStorage-a yazılanda buluda da yazılır (car366/<key>)
+        window.fbWrite = function(key, data) {
+            if (!COLLECTIONS.includes(key)) return;
+            set(ref(fbDb, `car366/${key}`), data).catch(err => {
+                console.error(`Firebase yazma xətası (${key}):`, err.message);
+            });
+        };
+
+        function startListeners() {
+            COLLECTIONS.forEach(key => {
+                onValue(ref(fbDb, `car366/${key}`), snap => {
+                    const val = snap.val();
+                    if (typeof window.applyFirebaseData === 'function') {
+                        window.applyFirebaseData(key, val);
+                    }
+                }, err => console.error(`Firebase oxuma xətası (${key}):`, err.message));
+            });
+        }
+
+        // Rules "auth != null" tələb edir — görünməz anonim giriş edirik (PIN sisteminə toxunmur)
+        signInAnonymously(fbAuth).then(startListeners).catch(err => {
+            console.error('Firebase auth xətası:', err.message);
+        });
+    </script>
+
+    <!-- ============================================================ -->
     <!-- JAVASCRIPT – TAM İŞLƏNƏN KOD -->
     <!-- ============================================================ -->
     <script src="/car/app.js" defer></script>

@@ -1547,6 +1547,10 @@
                 toast('Bu, bir alışa bağlıdır. Silmək üçün həmin alışı Alışlar bölməsindən silin.', 'warning');
                 return;
             }
+            if (entry.debtId) {
+                toast('Bu, bir borc ödənişinə bağlıdır. Silmək üçün Borclar bölməsindəki qeydi tənzimləyin.', 'warning');
+                return;
+            }
             if (!confirm(`Bu ${entry.type === 'income' ? 'gəlir' : 'xərc'} qeydini (${fmtMoney(entry.amount)}) silmək istədiyinizə əminsiniz?`)) return;
             const finance = getFinance().filter(f => f.id !== id);
             setFinance(finance);
@@ -1780,12 +1784,24 @@
             const finalTotal = Math.max(0, total - discount);
             const method = document.getElementById('posPaymentMethod')?.value || 'nağd';
 
+            let customerName = '', customerPhone = '';
+            if (method === 'borc') {
+                customerName = document.getElementById('posDebtName')?.value?.trim() || '';
+                customerPhone = document.getElementById('posDebtPhone')?.value?.trim() || '';
+                if (!customerName || !customerPhone) {
+                    toast('Borc üçün müştərinin adını və telefonunu daxil edin!', 'warning');
+                    return;
+                }
+            }
+
             const sale = {
                 id: 'sale_' + randId(),
                 items: state.posCart.map(item => ({ ...item })),
                 total: finalTotal,
                 discount: discount,
                 method: method,
+                customerName: customerName,
+                customerPhone: customerPhone,
                 date: today(),
                 timestamp: Date.now(),
             };
@@ -1803,24 +1819,55 @@
             sales.push(sale);
             setSales(sales);
 
-            const finance = getFinance();
-            finance.push({
-                id: 'fin_' + randId(),
-                type: 'income',
-                category: 'satış',
-                amount: finalTotal,
-                note: `Satış #${sale.id}`,
-                date: today(),
-                saleId: sale.id,
-            });
-            setFinance(finance);
+            if (method === 'borc') {
+                // Pul hələ alınmayıb — gəlir kimi yox, "bizə borcludur" kimi qeyd olunur.
+                // Borc ödəniləndə (payDebt) həmin məbləğ Maliyyəyə gəlir kimi düşəcək.
+                const debts = getDebts();
+                debts.push({
+                    id: 'd_' + randId(),
+                    type: 'bizeborcludur',
+                    person: `${customerName} (${customerPhone})`,
+                    total: finalTotal,
+                    paid: 0,
+                    due: '',
+                    status: 'aktiv',
+                    note: `Satış #${sale.id}`,
+                    saleId: sale.id,
+                });
+                setDebts(debts);
+                renderDebts();
+                toast(`Satış borc kimi qeyd edildi: ${fmtMoney(finalTotal)} (${customerName})`, 'success');
+            } else {
+                const finance = getFinance();
+                finance.push({
+                    id: 'fin_' + randId(),
+                    type: 'income',
+                    category: 'satış',
+                    amount: finalTotal,
+                    note: `Satış #${sale.id}`,
+                    date: today(),
+                    saleId: sale.id,
+                });
+                setFinance(finance);
+                toast(`Satış tamamlandı! Cəmi: ${fmtMoney(finalTotal)}`, 'success');
+            }
 
-            toast(`Satış tamamlandı! Cəmi: ${fmtMoney(finalTotal)}`, 'success');
             state.posCart = [];
             renderPosCart();
+            document.getElementById('posDebtName').value = '';
+            document.getElementById('posDebtPhone').value = '';
+            document.getElementById('posPaymentMethod').value = 'nağd';
+            togglePosDebtFields();
             renderDashboard();
             renderFinance();
         }
+
+        function togglePosDebtFields() {
+            const method = document.getElementById('posPaymentMethod')?.value;
+            const box = document.getElementById('posDebtFields');
+            if (box) box.style.display = method === 'borc' ? 'block' : 'none';
+        }
+        window.togglePosDebtFields = togglePosDebtFields;
 
         function deleteSale(id) {
             const sale = getSales().find(s => s.id === id);
@@ -1842,6 +1889,11 @@
             // 3) Bağlı maliyyə (gəlir) qeydini sil
             const finance = getFinance().filter(f => f.saleId !== id);
             setFinance(finance);
+
+            // 3b) Əgər bu satış borc idisə, bağlı borc qeydini də sil
+            const debts = getDebts().filter(d => d.saleId !== id);
+            setDebts(debts);
+            renderDebts();
 
             // 4) Hər yerdə yenilə
             renderDashboard();
@@ -2555,6 +2607,36 @@
             if (idx > -1) debts[idx] = debt;
             setDebts(debts);
             renderDebts();
+
+            // "Bizə borcludur" tipli borc ödənəndə bu, faktiki alınan gəlirdir — Maliyyəyə yazılır.
+            // "Kimə borcluyuq" tipli borc ödənəndə isə bu, bizim etdiyimiz xərcdir.
+            if (debt.type === 'bizeborcludur') {
+                const finance = getFinance();
+                finance.push({
+                    id: 'fin_' + randId(),
+                    type: 'income',
+                    category: debt.saleId ? 'satış (borc ödənişi)' : 'borc ödənişi',
+                    amount: payAmount,
+                    note: `Borc ödənişi — ${debt.person}`,
+                    date: today(),
+                    debtId: debt.id,
+                });
+                setFinance(finance);
+            } else if (debt.type === 'borcluyuq') {
+                const finance = getFinance();
+                finance.push({
+                    id: 'fin_' + randId(),
+                    type: 'expense',
+                    category: 'borc ödənişi',
+                    amount: payAmount,
+                    note: `Borc ödənişi — ${debt.person}`,
+                    date: today(),
+                    debtId: debt.id,
+                });
+                setFinance(finance);
+            }
+            renderFinance();
+            renderDashboard();
             toast(`${fmtMoney(payAmount)} ödənildi!`);
         }
 
@@ -2631,19 +2713,26 @@
             const totalIncome = finance.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
             const totalExpense = finance.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
             const netProfit = totalIncome - totalExpense;
-            state.lastReport = { start, end, sales, finance, totalSales, totalIncome, totalExpense, netProfit };
+            const debtSales = sales.filter(s => s.method === 'borc');
+            const debtSalesTotal = debtSales.reduce((sum, s) => sum + s.total, 0);
+            const outstandingReceivables = getDebts()
+                .filter(d => d.type === 'bizeborcludur' && d.status !== 'bağlandı')
+                .reduce((sum, d) => sum + Math.max(0, (d.total || 0) - (d.paid || 0)), 0);
+            state.lastReport = { start, end, sales, finance, totalSales, totalIncome, totalExpense, netProfit, debtSalesTotal, outstandingReceivables };
             const container = document.getElementById('reportContent');
             container.innerHTML = `
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1rem;">
                     <div class="stat-card"><div class="stat-label">Dövr</div><div class="stat-value" style="font-size:0.9rem;">${start} - ${end}</div></div>
-                    <div class="stat-card"><div class="stat-label">Satış</div><div class="stat-value success">${fmtMoney(totalSales)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Satış (cəmi)</div><div class="stat-value success">${fmtMoney(totalSales)}</div></div>
                     <div class="stat-card"><div class="stat-label">Satış sayı</div><div class="stat-value">${sales.length}</div></div>
                     <div class="stat-card"><div class="stat-label">Xərc</div><div class="stat-value" style="color:#f87171;">${fmtMoney(totalExpense)}</div></div>
                     <div class="stat-card"><div class="stat-label">Xalis mənfəət</div><div class="stat-value" style="color:${netProfit >= 0 ? '#34d399' : '#f87171'};">${fmtMoney(netProfit)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Borcla satış (bu dövr)</div><div class="stat-value" style="color:#fbbf24;">${fmtMoney(debtSalesTotal)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Ümumi gözləyən borc</div><div class="stat-value" style="color:#fbbf24;">${fmtMoney(outstandingReceivables)}</div></div>
                 </div>
                 <div><h5 style="color:var(--surface-text-secondary);font-weight:500;font-size:0.8rem;text-transform:uppercase;">Satışlar</h5>
                     ${sales.length === 0 ? '<p class="text-muted">Heç bir satış yoxdur</p>' :
-                    sales.slice(0, 20).map(s => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${s.date}</span><span style="color:#34d399;">${fmtMoney(s.total)}</span></div>`).join('')}
+                    sales.slice(0, 20).map(s => `<div class="flex-between" style="padding:0.2rem 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span>${s.date}${s.method === 'borc' ? ' <span class="badge" style="background:rgba(251,191,36,0.15);color:#fbbf24;padding:0.1rem 0.5rem;border-radius:10px;font-size:0.65rem;">BORC — ' + (s.customerName || '') + '</span>' : ''}</span><span style="color:${s.method === 'borc' ? '#fbbf24' : '#34d399'};">${fmtMoney(s.total)}</span></div>`).join('')}
                 </div>
                 <div style="margin-top:var(--spacing-16);"><h5 style="color:var(--surface-text-secondary);font-weight:500;font-size:0.8rem;text-transform:uppercase;">Xərclər</h5>
                     ${finance.filter(f => f.type === 'expense').length === 0 ? '<p class="text-muted">Heç bir xərc yoxdur</p>' :
@@ -2662,6 +2751,8 @@
                 ['Ümumi gəlir', r.totalIncome],
                 ['Ümumi xərc', r.totalExpense],
                 ['Xalis mənfəət', r.netProfit],
+                ['Borcla satış (bu dövr)', r.debtSalesTotal],
+                ['Ümumi gözləyən borc (bizə borcludur)', r.outstandingReceivables],
                 [],
                 ['Tarix', 'Növ', 'Kateqoriya/Qeyd', 'Məbləğ'],
                 ...r.finance.map(f => [f.date, f.type === 'income' ? 'Gəlir' : 'Xərc', f.category || f.note || '', f.amount])

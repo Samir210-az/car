@@ -1047,25 +1047,52 @@
             ];
 
             const partNames = {
-                'Mühərrik hissələri': ['Yağ filtri', 'Hava filtri', 'Mühərrik yağı 5W-30', 'Şam dəsti', 'Zamanlama kəməri', 'Termostat', 'Su nasosu', 'Yağ nasosu', 'Krank mili', 'Piston', 'Silindr başlığı', 'Klapan', 'Möhür dəsti', 'Conta dəsti', 'Kəmər gərginliyi', 'Kasnak', 'Mühərrik yastığı', 'Egzoz manifoldu', 'Emme manifoldu', 'Yağ soyuducusu', 'QRM kəməri', 'Kolenval sensoru', 'Distributor qapağı', 'Piston üzükləri', 'Mühərrik bloku conta dəsti'],
-                'Əyləc sistemi': ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları (nakladka)', 'Əyləc mayesi', 'Əyləc borusu', 'Əyləc silindri', 'Əyləc kaliperi', 'ABS sensoru', 'Əyləc pedalı', 'Vakuum gücləndirici', 'Tənzimləyici klapan', 'Əyləc şlanqı', 'Park əyləci kabeli', 'Əyləc diski qoruyucusu', 'Əyləc yastığı aşınma sensoru', 'Əl əyləc bəndi', 'Əyləc barabanı', 'ABS bloku'],
-                'Süspansiyon': ['Ön amortizator', 'Arxa amortizator', 'Ön qol', 'Arxa qol', 'Süspansiyon yastığı', 'Süspansiyon yayı', 'Stabilizator', 'Burç dəsti', 'Top birləşməsi', 'Rulda çubuğu', 'Rulda ucu', 'Təkər rulmanı', 'Təkər diski', 'Təkər boltları', 'Hava süspansiyon yastığı', 'Stabilizator burcu', 'Süspansiyon qolu siletblok'],
-                'Elektrik avadanlığı': ['Akkumulyator 60Ah', 'Generator (alternator)', 'Starter', 'Qığılcım şamları', 'Alışma bobini', 'Gərginlik tənzimləyici', 'Siqaret çakmağı', 'Qoruyucu bloku', 'Röle', 'Batareya naqili', 'Şarj relesi', 'Şüşəsilən motoru', 'Sürət sensoru', 'Oksigen sensoru (lambda)', 'Təzyiq sensoru', 'MAF hava axını sensoru', 'Krank mili sensoru', 'Distan idarəetmə açar başlığı', 'Mərkəzi qapanma modulu'],
-                'Filtrlər': ['Yağ filtri', 'Hava filtri', 'Kabin (salon) filtri', 'Yanacaq filtri', 'Transmissiya filtri', 'Yağ ayırıcı filtr', 'Hava filtr qutusu', 'Karbon filtri', 'Toz filtri', 'AdBlue filtri', 'Hidravlik filtr'],
-                'Yağlar və mayelər': ['Mühərrik yağı 5W-30', 'Mühərrik yağı 5W-40', 'Transmissiya yağı', 'Əyləc mayesi', 'Antifriz', 'Yağ əlavəsi', 'Yanacaq əlavəsi', 'Kondisioner qazı R134a', 'Sükan gücləndirici yağı', 'Şüşə yuyucu maye', 'Sürtkü yağı (qres)', 'Diferensial yağı', 'Radiator antifrizi (yaşıl)'],
-                'İqlim sistemi': ['Kondisioner kompressoru', 'Kondensator', 'Buxarlandırıcı (isparitel)', 'İqlim ventili', 'Salon qızdırıcı radiatoru', 'Fan motoru', 'Fan qanadları', 'İqlim idarə paneli', 'Kondisioner şlanq dəsti', 'Qaz doldurma vanası', 'Salon istilik sensoru'],
-                'Egzoz sistemi': ['Katalizator', 'Egzoz manifoldu', 'Egzoz borusu', 'Səsboğucu (glushitel)', 'Lambda sensoru', 'Egzoz yastığı', 'Flanets bağlayıcı', 'Bərkidici dəsti', 'DPF hissəcik filtri', 'Egzoz qoruyucu ekranı'],
-                'Transmissiya': ['Sürət qutusu yağı', 'Mufta (debriyaj) dəsti', 'Sürət qutusu filtri', 'Sürət qutusu nasosu', 'Debriyaj pedalı', 'Sürət seçici', 'Transmissiya idarə bloku', 'CVT kəməri', 'Diferensial yağı', 'Mufta diski', 'Mufta səbəti', 'Buraxıcı rulman'],
-                'Təkərlər və disklər': ['Yay təkəri 205/55 R16', 'Qış təkəri 205/55 R16', 'Alyuminium disk 16"', 'Polad disk 16"', 'Təkər boltları', 'Təkər qapağı', 'Təkər təzyiq sensoru (TPMS)', 'Təkər balans çəkisi', 'Ehtiyat təkər', 'Təkər qutusu astarı'],
-                'Karoser hissələri': ['Ön bamper', 'Arxa bamper', 'Kapot', 'Bagaj qapağı', 'Ön qanad', 'Arxa qanad', 'Qapı (sürücü)', 'Spoiler', 'Bamper amortizatoru', 'Ban bərkidici dəsti', 'Ban qoruyucu (molding)', 'Astar (podkrılnik)'],
+                'Mühərrik hissələri': ['Şam dəsti', 'Zamanlama kəməri', 'Termostat', 'Su nasosu', 'Yağ nasosu', 'Krank mili', 'Piston dəsti', 'Silindr başlığı', 'Klapan dəsti', 'Mühərrik conta dəsti', 'Kəmər gərginləşdiricisi', 'Kasnak', 'Mühərrik yastığı', 'Yağ soyuducusu', 'Krank mili sensoru', 'Paylayıcı qapağı', 'Piston üzükləri', 'Mühərrik bloku'],
+                'Əyləc sistemi': ['Ön əyləc diskləri', 'Arxa əyləc diskləri', 'Əyləc yastıqları', 'Əyləc mayesi', 'Əyləc borusu', 'Əyləc silindri', 'Əyləc kaliperi', 'ABS sensoru', 'Əyləc pedalı', 'Vakuum gücləndirici', 'Tənzimləyici klapan', 'Əyləc şlanqı', 'Əl əyləc kabeli', 'Əyləc diski qoruyucusu', 'Əyləc yastığı aşınma sensoru', 'Əl əyləc bəndi', 'Əyləc barabanı', 'ABS bloku'],
+                'Süspansiyon': ['Ön amortizator', 'Arxa amortizator', 'Ön qol', 'Arxa qol', 'Süspansiyon yastığı', 'Süspansiyon yayı', 'Stabilizator', 'Burç dəsti', 'Top birləşməsi', 'Ötürücü çubuq', 'Ötürücü çubuq ucu', 'Təkər rulmanı', 'Hava süspansiyon yastığı', 'Stabilizator burcu', 'Süspansiyon qolu bağlayıcısı'],
+                'Elektrik avadanlığı': ['Akkumulyator 60Ah', 'Generator', 'Starter', 'Alışma bobini', 'Gərginlik tənzimləyici', 'Siqaret çakmağı', 'Qoruyucu bloku', 'Röle', 'Batareya naqili', 'Şarj relesi', 'Şüşəsilən motoru', 'Sürət sensoru', 'Oksigen sensoru', 'Təzyiq sensoru', 'Hava axını sensoru', 'Distan idarəetmə açar başlığı', 'Mərkəzi qapanma modulu'],
+                'Filtrlər': ['Yağ filtri', 'Hava filtri', 'Salon filtri', 'Yanacaq filtri', 'Transmissiya filtri', 'Yağ ayırıcı filtr', 'Hava filtr qutusu', 'Karbon filtri', 'Toz filtri', 'Hidravlik filtr'],
+                'Yağlar və mayelər': ['Mühərrik yağı 5W-30', 'Mühərrik yağı 5W-40', 'Transmissiya yağı', 'Hidravlik yağ', 'Antifriz', 'Yağ əlavəsi', 'Yanacaq əlavəsi', 'Kondisioner qazı R134a', 'Sükan gücləndirici yağı', 'Şüşə yuyucu maye', 'Sürtkü yağı', 'Diferensial yağı', 'Kompressor yağı'],
+                'İqlim sistemi': ['Kondisioner kompressoru', 'Kondensator', 'Buxarlandırıcı', 'İqlim ventili', 'Salon qızdırıcı radiatoru', 'Fan motoru', 'Fan qanadları', 'İqlim idarə paneli', 'Kondisioner şlanq dəsti', 'Qaz doldurma vanası', 'Salon istilik sensoru'],
+                'Egzoz sistemi': ['Katalizator', 'Egzoz manifoldu', 'Egzoz borusu', 'Səsboğucu', 'Lambda sensoru', 'Egzoz yastığı', 'Birləşdirici flans', 'Bərkidici dəsti', 'Hissəcik filtri', 'Egzoz qoruyucu ekranı'],
+                'Transmissiya': ['Sürət qutusu yağı', 'Debriyaj dəsti', 'Sürət qutusu filtri', 'Sürət qutusu nasosu', 'Debriyaj pedalı', 'Sürət seçici', 'Transmissiya idarə bloku', 'CVT kəməri', 'Debriyaj diski', 'Debriyaj səbəti', 'Buraxıcı rulman'],
+                'Təkərlər və disklər': ['Yay təkəri 205/55 R16', 'Qış təkəri 205/55 R16', 'Alüminium disk 16"', 'Polad disk 16"', 'Təkər boltları', 'Təkər qapağı', 'Təkər təzyiq sensoru', 'Təkər balans çəkisi', 'Ehtiyat təkər', 'Təkər qutusu astarı'],
+                'Karoser hissələri': ['Ön bamper', 'Arxa bamper', 'Kapot', 'Bagaj qapağı', 'Ön qanad', 'Arxa qanad', 'Sürücü qapısı', 'Spoyler', 'Bamper amortizatoru', 'Ban bərkidici dəsti', 'Ban qoruyucu zolağı'],
                 'İnterior aksesuarlar': ['Oturacaq örtüyü', 'Döşəmə', 'Sükan çarxı örtüyü', 'Qapı çubuğu', 'Ayaqaltı dəsti', 'Alət paneli örtüyü', 'Mərkəzi konsol', 'Salon işıqlandırma lampası', 'Təhlükəsizlik kəməri', 'Günəşlik'],
-                'İşıqlandırma': ['Ön fara', 'Arxa lampa', 'Gündüz işıqları (DRL)', 'Dönmə siqnalı', 'Arxa əks etdirici', 'Fara lampası H7', 'LED lampa dəsti', 'Fara tənzimləyicisi', 'Duman fara', 'Fara şüşəsi'],
-                'Şüşələr': ['Ön şüşə', 'Arxa şüşə', 'Yan şüşə', 'Güzgü şüşəsi', 'Şüşə yapışqanı', 'Şüşə çərçivəsi (uplotnitel)', 'Şüşə qaldırıcı mexanizmi', 'Elektrik şüşə motoru'],
-                'Silecekler': ['Ön silecek çubuğu', 'Arxa silecek çubuğu', 'Silecek motoru', 'Silecek qolu', 'Silecek süngəri', 'Şüşəyuyan forsunka', 'Silecek rölesi'],
-                'Yanacaq sistemi': ['Yanacaq nasosu', 'Yanacaq forsunkası (injektor)', 'Yanacaq təzyiq tənzimləyicisi', 'Yanacaq bakı', 'Yanacaq şlanqı', 'Yanacaq səviyyəsi sensoru', 'Yanacaq nasosu modulu', 'Yanacaq xətti bərkidicisi', 'Fişəng bobini'],
-                'Sükan sistemi': ['Sükan qutusu (rul reykası)', 'Sükan gücləndirici nasosu', 'Sükan mili', 'Sükan çubuğu ucu', 'Sükan mailliyi tənzimləyicisi', 'Elektrik sükan modulu (EPS)', 'Sükan yağı şlanqı', 'Sükan çarxı'],
-                'Güzgü və xarici aksesuarlar': ['Yan güzgü (sol)', 'Yan güzgü (sağ)', 'Güzgü qızdırıcı elementi', 'Elektrik güzgü tənzimləyici motoru', 'Daxili salon güzgüsü', 'Güzgü qapağı', 'Radio anteni', 'Bagaj çubuğu (reling)'],
+                'İşıqlandırma': ['Ön fara', 'Arxa lampa', 'Gündüz işıqları', 'Dönmə siqnalı', 'Arxa əks etdirici', 'Fara lampası H7', 'LED lampa dəsti', 'Fara tənzimləyicisi', 'Duman fara', 'Fara şüşəsi'],
+                'Şüşələr': ['Ön şüşə', 'Arxa şüşə', 'Yan şüşə', 'Güzgü şüşəsi', 'Şüşə yapışqanı', 'Şüşə kip lenti', 'Şüşə qaldırıcı mexanizmi', 'Elektrik şüşə motoru'],
+                'Silecekler': ['Ön silecek çubuğu', 'Arxa silecek çubuğu', 'Silecek motoru', 'Silecek qolu', 'Silecek süngəri', 'Şüşəyuyan forsunka', 'Silecek relesi'],
+                'Yanacaq sistemi': ['Yanacaq nasosu', 'Yanacaq forsunkası', 'Yanacaq təzyiq tənzimləyicisi', 'Yanacaq bakı', 'Yanacaq şlanqı', 'Yanacaq səviyyəsi sensoru', 'Yanacaq nasosu modulu', 'Yanacaq xətti bərkidicisi', 'Yanacaq bölücüsü'],
+                'Sükan sistemi': ['Sükan qutusu', 'Sükan gücləndirici nasosu', 'Sükan mili', 'Sükan çubuğu ucu', 'Sükan mailliyi tənzimləyicisi', 'Elektrik sükan modulu', 'Sükan yağı şlanqı', 'Sükan çarxı'],
+                'Güzgü və xarici aksesuarlar': ['Yan güzgü (sol)', 'Yan güzgü (sağ)', 'Güzgü qızdırıcı elementi', 'Elektrik güzgü tənzimləyici motoru', 'Daxili salon güzgüsü', 'Güzgü qapağı', 'Radio anteni', 'Bagaj çubuğu'],
             };
+
+            // ===== BAZAR QİYMƏTLƏRİ (AZN) — Bakı bazarı araşdırmasına əsasən =====
+            const basePriceRanges = {
+                'Mühərrik hissələri': [15, 130], 'Əyləc sistemi': [20, 150], 'Süspansiyon': [15, 180],
+                'Elektrik avadanlığı': [12, 190], 'Filtrlər': [8, 32], 'Yağlar və mayelər': [8, 45],
+                'İqlim sistemi': [22, 200], 'Egzoz sistemi': [20, 160], 'Transmissiya': [20, 200],
+                'Təkərlər və disklər': [25, 190], 'Karoser hissələri': [40, 350], 'İnterior aksesuarlar': [10, 100],
+                'İşıqlandırma': [12, 200], 'Şüşələr': [30, 260], 'Silecekler': [8, 40],
+                'Yanacaq sistemi': [20, 220], 'Sükan sistemi': [35, 350], 'Güzgü və xarici aksesuarlar': [18, 130]
+            };
+            const premiumPriceRanges = {
+                'Mühərrik hissələri': [180, 480], 'Əyləc sistemi': [180, 350], 'Süspansiyon': [200, 420],
+                'Elektrik avadanlığı': [180, 320], 'İqlim sistemi': [220, 420], 'Egzoz sistemi': [180, 350],
+                'Transmissiya': [220, 480], 'Karoser hissələri': [400, 750], 'İşıqlandırma': [220, 280],
+                'Şüşələr': [260, 380], 'Yanacaq sistemi': [230, 350], 'Sükan sistemi': [360, 480]
+            };
+            const premiumKeywords = ['mühərrik bloku', 'krank mili', 'piston', 'silindr başlığı', 'sürət qutusu',
+                'debriyaj səbəti', 'debriyaj dəsti', 'katalizator', 'kondisioner kompressoru', 'ön şüşə', 'arxa şüşə',
+                'kapot', 'bagaj qapağı', 'ön bamper', 'arxa bamper', 'sükan qutusu', 'sükan gücləndirici nasosu',
+                'yanacaq nasosu', 'egzoz manifoldu', 'abs bloku', 'akkumulyator', 'generator', 'sürücü qapısı'];
+
+            function realisticPrice(cat, partName) {
+                const [lo, hi] = basePriceRanges[cat] || [10, 100];
+                const isPremium = premiumKeywords.some(k => partName.toLowerCase().includes(k));
+                const [plo, phi] = (isPremium && premiumPriceRanges[cat]) ? premiumPriceRanges[cat] : [lo, hi];
+                return Math.round((plo + Math.random() * (phi - plo)) * 10) / 10;
+            }
 
             const makeModelPairs = [];
             const makes = VinDatabase.getAllMakes();
@@ -1087,7 +1114,7 @@
                     const year = (modelYears && modelYears.length)
                         ? modelYears[Math.floor(Math.random() * modelYears.length)]
                         : (2005 + Math.floor(Math.random() * 21));
-                    const price = Math.floor(Math.random() * 100) + 10;
+                    const price = realisticPrice(cat, name);
                     const stock = Math.floor(Math.random() * 50) + 5;
                     products.push({
                         id: 'p' + (idCounter++),
@@ -2431,7 +2458,7 @@
         // ===== INIT =====
         function initApp() {
             // Məhsulları yüklə — kataloq versiyası dəyişibsə (yeni marka bazası) yenidən yarat
-            const CATALOG_VERSION = '4'; // v4 = 18 kateqoriya, real hissə adları, ~470 məhsul
+            const CATALOG_VERSION = '5'; // v5 = real bazar qiymətləri (AZN) + təmizlənmiş ad bazası
             state.products = loadFromStorage('products');
             const catalogV = localStorage.getItem('autoparts_catalog_v');
             if (state.products.length === 0 || state.products.length < 400 || catalogV !== CATALOG_VERSION) {

@@ -270,7 +270,8 @@
         window.applyFirebaseData = applyFirebaseData;
 
 
-        // ===== VIN KATALOQU (qısa) =====
+        // ===== VIN KATALOQU (genişləndirilmiş) =====
+        function yrs(from, to) { const a = []; for (let y = from; y <= to; y++) a.push(y); return a; }
         const VinDatabase = {
             wmiMap: {
                 '1HG': { make: 'Honda' },
@@ -315,174 +316,309 @@
                 'JTJ': { make: 'Lexus' },
                 'WP0': { make: 'Porsche' },
                 '5YJ': { make: 'Tesla' },
+                'TMB': { make: 'Skoda' },
+                'VSS': { make: 'Seat' },
+                'W0L': { make: 'Opel' },
+                'WMW': { make: 'MINI' },
+                'ZAR': { make: 'Alfa Romeo' },
+                'UU1': { make: 'Dacia' },
+                'JN1': { make: 'Infiniti' },
+                '19U': { make: 'Acura' },
+                '1C3': { make: 'Chrysler' },
+                '1B3': { make: 'Dodge' },
+                '1J4': { make: 'Jeep' },
+                '1G6': { make: 'Cadillac' },
+                '1GT': { make: 'GMC' },
+                '1G4': { make: 'Buick' },
+                '1LN': { make: 'Lincoln' },
+                'SCB': { make: 'Bentley' },
+                'SCA': { make: 'Rolls-Royce' },
+                'SCF': { make: 'Aston Martin' },
+                'WME': { make: 'Smart' },
+                'JA3': { make: 'Mitsubishi' },
+                'JS1': { make: 'Suzuki' },
+                'XTA': { make: 'Lada' },
+                'XTT': { make: 'UAZ' },
             },
             models: {
-                'Honda': { 'Accord': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Civic': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'CR-V': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Pilot': { years: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
-                            2022, 2023, 2024
-                        ] },
+                'Honda': {
+                    'Accord': { years: yrs(2008, 2024) },
+                    'Civic': { years: yrs(2006, 2024) },
+                    'CR-V': { years: yrs(2007, 2024) },
+                    'Pilot': { years: yrs(2009, 2024) },
                 },
                 'Toyota': {
-                    'Camry': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Corolla': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
-                    'RAV4': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Camry': { years: yrs(2007, 2024) },
+                    'Corolla': { years: yrs(2008, 2024) },
+                    'RAV4': { years: yrs(2006, 2024) },
+                    'Land Cruiser': { years: yrs(2008, 2024) },
+                    'Prado': { years: yrs(2009, 2024) },
                 },
                 'BMW': {
-                    '3 Series': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-                            2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    '5 Series': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
-                            2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    '3 Series': { years: yrs(2005, 2024) },
+                    '5 Series': { years: yrs(2005, 2024) },
+                    'X5': { years: yrs(2007, 2024) },
+                    'X3': { years: yrs(2006, 2024) },
                 },
                 'Mercedes-Benz': {
-                    'C-Class': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'E-Class': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'C-Class': { years: yrs(2007, 2024) },
+                    'E-Class': { years: yrs(2006, 2024) },
+                    'S-Class': { years: yrs(2006, 2024) },
+                    'GLE': { years: yrs(2015, 2024) },
                 },
                 'Ford': {
-                    'Focus': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Fiesta': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
+                    'Focus': { years: yrs(2005, 2024) },
+                    'Fiesta': { years: yrs(2008, 2024) },
+                    'Explorer': { years: yrs(2006, 2024) },
+                    'Kuga': { years: yrs(2008, 2024) },
                 },
                 'Chevrolet': {
-                    'Malibu': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
-                    'Cruze': { years: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
-                            2022, 2023, 2024
-                        ] },
+                    'Malibu': { years: yrs(2008, 2024) },
+                    'Cruze': { years: yrs(2009, 2024) },
+                    'Tahoe': { years: yrs(2007, 2024) },
+                    'Lacetti': { years: yrs(2004, 2013) },
                 },
                 'Nissan': {
-                    'Altima': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Rogue': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
+                    'Altima': { years: yrs(2007, 2024) },
+                    'Rogue': { years: yrs(2008, 2024) },
+                    'Qashqai': { years: yrs(2007, 2024) },
+                    'Patrol': { years: yrs(2006, 2024) },
                 },
                 'Volkswagen': {
-                    'Golf': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Passat': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Golf': { years: yrs(2006, 2024) },
+                    'Passat': { years: yrs(2005, 2024) },
+                    'Tiguan': { years: yrs(2008, 2024) },
+                    'Polo': { years: yrs(2009, 2024) },
                 },
                 'Audi': {
-                    'A4': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'A6': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'A4': { years: yrs(2005, 2024) },
+                    'A6': { years: yrs(2005, 2024) },
+                    'Q5': { years: yrs(2009, 2024) },
+                    'Q7': { years: yrs(2006, 2024) },
                 },
                 'Hyundai': {
-                    'Elantra': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Sonata': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Elantra': { years: yrs(2006, 2024) },
+                    'Sonata': { years: yrs(2006, 2024) },
+                    'Tucson': { years: yrs(2005, 2024) },
+                    'Santa Fe': { years: yrs(2007, 2024) },
                 },
                 'Kia': {
-                    'Optima': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Sportage': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Optima': { years: yrs(2006, 2024) },
+                    'Sportage': { years: yrs(2005, 2024) },
+                    'Rio': { years: yrs(2006, 2024) },
+                    'Sorento': { years: yrs(2009, 2024) },
                 },
                 'Mazda': {
-                    'Mazda3': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Mazda6': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Mazda3': { years: yrs(2006, 2024) },
+                    'Mazda6': { years: yrs(2006, 2024) },
+                    'CX-5': { years: yrs(2013, 2024) },
                 },
                 'Subaru': {
-                    'Impreza': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Outback': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Impreza': { years: yrs(2005, 2024) },
+                    'Outback': { years: yrs(2005, 2024) },
+                    'Forester': { years: yrs(2008, 2024) },
                 },
                 'Lexus': {
-                    'ES': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'RX': { years: [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                            2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'ES': { years: yrs(2006, 2024) },
+                    'RX': { years: yrs(2006, 2024) },
+                    'GX': { years: yrs(2010, 2024) },
+                    'LX': { years: yrs(2008, 2024) },
                 },
                 'Volvo': {
-                    'S60': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'XC60': { years: [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
-                            2022, 2023, 2024
-                        ] },
+                    'S60': { years: yrs(2005, 2024) },
+                    'XC60': { years: yrs(2008, 2024) },
+                    'XC90': { years: yrs(2005, 2024) },
                 },
                 'Renault': {
-                    'Clio': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
-                    'Megane': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Clio': { years: yrs(2005, 2024) },
+                    'Megane': { years: yrs(2005, 2024) },
+                    'Duster': { years: yrs(2010, 2024) },
+                    'Logan': { years: yrs(2005, 2024) },
                 },
                 'Peugeot': {
-                    '208': { years: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024] },
-                    '308': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
+                    '208': { years: yrs(2012, 2024) },
+                    '308': { years: yrs(2007, 2024) },
+                    '3008': { years: yrs(2009, 2024) },
+                    '508': { years: yrs(2010, 2024) },
                 },
                 'Fiat': {
-                    '500': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
+                    '500': { years: yrs(2007, 2024) },
+                    'Doblo': { years: yrs(2010, 2024) },
+                    'Tipo': { years: yrs(2015, 2024) },
                 },
                 'Jaguar': {
-                    'XF': { years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
-                            2021, 2022, 2023, 2024
-                        ] },
+                    'XF': { years: yrs(2007, 2024) },
+                    'F-Pace': { years: yrs(2016, 2024) },
                 },
                 'Land Rover': {
-                    'Discovery': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
-                            2018, 2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    'Discovery': { years: yrs(2005, 2017) },
+                    'Range Rover': { years: yrs(2005, 2024) },
+                    'Range Rover Sport': { years: yrs(2005, 2024) },
                 },
                 'Porsche': {
-                    '911': { years: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
-                            2019, 2020, 2021, 2022, 2023, 2024
-                        ] },
+                    '911': { years: yrs(2005, 2024) },
+                    'Cayenne': { years: yrs(2005, 2024) },
+                    'Macan': { years: yrs(2014, 2024) },
                 },
                 'Tesla': {
-                    'Model 3': { years: [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024] },
-                    'Model S': { years: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024] },
-                }
+                    'Model 3': { years: yrs(2017, 2024) },
+                    'Model S': { years: yrs(2012, 2024) },
+                    'Model Y': { years: yrs(2020, 2024) },
+                },
+                'Citroën': {
+                    'C4': { years: yrs(2005, 2024) },
+                    'Berlingo': { years: yrs(2005, 2024) },
+                    'C5': { years: yrs(2005, 2017) },
+                },
+                'Ferrari': {
+                    '488': { years: yrs(2015, 2024) },
+                    'Portofino': { years: yrs(2018, 2024) },
+                    'Roma': { years: yrs(2020, 2024) },
+                },
+                'Maserati': {
+                    'Ghibli': { years: yrs(2013, 2024) },
+                    'Levante': { years: yrs(2016, 2024) },
+                },
+                'Skoda': {
+                    'Octavia': { years: yrs(2005, 2024) },
+                    'Superb': { years: yrs(2008, 2024) },
+                    'Fabia': { years: yrs(2007, 2024) },
+                    'Kodiaq': { years: yrs(2017, 2024) },
+                },
+                'Seat': {
+                    'Leon': { years: yrs(2005, 2024) },
+                    'Ibiza': { years: yrs(2008, 2024) },
+                },
+                'Opel': {
+                    'Astra': { years: yrs(2005, 2024) },
+                    'Corsa': { years: yrs(2006, 2024) },
+                    'Insignia': { years: yrs(2009, 2024) },
+                },
+                'MINI': {
+                    'Cooper': { years: yrs(2007, 2024) },
+                    'Countryman': { years: yrs(2010, 2024) },
+                },
+                'Alfa Romeo': {
+                    'Giulia': { years: yrs(2016, 2024) },
+                    'Stelvio': { years: yrs(2017, 2024) },
+                },
+                'Dacia': {
+                    'Duster': { years: yrs(2010, 2024) },
+                    'Logan': { years: yrs(2005, 2024) },
+                    'Sandero': { years: yrs(2008, 2024) },
+                },
+                'Infiniti': {
+                    'Q50': { years: yrs(2013, 2024) },
+                    'QX60': { years: yrs(2013, 2024) },
+                },
+                'Acura': {
+                    'TLX': { years: yrs(2014, 2024) },
+                    'MDX': { years: yrs(2006, 2024) },
+                },
+                'Genesis': {
+                    'G80': { years: yrs(2016, 2024) },
+                    'GV80': { years: yrs(2020, 2024) },
+                },
+                'Chrysler': {
+                    '300': { years: yrs(2005, 2024) },
+                },
+                'Dodge': {
+                    'Charger': { years: yrs(2006, 2024) },
+                    'Challenger': { years: yrs(2008, 2024) },
+                },
+                'Jeep': {
+                    'Grand Cherokee': { years: yrs(2005, 2024) },
+                    'Wrangler': { years: yrs(2005, 2024) },
+                    'Compass': { years: yrs(2007, 2024) },
+                },
+                'Cadillac': {
+                    'Escalade': { years: yrs(2007, 2024) },
+                    'CTS': { years: yrs(2008, 2019) },
+                },
+                'GMC': {
+                    'Yukon': { years: yrs(2007, 2024) },
+                    'Sierra': { years: yrs(2007, 2024) },
+                },
+                'Buick': {
+                    'Enclave': { years: yrs(2008, 2024) },
+                },
+                'Lincoln': {
+                    'Navigator': { years: yrs(2007, 2024) },
+                },
+                'Bentley': {
+                    'Continental GT': { years: yrs(2005, 2024) },
+                },
+                'Rolls-Royce': {
+                    'Phantom': { years: yrs(2005, 2024) },
+                    'Ghost': { years: yrs(2010, 2024) },
+                },
+                'Lamborghini': {
+                    'Huracan': { years: yrs(2014, 2024) },
+                    'Urus': { years: yrs(2018, 2024) },
+                },
+                'Aston Martin': {
+                    'DB11': { years: yrs(2016, 2024) },
+                    'Vantage': { years: yrs(2005, 2024) },
+                },
+                'McLaren': {
+                    '570S': { years: yrs(2015, 2024) },
+                },
+                'Smart': {
+                    'ForTwo': { years: yrs(2007, 2024) },
+                },
+                'Isuzu': {
+                    'D-Max': { years: yrs(2007, 2024) },
+                    'NPR': { years: yrs(2005, 2024) },
+                },
+                'Mitsubishi': {
+                    'Lancer': { years: yrs(2007, 2017) },
+                    'Outlander': { years: yrs(2006, 2024) },
+                    'Pajero': { years: yrs(2006, 2021) },
+                },
+                'Suzuki': {
+                    'Vitara': { years: yrs(2015, 2024) },
+                    'Swift': { years: yrs(2005, 2024) },
+                },
+                'SsangYong': {
+                    'Rexton': { years: yrs(2006, 2024) },
+                    'Korando': { years: yrs(2010, 2024) },
+                },
+                'Daewoo': {
+                    'Nexia': { years: yrs(2005, 2016) },
+                    'Lanos': { years: yrs(2005, 2009) },
+                },
+                'Lada': {
+                    'Granta': { years: yrs(2011, 2024) },
+                    'Vesta': { years: yrs(2015, 2024) },
+                    'Niva': { years: yrs(2005, 2024) },
+                },
+                'GAZ': {
+                    'Gazelle': { years: yrs(2005, 2024) },
+                },
+                'UAZ': {
+                    'Patriot': { years: yrs(2005, 2024) },
+                },
+                'Chery': {
+                    'Tiggo': { years: yrs(2015, 2024) },
+                },
+                'Geely': {
+                    'Coolray': { years: yrs(2019, 2024) },
+                    'Emgrand': { years: yrs(2016, 2024) },
+                },
+                'Haval': {
+                    'H6': { years: yrs(2017, 2024) },
+                    'Jolion': { years: yrs(2020, 2024) },
+                },
+                'BYD': {
+                    'Song': { years: yrs(2019, 2024) },
+                    'Han': { years: yrs(2020, 2024) },
+                },
+                'JAC': {
+                    'J7': { years: yrs(2020, 2024) },
+                },
+                'Changan': {
+                    'CS35': { years: yrs(2018, 2024) },
+                },
             },
             getMakeFromWMI(wmi) {
                 const found = Object.keys(this.wmiMap).find(key => wmi.startsWith(key));
@@ -1123,8 +1259,8 @@
 
         function renderPosProducts() {
             const search = document.getElementById('posSearch')?.value?.toLowerCase() || '';
-            const model = document.getElementById('posModelFilter')?.value || '';
             const make = document.getElementById('posMakeFilter')?.value || '';
+            const model = document.getElementById('posModelFilter')?.value || '';
             const year = document.getElementById('posYearFilter')?.value || '';
             const category = document.getElementById('posCategoryFilter')?.value || '';
 
@@ -1135,42 +1271,42 @@
                     p.name?.toLowerCase().includes(search) ||
                     p.oem?.toLowerCase().includes(search) ||
                     p.barcode?.toLowerCase().includes(search);
-                const matchModel = model === '' || p.carModel === model;
                 const matchMake = make === '' || p.carBrand === make;
+                const matchModel = model === '' || p.carModel === model;
                 const matchYear = year === '' || String(p.carYear) === year;
                 const matchCategory = category === '' || p.category === category;
-                return matchSearch && matchModel && matchMake && matchYear && matchCategory;
+                return matchSearch && matchMake && matchModel && matchYear && matchCategory;
             });
 
-            // ===== KASKAD FİLTR: Model → Marka → İl (bütün bazadan) =====
-            // 1) MODEL — həmişə bütün bazadakı modelləri göstərir (ilk seçim addımı)
-            const modelSelect = document.getElementById('posModelFilter');
-            if (modelSelect) {
-                const currentVal = modelSelect.value;
-                const models = [...new Set(allProducts.map(p => p.carModel).filter(Boolean))].sort();
-                modelSelect.innerHTML = '<option value="">1. Model seçin</option>' +
-                    models.map(m => `<option value="${m}">${m}</option>`).join('');
-                modelSelect.value = models.includes(currentVal) ? currentVal : '';
-            }
-
-            // 2) MARKA — seçilmiş modelə uyğun markalarla məhdudlaşır
+            // ===== KASKAD FİLTR: Marka → Model → İl (bütün bazadan) =====
+            // 1) MARKA — həmişə bütün bazadakı markaları göstərir (ilk seçim addımı)
             const makeSelect = document.getElementById('posMakeFilter');
             if (makeSelect) {
                 const currentVal = makeSelect.value;
-                const poolForMake = model ? allProducts.filter(p => p.carModel === model) : allProducts;
-                const makes = [...new Set(poolForMake.map(p => p.carBrand).filter(Boolean))].sort();
-                makeSelect.innerHTML = '<option value="">2. Marka seçin</option>' +
+                const makes = [...new Set(allProducts.map(p => p.carBrand).filter(Boolean))].sort();
+                makeSelect.innerHTML = '<option value="">1. Marka seçin</option>' +
                     makes.map(m => `<option value="${m}">${m}</option>`).join('');
                 makeSelect.value = makes.includes(currentVal) ? currentVal : '';
             }
 
-            // 3) İL — seçilmiş model + markaya uyğun illərlə məhdudlaşır
+            // 2) MODEL — seçilmiş markaya uyğun modellərlə məhdudlaşır
+            const modelSelect = document.getElementById('posModelFilter');
+            if (modelSelect) {
+                const currentVal = modelSelect.value;
+                const poolForModel = make ? allProducts.filter(p => p.carBrand === make) : allProducts;
+                const models = [...new Set(poolForModel.map(p => p.carModel).filter(Boolean))].sort();
+                modelSelect.innerHTML = '<option value="">2. Model seçin</option>' +
+                    models.map(m => `<option value="${m}">${m}</option>`).join('');
+                modelSelect.value = models.includes(currentVal) ? currentVal : '';
+            }
+
+            // 3) İL — seçilmiş marka + modelə uyğun illərlə məhdudlaşır
             const yearSelect = document.getElementById('posYearFilter');
             if (yearSelect) {
                 const currentVal = yearSelect.value;
                 let poolForYear = allProducts;
-                if (model) poolForYear = poolForYear.filter(p => p.carModel === model);
-                if (makeSelect && makeSelect.value) poolForYear = poolForYear.filter(p => p.carBrand === makeSelect.value);
+                if (make) poolForYear = poolForYear.filter(p => p.carBrand === make);
+                if (modelSelect && modelSelect.value) poolForYear = poolForYear.filter(p => p.carModel === modelSelect.value);
                 const years = [...new Set(poolForYear.map(p => p.carYear).filter(Boolean))].sort();
                 yearSelect.innerHTML = '<option value="">3. İl seçin</option>' +
                     years.map(y => `<option value="${y}">${y}</option>`).join('');

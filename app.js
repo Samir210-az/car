@@ -2416,17 +2416,14 @@
 
         // ===== INIT =====
         function initApp() {
-            // Məhsulları yüklə, yoxdursa 320+ yarat
+            // Məhsulları yüklə — kataloq versiyası dəyişibsə (yeni marka bazası) yenidən yarat
+            const CATALOG_VERSION = '2'; // v2 = 61 marka / 156 model
             state.products = loadFromStorage('products');
-            if (state.products.length === 0) {
+            const catalogV = localStorage.getItem('autoparts_catalog_v');
+            if (state.products.length === 0 || state.products.length < 300 || catalogV !== CATALOG_VERSION) {
                 state.products = generateSampleProducts();
                 saveToStorage('products', state.products);
-            } else {
-                // Əgər məhsul sayı 320-dən azdırsa, yenidən yarat
-                if (state.products.length < 300) {
-                    state.products = generateSampleProducts();
-                    saveToStorage('products', state.products);
-                }
+                localStorage.setItem('autoparts_catalog_v', CATALOG_VERSION);
             }
 
             state.suppliers = loadFromStorage('suppliers');

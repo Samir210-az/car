@@ -59,6 +59,12 @@
     <!-- ===== TOAST ===== -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ===== ÜZƏN "YENİ SATIŞ" DÜYMƏSİ ===== -->
+    <button id="quickSaleFab" class="quick-sale-fab" onclick="goToSalesQuick()" title="Müştəri gəldi — Satışa keç" aria-label="Yeni Satış">
+        <i class="fas fa-cash-register"></i>
+        <span class="quick-sale-fab-label">Yeni Satış</span>
+    </button>
+
     <!-- ===== APP ===== -->
     <div id="app" style="display:none;">
 
@@ -186,15 +192,19 @@
 
             <!-- ===== SALES (POS) ===== -->
             <div class="page" id="page-sales">
-                <h2 style="font-weight:500;font-size:1.4rem;letter-spacing:-0.02em;margin-bottom:var(--spacing-20);"><i class="fas fa-cash-register" style="color:var(--color-lavender-phosphor);margin-right:var(--spacing-12);"></i> Satış (POS)</h2>
+                <div class="flex-between" style="margin-bottom:var(--spacing-20);flex-wrap:wrap;gap:0.8rem;">
+                    <h2 style="font-weight:500;font-size:1.4rem;letter-spacing:-0.02em;margin:0;"><i class="fas fa-cash-register" style="color:var(--color-lavender-phosphor);margin-right:var(--spacing-12);"></i> Satış (POS)</h2>
+                    <button class="btn btn-primary btn-sm" id="kioskToggleBtn" onclick="toggleKioskMode()"><i class="fas fa-expand"></i> Kassa rejimi</button>
+                </div>
                 <div class="pos-layout">
                     <div class="card">
                         <div class="toolbar" style="margin-bottom:var(--spacing-16);flex-wrap:wrap;">
                             <div class="search-box" style="flex:1;min-width:140px;"><i class="fas fa-search"></i><input type="text" id="posSearch" placeholder="Axtar..." oninput="renderPosProducts()"></div>
-                            <select id="posCategoryFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">Kateqoriya</option></select>
-                            <select id="posMakeFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">Marka</option></select>
-                            <select id="posModelFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">Model</option></select>
-                            <select id="posYearFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">İl</option></select>
+                            <select id="posModelFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">1. Model seçin</option></select>
+                            <select id="posMakeFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">2. Marka seçin</option></select>
+                            <select id="posYearFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">3. İl seçin</option></select>
+                            <select id="posCategoryFilter" onchange="renderPosProducts()" style="padding:0.4rem 0.6rem;border-radius:var(--radius-sm);border:1.5px solid rgba(255,255,255,0.06);background:var(--color-liquid-deep);color:var(--surface-text);font-size:0.75rem;"><option value="">4. Kateqoriya seçin</option></select>
+                            <button class="btn btn-outline btn-sm" onclick="resetPosFilters()" title="Filtrləri sıfırla"><i class="fas fa-rotate-left"></i></button>
                             <button class="btn btn-outline btn-sm" onclick="clearPosCart()"><i class="fas fa-trash"></i> Təmizlə</button>
                             <button class="btn btn-outline btn-sm" onclick="printReceipt()"><i class="fas fa-print"></i> Çap et</button>
                         </div>

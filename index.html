@@ -145,7 +145,42 @@
                     <div class="stat-card"><div class="stat-label">Kassa qalığı</div><div class="stat-value" id="statCashBalance">0 ₼</div></div>
                     <div class="stat-card"><div class="stat-label">Bank hesabı</div><div class="stat-value" id="statBankBalance">0 ₼</div></div>
                 </div>
-                <div class="charts-grid">
+
+                <!-- ===== QAZANC ANALİZİ ===== -->
+                <div class="card mt-2">
+                    <h4 style="margin-bottom:var(--spacing-16);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--surface-text-secondary);font-weight:500;"><i class="fas fa-chart-line"></i> Qazanc Analizi</h4>
+                    <div class="profit-analysis-grid">
+                        <div class="profit-period-box">
+                            <div class="profit-period-title">Bugün</div>
+                            <div class="profit-row"><span>Gəlir</span><span id="profitTodayRevenue">0 ₼</span></div>
+                            <div class="profit-row"><span>Malın maya dəyəri</span><span id="profitTodayCogs">0 ₼</span></div>
+                            <div class="profit-row"><span>Digər xərclər</span><span id="profitTodayExpense">0 ₼</span></div>
+                            <div class="profit-row profit-net"><span>Xalis qazanc</span><span id="profitTodayNet">0 ₼</span></div>
+                        </div>
+                        <div class="profit-period-box">
+                            <div class="profit-period-title">Bu həftə</div>
+                            <div class="profit-row"><span>Gəlir</span><span id="profitWeekRevenue">0 ₼</span></div>
+                            <div class="profit-row"><span>Malın maya dəyəri</span><span id="profitWeekCogs">0 ₼</span></div>
+                            <div class="profit-row"><span>Digər xərclər</span><span id="profitWeekExpense">0 ₼</span></div>
+                            <div class="profit-row profit-net"><span>Xalis qazanc</span><span id="profitWeekNet">0 ₼</span></div>
+                        </div>
+                        <div class="profit-period-box">
+                            <div class="profit-period-title">Bu ay</div>
+                            <div class="profit-row"><span>Gəlir</span><span id="profitMonthRevenue">0 ₼</span></div>
+                            <div class="profit-row"><span>Malın maya dəyəri</span><span id="profitMonthCogs">0 ₼</span></div>
+                            <div class="profit-row"><span>Digər xərclər</span><span id="profitMonthExpense">0 ₼</span></div>
+                            <div class="profit-row profit-net"><span>Xalis qazanc</span><span id="profitMonthNet">0 ₼</span></div>
+                        </div>
+                        <div class="profit-period-box">
+                            <div class="profit-period-title">Bu il</div>
+                            <div class="profit-row"><span>Gəlir</span><span id="profitYearRevenue">0 ₼</span></div>
+                            <div class="profit-row"><span>Malın maya dəyəri</span><span id="profitYearCogs">0 ₼</span></div>
+                            <div class="profit-row"><span>Digər xərclər</span><span id="profitYearExpense">0 ₼</span></div>
+                            <div class="profit-row profit-net"><span>Xalis qazanc</span><span id="profitYearNet">0 ₼</span></div>
+                        </div>
+                    </div>
+                    <div class="fs-small text-muted" style="margin-top:var(--spacing-12);"><i class="fas fa-info-circle"></i> Xalis qazanc = Gəlir − Malın maya dəyəri (satılan malın alış qiyməti) − Digər xərclər (əməkhaqqı, icarə və s.)</div>
+                </div>
                     <div class="chart-box"><h4>Gündəlik satış (son 7 gün)</h4><canvas id="dailyChart"></canvas></div>
                     <div class="chart-box"><h4>Ən çox satılanlar</h4><canvas id="topProductsChart"></canvas></div>
                 </div>

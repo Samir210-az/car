@@ -1667,18 +1667,66 @@
             const total = state.posCart.reduce((sum, item) => sum + (item.sellPrice || 0) * item.qty, 0);
             const discount = parseFloat(document.getElementById('posDiscount')?.value) || 0;
             const finalTotal = Math.max(0, total - discount);
-            let receipt = '=== 366 AUTO ===\n';
-            receipt += `Tarix: ${now()}\n`;
-            receipt += '---\n';
-            state.posCart.forEach(item => {
-                receipt += `${item.name} x${item.qty} = ${fmtMoney((item.sellPrice || 0) * item.qty)}\n`;
-            });
-            receipt += '---\n';
-            receipt += `Cəmi: ${fmtMoney(total)}\n`;
-            receipt += `Endirim: ${fmtMoney(discount)}\n`;
-            receipt += `Ödəniləcək: ${fmtMoney(finalTotal)}\n`;
-            receipt += '=== Xoş gəldiniz ===\n';
-            alert(receipt);
+            const paymentMethod = document.getElementById('posPaymentMethod')?.value || 'nağd';
+
+            const itemsHtml = state.posCart.map(item => `
+                <tr>
+                    <td style="text-align:left;padding:3px 0;">${item.name}</td>
+                    <td style="text-align:center;padding:3px 0;">${item.qty}</td>
+                    <td style="text-align:right;padding:3px 0;">${fmtMoney((item.sellPrice || 0) * item.qty)}</td>
+                </tr>`).join('');
+
+            const receiptHtml = `<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Qəbz — 366 AUTO</title>
+<style>
+    @page { size: 80mm auto; margin: 4mm; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Courier New', monospace; width: 74mm; margin: 0 auto; color: #000; font-size: 12px; background:#fff; }
+    .center { text-align: center; }
+    h1 { font-size: 16px; margin: 4px 0 0; letter-spacing: 1px; }
+    .sub { font-size: 10px; margin-bottom: 2px; }
+    table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+    th { text-align: left; font-size: 10px; border-bottom: 1px solid #000; padding-bottom: 3px; }
+    .line { border-top: 1px dashed #000; margin: 6px 0; }
+    .total-row td { font-weight: bold; font-size: 14px; padding-top: 6px; border-top: 1px solid #000; }
+    .row td { padding: 1px 0; }
+    .footer { margin-top: 12px; font-size: 10px; }
+</style>
+</head>
+<body onload="window.print();">
+    <div class="center">
+        <h1>366 AUTO</h1>
+        <div class="sub">Avtomobil Ehtiyat Hissələri</div>
+        <div class="sub">${now()}</div>
+    </div>
+    <div class="line"></div>
+    <table>
+        <thead><tr><th>Məhsul</th><th style="text-align:center;">Say</th><th style="text-align:right;">Qiymət</th></tr></thead>
+        <tbody>${itemsHtml}</tbody>
+    </table>
+    <div class="line"></div>
+    <table>
+        <tr class="row"><td>Cəmi:</td><td style="text-align:right;">${fmtMoney(total)}</td></tr>
+        <tr class="row"><td>Endirim:</td><td style="text-align:right;">${fmtMoney(discount)}</td></tr>
+        <tr class="row"><td>Ödəniş üsulu:</td><td style="text-align:right;">${paymentMethod}</td></tr>
+        <tr class="total-row"><td>ÖDƏNİLƏCƏK:</td><td style="text-align:right;">${fmtMoney(finalTotal)}</td></tr>
+    </table>
+    <div class="line"></div>
+    <div class="center footer">Xoş gəldiniz!<br>Təkrar gözləyirik.</div>
+</body>
+</html>`;
+
+            const printWin = window.open('', '_blank', 'width=380,height=640');
+            if (!printWin) {
+                toast('Pop-up bloklanıb! Brauzerdə bu sayt üçün pop-up-a icazə verin.', 'danger');
+                return;
+            }
+            printWin.document.open();
+            printWin.document.write(receiptHtml);
+            printWin.document.close();
         }
 
 

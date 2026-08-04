@@ -1430,6 +1430,51 @@
         window.resetDbSearchFilters = resetDbSearchFilters;
 
         // ===== DASHBOARD, FINANCE, SUPPLIERS, PURCHASES, EMPLOYEES, TAXES, DEBTS, CUSTOMERS =====
+        // ===== QAZANC ANALİZİ (gündəlik/həftəlik/aylıq/illik) =====
+        function startOfWeekISO() {
+            const d = new Date();
+            const day = d.getDay(); // 0=Bazar,1=Bazar ertəsi...
+            const diff = (day === 0 ? -6 : 1) - day; // Bazar ertəsinə qədər fərq
+            d.setDate(d.getDate() + diff);
+            return d.toISOString().split('T')[0];
+        }
+
+        function calcProfitForPeriod(start, end) {
+            const sales = getSales().filter(s => s.date >= start && s.date <= end);
+            const revenue = sales.reduce((sum, s) => sum + (s.total || 0), 0);
+            const cogs = sales.reduce((sum, s) =>
+                sum + (s.items || []).reduce((isum, it) => isum + (it.buyPrice || 0) * (it.qty || 0), 0), 0);
+            // Digər xərclər: alışla bağlı xərclər buraya daxil edilmir (onların dəyəri satılanda
+            // "Malın maya dəyəri" kimi artıq hesablanır) — əks halda eyni xərc iki dəfə çıxılardı.
+            const otherExpenses = getFinance()
+                .filter(f => f.type === 'expense' && !f.purchaseId && f.date >= start && f.date <= end)
+                .reduce((sum, f) => sum + (f.amount || 0), 0);
+            const netProfit = revenue - cogs - otherExpenses;
+            return { revenue, cogs, otherExpenses, netProfit };
+        }
+
+        function renderProfitAnalysis() {
+            const t = today();
+            const periods = {
+                Today: [t, t],
+                Week: [startOfWeekISO(), t],
+                Month: [t.slice(0, 7) + '-01', t],
+                Year: [t.slice(0, 4) + '-01-01', t],
+            };
+            Object.entries(periods).forEach(([key, [start, end]]) => {
+                const r = calcProfitForPeriod(start, end);
+                const set = (suffix, val) => {
+                    const el = document.getElementById(`profit${key}${suffix}`);
+                    if (el) el.textContent = fmtMoney(val);
+                };
+                set('Revenue', r.revenue);
+                set('Cogs', r.cogs);
+                set('Expense', r.otherExpenses);
+                set('Net', r.netProfit);
+            });
+        }
+        window.renderProfitAnalysis = renderProfitAnalysis;
+
         function renderDashboard() {
             const sales = getSales();
             const todaySales = sales.filter(s => s.date?.startsWith(today())).reduce((sum, s) => sum + s.total, 0);
@@ -1452,7 +1497,7 @@
             const tbody = document.getElementById('recentSales');
             if (tbody) {
                 tbody.innerHTML = recentSales.map(s =>
-                    `<tr><td>${s.items?.[0]?.name || '—'}</td><td>${s.items?.length || 0}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td><td><button class="btn btn-outline btn-sm" style="color:#f87171;border-color:#f87171;padding:0.2rem 0.5rem;" onclick="deleteSale('${s.id}')" title="Sil"><i class="fas fa-trash"></i></button></td></tr>`
+                    `<tr><td>${s.items?.[0]?.name || '—'}</td><td>${s.items?.length || 0}</td><td>${fmtMoney(s.total)}</td><td>${s.timestamp ? new Date(s.timestamp).toLocaleString('az-AZ') : s.date}</td><td><button class="btn btn-outline btn-sm" style="color:#f87171;border-color:#f87171;padding:0.2rem 0.5rem;" onclick="deleteSale('${s.id}')" title="Sil"><i class="fas fa-trash"></i></button></td></tr>`
                 ).join('');
             }
             const recentProducts = getProducts().slice(-5).reverse();
@@ -1462,6 +1507,7 @@
                     `<tr><td>${p.name}</td><td>${p.stock}</td><td>${fmtMoney(p.sellPrice)}</td></tr>`
                 ).join('');
             }
+            renderProfitAnalysis();
         }
 
         function renderFinance() {
@@ -1740,7 +1786,7 @@
                 total: finalTotal,
                 discount: discount,
                 method: method,
-                date: now(),
+                date: today(),
                 timestamp: Date.now(),
             };
 
@@ -2307,6 +2353,7 @@
             setFinance(finance);
             closeModal('incomeModal');
             renderFinance();
+            renderDashboard();
             toast('Gəlir əlavə edildi!');
         }
 
@@ -2328,6 +2375,7 @@
             setFinance(finance);
             closeModal('expenseModal');
             renderFinance();
+            renderDashboard();
             toast('Xərc əlavə edildi!');
         }
 
@@ -2407,6 +2455,7 @@
             setFinance(finance);
             toast(`${emp.name} üçün ${fmtMoney(amount)} maaş ödənildi!`);
             renderFinance();
+            renderDashboard();
         }
 
         // ===== TAX CRUD =====

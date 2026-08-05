@@ -330,6 +330,20 @@
         }
         .quick-sale-fab:hover { transform: translateY(-3px) scale(1.03); }
         .quick-sale-fab:active { transform: translateY(0) scale(0.97); }
+
+        /* ===== PWA QURAŞDIRMA DÜYMƏSİ ===== */
+        .pwa-install-fab {
+            position: fixed; left: 24px; bottom: 24px; z-index: 4000;
+            display: none; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 1.3rem; border-radius: 50px; border: none; cursor: pointer;
+            background: var(--gradient-aurora); color: #0a1a19; font-weight: 700; font-size: 0.9rem;
+            font-family: var(--font-primary); letter-spacing: 0.01em;
+            box-shadow: 0 10px 34px rgba(0,130,124,0.45);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .pwa-install-fab.show { display: flex; }
+        .pwa-install-fab:hover { transform: translateY(-3px) scale(1.03); }
+        .pwa-install-fab:active { transform: translateY(0) scale(0.97); }
         .quick-sale-fab i { font-size: 1.15rem; }
         @keyframes fabPulse {
             0%   { box-shadow: 0 10px 34px rgba(0,130,124,0.45), 0 0 0 0 rgba(0,212,192,0.5); }

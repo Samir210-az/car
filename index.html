@@ -65,6 +65,12 @@
         <span class="quick-sale-fab-label">Yeni Satış</span>
     </button>
 
+    <!-- ===== PWA QURAŞDIRMA DÜYMƏSİ ===== -->
+    <button id="pwaInstallBtn" class="pwa-install-fab" title="Telefona quraşdır" aria-label="Quraşdır">
+        <i class="fas fa-download"></i>
+        <span>Quraşdır</span>
+    </button>
+
     <!-- ===== APP ===== -->
     <div id="app" style="display:none;">
 
@@ -617,6 +623,32 @@
     <!-- ============================================================ -->
     <!-- JAVASCRIPT – TAM İŞLƏNƏN KOD -->
     <!-- ============================================================ -->
+    <!-- ===== PWA: Service Worker + Quraşdırma ===== -->
+    <script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js").catch(()=>{});
+    }
+    let deferredPrompt = null;
+    const pwaBtn = document.getElementById("pwaInstallBtn");
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (pwaBtn) pwaBtn.classList.add("show");
+    });
+    if (pwaBtn) {
+        pwaBtn.addEventListener("click", async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            pwaBtn.classList.remove("show");
+        });
+    }
+    window.addEventListener("appinstalled", () => {
+        if (pwaBtn) pwaBtn.classList.remove("show");
+    });
+    </script>
+
     <script src="app.js" defer></script>
 </body>
 </html>
